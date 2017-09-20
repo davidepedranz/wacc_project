@@ -1,0 +1,26 @@
+<md-card class="login-form" layout-align="center">
+  <md-card-title>
+    Welcome
+  </md-card-title>
+  <md-card-content>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <p>
+        <md-form-field>
+          <input mdInput required placeholder="Username" type="text" formControlName="username">
+          <md-error *ngIf="username.invalid && (username.dirty || username.touched) && username.errors.required">
+            Please enter your username.
+          </md-error>
+        </md-form-field>
+      </p>
+      <p>
+        <md-form-field>
+          <input mdInput required placeholder="Password" type="password" formControlName="password">
+          <md-error *ngIf="password.invalid && (password.dirty || password.touched) && password.errors.required">
+            Please enter your password.
+          </md-error>
+        </md-form-field>
+      </p>
+      <button md-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+  </md-card-content>
+</md-card>
