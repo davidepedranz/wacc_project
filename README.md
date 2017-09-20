@@ -11,4 +11,17 @@ This repository contains the project of the course Web and Cloud Computing (wint
 | Folder                       | Content                                  |
 | ---------------------------- | ---------------------------------------- |
 | [architecture](architecture) | The folder contains the description of the general architecture of the project. |
+| [frontend](frontend)         | Implementation of the frontend using Angular 4 and Angular Material. |
+
+## Setup
+
+### Frontend
+
+```bash
+# install yarn
+# https://yarnpkg.com/lang/en/docs/install/
+
+# use yarn instead of npm
+ng set --global packageManager=yarn
+```
 
