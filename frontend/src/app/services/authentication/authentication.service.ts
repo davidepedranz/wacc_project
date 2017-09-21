@@ -8,8 +8,12 @@ import { Credentials } from '../../models/credentials';
 @Injectable()
 export class AuthenticationService {
 
-  login(credentials: Credentials): Observable<string> {
-    return Observable.of('fake-token').delay(1000);
+  login({ username, password }: Credentials): Observable<string> {
+    if (username === 'admin') {
+      return Observable.of('fake-token').delay(1000);
+    } else {
+      return Observable.of('fake-token').delay(1000).map(_ => { throw Error('Some error'); });
+    }
   }
 
 }

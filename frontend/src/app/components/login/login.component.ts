@@ -17,6 +17,7 @@ import * as fromRoot from '../../store/reducers';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loginPending: Observable<boolean>;
+  loginError: Observable<boolean>;
   token: Observable<string>;
 
   constructor(
@@ -26,6 +27,7 @@ export class LoginComponent implements OnInit {
   ) {
     this.createForm();
     this.loginPending = store.select(fromRoot.isLoginPending);
+    this.loginError = store.select(fromRoot.isLoginError);
     this.token = store.select(fromRoot.selectToken);
   }
 
