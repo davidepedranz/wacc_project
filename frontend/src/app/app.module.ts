@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Angular Material
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdInputModule, MdButtonModule, MdCardModule, MdProgressSpinnerModule } from '@angular/material';
+import { MdInputModule, MdButtonModule, MdCardModule, MdProgressSpinnerModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
 
 // Reactive Angular (ngrx)
 import { StoreModule } from '@ngrx/store';
@@ -27,12 +27,16 @@ import { AppRoutes } from './app.routing';
 import { AppComponent } from './components/app/app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { UsersComponent } from './components/users/users.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    LoginComponent
+    LoginComponent,
+    NavbarComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +46,7 @@ import { LoginComponent } from './components/login/login.component';
 
     // router
     RouterModule.forRoot(AppRoutes, {
-      enableTracing: true
+      enableTracing: false
     }),
 
     // application status, using ngrx
@@ -56,7 +60,9 @@ import { LoginComponent } from './components/login/login.component';
     MdInputModule,
     MdButtonModule,
     MdCardModule,
-    MdProgressSpinnerModule
+    MdProgressSpinnerModule,
+    MdSidenavModule,
+    MdToolbarModule
   ],
   providers: [
     AuthenticationGuard,
