@@ -4,21 +4,20 @@ import * as AuthenticationActions from './authentication.actions';
 export interface State {
     redirectPageAfterLogin: string,
     loginPending: boolean,
-    loginError: boolean,    
+    loginError: boolean,
     token: string | null
 }
 
-// TODO: initial state for redirectPageAfterLogin???
 const initialState: State = {
-    redirectPageAfterLogin: null,
+    redirectPageAfterLogin: '/',
     loginPending: false,
     loginError: false,
     token: null
 }
 
 export function reducer(state = initialState, action: AuthenticationActions.All): State {
-    switch(action.type) {
-        
+    switch (action.type) {
+
         case AuthenticationActions.LOGIN: {
             return {
                 ...state,
@@ -41,6 +40,13 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
                 ...state,
                 loginPending: false,
                 loginError: true
+            }
+        }
+
+        case AuthenticationActions.LOGIN_REDIRECT: {
+            return {
+                ...state,
+                redirectPageAfterLogin: action.payload
             }
         }
 

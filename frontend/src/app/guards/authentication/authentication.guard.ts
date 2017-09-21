@@ -30,7 +30,7 @@ export class AuthenticationGuard implements CanActivate {
         if (authenticated) {
           return true;
         } else {
-          this.store.dispatch(new Authentication.LoginRedirect());
+          this.store.dispatch(new Authentication.LoginRedirect(url));
           return false;
         }
       })

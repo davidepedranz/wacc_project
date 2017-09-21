@@ -30,8 +30,11 @@ export class LoginFailure implements Action {
 // action dispatched when a guard prevents to route to a certain page (login required)
 export class LoginRedirect implements Action {
     readonly type = LOGIN_REDIRECT;
+
+    constructor(public payload: string) { }
 }
 
+// action dispatched to logout
 export class Logout implements Action {
     readonly type = LOGOUT;
 }

@@ -3,12 +3,15 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/exhaustMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/withLatestFrom';
 import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { Effect, Actions } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import * as fromRoot from '../reducers';
+import { selectRedirectPathAfterLogin } from '../reducers';
 import * as AuthenticationActions from './authentication.actions';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 
@@ -28,18 +31,19 @@ export class AuthenticationEffects {
     @Effect({ dispatch: false })
     loginSuccess$ = this.actions$
         .ofType(AuthenticationActions.LOGIN_SUCCESS)
-        .do(() => this.router.navigate(['/']));
+        .withLatestFrom(this.store$)
+        .map(([action, state]) => selectRedirectPathAfterLogin(state))
+        .do(path => this.router.navigate([path]));
 
     @Effect({ dispatch: false })
-    loginRedirect$ = this.actions$
+    redirectToLogin$ = this.actions$
         .ofType(AuthenticationActions.LOGIN_REDIRECT, AuthenticationActions.LOGOUT)
-        .do(_ => {
-            this.router.navigate(['/login']);
-        });
+        .do(_ => this.router.navigate(['/login']));
 
     constructor(
+        private store$: Store<fromRoot.State>,
         private actions$: Actions,
         private authenticationService: AuthenticationService,
-        private router: Router        
+        private router: Router
     ) { }
 }
