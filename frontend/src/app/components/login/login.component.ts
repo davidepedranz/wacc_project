@@ -1,60 +1,29 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
-import * as Authentication from '../../store/authentication/authentication.actions';
+import { Credentials } from '../../models/credentials';
 import * as fromRoot from '../../store/reducers';
+import * as Authentication from '../../store/authentication/authentication.actions';
 
 @Component({
   selector: 'app-login',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
-  loginPending: Observable<boolean>;
-  loginError: Observable<boolean>;
-  token: Observable<string>;
+  pending$: Observable<boolean>;
+  error$: Observable<boolean>;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private store: Store<fromRoot.State>
-  ) {
-    this.createForm();
-    this.loginPending = store.select(fromRoot.isLoginPending);
-    this.loginError = store.select(fromRoot.isLoginError);
-    this.token = store.select(fromRoot.selectToken);
+  constructor(private store: Store<fromRoot.State>) {
+    this.pending$ = store.select(fromRoot.isLoginPending);
+    this.error$ = store.select(fromRoot.isLoginError);
   }
 
   ngOnInit() { }
 
-  createForm() {
-    this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
-  }
-
-  // TODO: separate presentation from logic
-  // see: https://github.com/ngrx/platform/blob/master/example-app/app/auth/containers/login-page.component.ts
-  onSubmit() {
-    // request the application to perform the login action
-    this.store.dispatch(new Authentication.Login({
-      username: this.username.value,
-      password: this.password.value
-    }));
-  }
-
-  get username() {
-    return this.loginForm.get('username');
-  }
-
-  get password() {
-    return this.loginForm.get('password');
+  onSubmit($event: Credentials) {
+    this.store.dispatch(new Authentication.Login($event));
   }
 }

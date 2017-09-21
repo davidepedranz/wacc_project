@@ -26,9 +26,10 @@ import { AppRoutes } from './app.routing';
 
 // UI components
 import { AppComponent } from './components/app/app.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UsersComponent } from './components/users/users.component';
 
 @NgModule({
@@ -37,7 +38,8 @@ import { UsersComponent } from './components/users/users.component';
     DashboardComponent,
     LoginComponent,
     NavbarComponent,
-    UsersComponent
+    UsersComponent,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,

@@ -1,39 +1,4 @@
 <div fxLayout fxLayoutAlign="center center" class="container">
-  <md-card *ngIf="!(loginPending | async)">
-    <md-card-title>
-      Login
-    </md-card-title>
-    <md-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-        <p>
-          <md-form-field>
-            <input mdInput required placeholder="Username" type="text" formControlName="username">
-            <md-error *ngIf="username.invalid && (username.dirty || username.touched) && username.errors.required">
-              Please enter your username.
-            </md-error>
-          </md-form-field>
-        </p>
-        <p>
-          <md-form-field>
-            <input mdInput required placeholder="Password" type="password" formControlName="password">
-            <md-error *ngIf="password.invalid && (password.dirty || password.touched) && password.errors.required">
-              Please enter your password.
-            </md-error>
-            <!-- <md-error *ngIf="(loginError | async)">
-              Username or password not valid.
-            </md-error> -->
-          </md-form-field>
-        </p>
-        <p *ngIf="(loginError | async)">
-          <md-error>
-            Wrong username or password.
-          </md-error>
-        </p>
-        <p>
-          <button md-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
-        </p>
-      </form>
-    </md-card-content>
-  </md-card>
-  <md-progress-spinner mode="indeterminate" *ngIf="loginPending | async"></md-progress-spinner>
+  <app-login-form *ngIf="!(pending$ | async)" [pending]="pending$ | async" [error]="error$ | async" (submitted)="onSubmit($event)"></app-login-form>
+  <md-progress-spinner mode="indeterminate" *ngIf="pending$ | async"></md-progress-spinner>
 </div>
