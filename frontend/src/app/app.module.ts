@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-// Angular Material
+// Angular Material + Flex
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MdInputModule, MdButtonModule, MdCardModule, MdProgressSpinnerModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
 
 // Reactive Angular (ngrx)
@@ -43,6 +44,7 @@ import { UsersComponent } from './components/users/users.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    FlexLayoutModule,
 
     // router
     RouterModule.forRoot(AppRoutes, {

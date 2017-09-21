@@ -1,5 +1,3 @@
-.login-form {
-    width: 250px;
-    margin-left: auto;
-    margin-right: auto;    
+.container {
+    height: 100vh;
 }

@@ -125,6 +125,12 @@
   dependencies:
     tslib "^1.7.1"
 
+"@angular/flex-layout@^2.0.0-beta.9":
+  version "2.0.0-beta.9"
+  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-2.0.0-beta.9.tgz#3e54f898e805d0b1426d15e6139db415d04ee75f"
+  dependencies:
+    tslib "^1.7.1"
+
 "@angular/forms@^4.2.4":
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.4.3.tgz#25b41bbab58bf1da872411c8517c10d7c5373d8e"
