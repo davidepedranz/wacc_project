@@ -13,6 +13,7 @@ import * as fromRoot from '../../store/reducers';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  loginPending: Observable<boolean>;
   token: Observable<string>;
 
   constructor(
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
     private store: Store<fromRoot.State>
   ) {
     this.createForm();
+    this.loginPending = store.select(fromRoot.isLoginPending);
     this.token = store.select(fromRoot.selectToken);
   }
 

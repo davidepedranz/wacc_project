@@ -14,7 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Angular Material
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdInputModule, MdButtonModule, MdCardModule } from '@angular/material';
+import { MdInputModule, MdButtonModule, MdCardModule, MdProgressSpinnerModule } from '@angular/material';
 
 import { AuthenticationGuard } from './guards/authentication/authentication.guard';
 import { AuthenticationService } from './services/authentication/authentication.service';
@@ -62,7 +62,8 @@ import { LoginComponent } from './components/login/login.component';
     // UI elements
     MdInputModule,
     MdButtonModule,
-    MdCardModule
+    MdCardModule,
+    MdProgressSpinnerModule
   ],
   providers: [
     AuthenticationGuard,
