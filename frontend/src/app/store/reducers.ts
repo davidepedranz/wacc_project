@@ -8,7 +8,7 @@ export interface State {
 // global reducer for the application
 export const reducers = {
     authentication: fromAuthentication.reducer
-}
+};
 
 export function selectRedirectPathAfterLogin(state: State): string {
     return state.authentication.redirectPageAfterLogin;

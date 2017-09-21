@@ -15,8 +15,7 @@ export class AuthenticationGuard implements CanActivate {
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let url: string = state.url;
-    return this.checkLogin(url);
+    return this.checkLogin(state.url);
   }
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {

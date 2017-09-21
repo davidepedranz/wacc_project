@@ -2,10 +2,10 @@ import { Credentials } from '../../models/credentials';
 import * as AuthenticationActions from './authentication.actions';
 
 export interface State {
-    redirectPageAfterLogin: string,
-    loginPending: boolean,
-    loginError: boolean,
-    token: string | null
+    redirectPageAfterLogin: string;
+    loginPending: boolean;
+    loginError: boolean;
+    token: string | null;
 }
 
 const initialState: State = {
@@ -13,7 +13,7 @@ const initialState: State = {
     loginPending: false,
     loginError: false,
     token: null
-}
+};
 
 export function reducer(state = initialState, action: AuthenticationActions.All): State {
     switch (action.type) {
@@ -23,7 +23,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
                 ...state,
                 loginPending: true,
                 loginError: false
-            }
+            };
         }
 
         case AuthenticationActions.LOGIN_SUCCESS: {
@@ -32,7 +32,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
                 loginPending: false,
                 loginError: false,
                 token: action.payload
-            }
+            };
         }
 
         case AuthenticationActions.LOGIN_FAILURE: {
@@ -40,14 +40,14 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
                 ...state,
                 loginPending: false,
                 loginError: true
-            }
+            };
         }
 
         case AuthenticationActions.LOGIN_REDIRECT: {
             return {
                 ...state,
                 redirectPageAfterLogin: action.payload
-            }
+            };
         }
 
         case AuthenticationActions.LOGOUT: {

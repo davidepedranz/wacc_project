@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+
 import * as Authentication from '../../store/authentication/authentication.actions';
 import * as fromRoot from '../../store/reducers';
 
 @Component({
   selector: 'app-login',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -26,11 +29,7 @@ export class LoginComponent implements OnInit {
     this.token = store.select(fromRoot.selectToken);
   }
 
-  ngOnInit() {
-    this.token.subscribe((value) => {
-      console.log(`Login component got token ${value}`)
-    });
-  }
+  ngOnInit() { }
 
   createForm() {
     this.loginForm = this.fb.group({
