@@ -1,18 +1,18 @@
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/map';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
-import * as Authentication from '../../store/authentication/authentication.actions';
-import * as fromRoot from '../../store/reducers';
+
+import * as Authentication from '../store/authentication/authentication.actions';
+import * as fromRoot from '../store/reducers';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
 
-  constructor(
-    private store: Store<fromRoot.State>
-  ) { }
+  constructor(private store: Store<fromRoot.State>) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.checkLogin(state.url);

@@ -50,7 +50,7 @@ export class LoginFormComponent implements OnInit {
   }
 
   invalid(field: FormControl) {
-    return field.invalid && (field.dirty || field.touched)
+    return field.invalid && (field.dirty || field.touched);
   }
 
   submit() {

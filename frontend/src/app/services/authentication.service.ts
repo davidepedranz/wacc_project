@@ -1,9 +1,11 @@
+import { Injectable } from '@angular/core';
+
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/delay';
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Credentials } from '../../models/credentials';
+
+import { Credentials } from '../models/credentials';
 
 @Injectable()
 export class AuthenticationService {
@@ -15,5 +17,4 @@ export class AuthenticationService {
       return Observable.of('fake-token').delay(1000).map(_ => { throw Error('Some error'); });
     }
   }
-
 }

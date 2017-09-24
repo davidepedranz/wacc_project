@@ -1,19 +1,19 @@
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/exhaustMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/withLatestFrom';
-import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+
 import * as fromRoot from '../reducers';
-import { selectRedirectPathAfterLogin } from '../reducers';
 import * as AuthenticationActions from './authentication.actions';
-import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -25,14 +25,14 @@ export class AuthenticationEffects {
             this.authenticationService
                 .login(credentials)
                 .map(token => new AuthenticationActions.LoginSuccess(token))
-                .catch(error => of(new AuthenticationActions.LoginFailure()))
+                .catch(error => Observable.of(new AuthenticationActions.LoginFailure()))
         );
 
     @Effect({ dispatch: false })
     loginSuccess$ = this.actions$
         .ofType(AuthenticationActions.LOGIN_SUCCESS)
         .withLatestFrom(this.store$)
-        .map(([action, state]) => selectRedirectPathAfterLogin(state))
+        .map(([action, state]) => fromRoot.selectRedirectPathAfterLogin(state))
         .do(path => this.router.navigate([path]));
 
     @Effect({ dispatch: false })

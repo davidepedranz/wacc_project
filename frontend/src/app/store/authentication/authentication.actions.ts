@@ -1,7 +1,6 @@
 import { Action } from '@ngrx/store';
 import { Credentials } from '../../models/credentials';
 
-// login
 export const LOGIN = '[Authentication] Login';
 export const LOGIN_SUCCESS = '[Authentication] Login Success';
 export const LOGIN_FAILURE = '[Authentication] Login Failure';

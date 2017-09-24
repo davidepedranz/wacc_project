@@ -1,11 +1,10 @@
 import { Routes } from '@angular/router';
 
+import { AuthenticationGuard } from './guards/authentication.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UsersComponent } from './components/users/users.component';
+import { ComponentsComponent } from './components/components/components.component';
 import { LoginComponent } from './components/login/login.component';
-import { ComponentsTableComponent } from './components/components-table/components-table.component';
-
-import { AuthenticationGuard } from './guards/authentication/authentication.guard';
 
 const routes: Routes = [
     {
@@ -21,19 +20,15 @@ const routes: Routes = [
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'login',
-        component: LoginComponent,
-        data: {
-            hidNavbar: true
-        }
-    },
-    {
-        path: 'components-table',
-        component: ComponentsTableComponent,
+        path: 'components',
+        component: ComponentsComponent,
         pathMatch: 'full',
         canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'login',
+        component: LoginComponent
     }
-
 ];
 
 export { routes as AppRoutes };

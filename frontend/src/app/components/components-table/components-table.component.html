@@ -1,9 +1,10 @@
-<div>
-
+<div fxLayout='column'>
   <md-table #table [dataSource]="dataSource">
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+    <!--
+      Note that these columns can be defined in any order.
+      The actual rendered columns are set as a property on the row definition"
+    -->
 
     <!-- ID Column -->
     <ng-container mdColumnDef="id">
@@ -33,10 +34,5 @@
     <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
   </md-table>
 
-  <md-paginator #paginator
-                [length]="componentDatabase.data.length"
-                [pageIndex]="0"
-                [pageSize]="25"
-                [pageSizeOptions]="[5, 10, 25, 100]">
-  </md-paginator>
+  <md-paginator #paginator [length]="componentDatabase.data.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]"></md-paginator>
 </div>

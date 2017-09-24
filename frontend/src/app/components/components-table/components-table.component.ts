@@ -1,29 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
-import {MdPaginator} from '@angular/material';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import { MdPaginator } from '@angular/material';
+import { DataSource } from '@angular/cdk/collections';
+
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
-
-
-@Component({
-  selector: 'app-components-table',
-  templateUrl: './components-table.component.html',
-  styleUrls: ['./components-table.component.css']
-})
-export class ComponentsTableComponent implements OnInit {
-  displayedColumns = ['id', 'name', 'status', 'image'];
-  componentDatabase = new ComponentDatabase();
-  dataSource: ComponentDataSource | null;
-
-  @ViewChild(MdPaginator) paginator: MdPaginator;
-
-  ngOnInit() {
-    this.dataSource = new ComponentDataSource(this.componentDatabase, this.paginator);
-  }
-}
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 /** Constants used to fill up our data base. */
 const STATUS = ['Running', 'Stop', 'Error', 'Starting'];
@@ -56,11 +39,9 @@ export class ComponentDatabase {
 
   /** Builds and returns a new User. */
   private createNewRow() {
-    const name =
-        NAMES[Math.round(Math.random() * (NAMES.length - 1))];
-    const image = name + ' - ' + Math.round(Math.random()*10) + '.' + Math.round(Math.random()*10);
-    const status =
-        STATUS[Math.round(Math.random() * (STATUS.length - 1))];
+    const name = NAMES[Math.round(Math.random() * (NAMES.length - 1))];
+    const image = name + ' - ' + Math.round(Math.random() * 10) + '.' + Math.round(Math.random() * 10);
+    const status = STATUS[Math.round(Math.random() * (STATUS.length - 1))];
 
     return {
       id: (this.data.length + 1).toString(),
@@ -99,5 +80,23 @@ export class ComponentDataSource extends DataSource<any> {
     });
   }
 
-  disconnect() {}
+  disconnect() { }
 }
+
+@Component({
+  selector: 'app-components-table',
+  templateUrl: './components-table.component.html',
+  styleUrls: ['./components-table.component.css']
+})
+export class ComponentsTableComponent implements OnInit {
+  displayedColumns = ['id', 'name', 'status', 'image'];
+  componentDatabase = new ComponentDatabase();
+  dataSource: ComponentDataSource | null;
+
+  @ViewChild(MdPaginator) paginator: MdPaginator;
+
+  ngOnInit() {
+    this.dataSource = new ComponentDataSource(this.componentDatabase, this.paginator);
+  }
+}
+
