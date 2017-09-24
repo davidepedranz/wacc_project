@@ -6,7 +6,77 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Angular Material + Flex
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MdInputModule, MdButtonModule, MdCardModule, MdProgressSpinnerModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
+import { MdAutocompleteModule,
+           MdButtonModule,
+           MdButtonToggleModule,
+           MdCardModule,
+           MdCheckboxModule,
+           MdChipsModule,
+           MdDatepickerModule,
+           MdDialogModule,
+           MdExpansionModule,
+           MdGridListModule,
+           MdIconModule,
+           MdInputModule,
+           MdListModule,
+           MdMenuModule,
+           MdNativeDateModule,
+           MdPaginatorModule,
+           MdProgressBarModule,
+           MdProgressSpinnerModule,
+           MdRadioModule,
+           MdRippleModule,
+           MdSelectModule,
+           MdSidenavModule,
+           MdSliderModule,
+           MdSlideToggleModule,
+           MdSnackBarModule,
+           MdSortModule,
+           MdTableModule,
+           MdTabsModule,
+           MdToolbarModule,
+           MdTooltipModule,
+           MdStepperModule, } from '@angular/material';
+import {HttpModule} from '@angular/http';
+import {CdkTableModule} from '@angular/cdk/table';
+
+@NgModule({
+  exports: [
+    CdkTableModule,
+    MdAutocompleteModule,
+    MdButtonModule,
+    MdButtonToggleModule,
+    MdCardModule,
+    MdCheckboxModule,
+    MdChipsModule,
+    MdStepperModule,
+    MdDatepickerModule,
+    MdDialogModule,
+    MdExpansionModule,
+    MdGridListModule,
+    MdIconModule,
+    MdInputModule,
+    MdListModule,
+    MdMenuModule,
+    MdNativeDateModule,
+    MdPaginatorModule,
+    MdProgressBarModule,
+    MdProgressSpinnerModule,
+    MdRadioModule,
+    MdRippleModule,
+    MdSelectModule,
+    MdSidenavModule,
+    MdSliderModule,
+    MdSlideToggleModule,
+    MdSnackBarModule,
+    MdSortModule,
+    MdTableModule,
+    MdTabsModule,
+    MdToolbarModule,
+    MdTooltipModule,
+  ]
+})
+export class MaterialModule {}
 
 // Reactive Angular (ngrx)
 import { StoreModule } from '@ngrx/store';
@@ -31,6 +101,7 @@ import { LoginFormComponent } from './components/login-form/login-form.component
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UsersComponent } from './components/users/users.component';
+import { ComponentsTableComponent } from './components/components-table/components-table.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +110,8 @@ import { UsersComponent } from './components/users/users.component';
     LoginComponent,
     NavbarComponent,
     UsersComponent,
-    LoginFormComponent
+    LoginFormComponent,
+    ComponentsTableComponent
   ],
   imports: [
     BrowserModule,
@@ -61,17 +133,15 @@ import { UsersComponent } from './components/users/users.component';
     }),
 
     // UI elements
-    MdInputModule,
-    MdButtonModule,
-    MdCardModule,
-    MdProgressSpinnerModule,
-    MdSidenavModule,
-    MdToolbarModule
+    MaterialModule
   ],
   providers: [
     AuthenticationGuard,
     AuthenticationService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent,
+    ComponentsTableComponent
+  ]
 })
 export class AppModule { }
