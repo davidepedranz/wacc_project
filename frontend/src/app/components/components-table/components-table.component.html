@@ -1,18 +1,4 @@
 <div>
-  <table>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-      <th>Image</th>
-    </tr>
-    <tr *ngFor="let singleComponent of componentList">
-      <td>{{singleComponent.name}}</td>
-      <td>{{singleComponent.status}}</td>
-      <td>{{singleComponent.image}}</td>
-    </tr>
-  </table>
-</div>
-<div class="example-container mat-elevation-z8">
 
   <md-table #table [dataSource]="dataSource">
 
