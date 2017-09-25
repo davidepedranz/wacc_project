@@ -1,11 +1,17 @@
 import { Action } from '@ngrx/store';
 import { Credentials } from '../../models/credentials';
 
+export const LOAD_TOKEN = '[Authentication] Load Token';
 export const LOGIN = '[Authentication] Login';
 export const LOGIN_SUCCESS = '[Authentication] Login Success';
 export const LOGIN_FAILURE = '[Authentication] Login Failure';
 export const LOGIN_REDIRECT = '[Authentication] Login Redirect';
 export const LOGOUT = '[Authentication] Logout';
+
+// action dispatched to load the token from the local storage
+export class LoadToken implements Action {
+    readonly type = LOAD_TOKEN;
+}
 
 // action dispatched to request a login (eg. from the login component)
 export class Login implements Action {
@@ -39,6 +45,7 @@ export class Logout implements Action {
 }
 
 export type All =
+    | LoadToken
     | Login
     | LoginSuccess
     | LoginFailure

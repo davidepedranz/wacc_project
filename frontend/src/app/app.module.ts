@@ -13,6 +13,7 @@ import { reducers } from './store/reducers';
 import { AuthenticationEffects } from './store/authentication/authentication.effects';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
+import { TokenService } from './services/token.service';
 import { AppRoutes } from './app.routing';
 import { MaterialModule } from './material.module';
 import { AppComponent } from './components/app/app.component';
@@ -53,7 +54,8 @@ import { UsersTableComponent } from './components/users-table/users-table.compon
   ],
   providers: [
     AuthenticationGuard,
-    AuthenticationService
+    AuthenticationService,
+    TokenService
   ],
   bootstrap: [
     AppComponent
