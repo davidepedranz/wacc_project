@@ -20,9 +20,10 @@ import { LoginComponent } from './components/login/login.component';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { UsersComponent } from './components/users/users.component';
 import { ComponentsComponent } from './components/components/components.component';
 import { ComponentsTableComponent } from './components/components-table/components-table.component';
+import { UsersComponent } from './components/users/users.component';
+import { UsersTableComponent } from './components/users-table/users-table.component';
 
 @NgModule({
   declarations: [
@@ -30,10 +31,11 @@ import { ComponentsTableComponent } from './components/components-table/componen
     DashboardComponent,
     LoginComponent,
     NavbarComponent,
-    UsersComponent,
     LoginFormComponent,
     ComponentsComponent,
-    ComponentsTableComponent
+    ComponentsTableComponent,
+    UsersComponent,
+    UsersTableComponent
   ],
   imports: [
     BrowserModule,
