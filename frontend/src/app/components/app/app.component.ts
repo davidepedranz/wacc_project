@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   constructor(private store: Store<State>) { }
 
-  public ngOnInit(): void {
+  ngOnInit() {
     // first thing when app loads -> load token into ngrx store
     this.store.dispatch(new Authentication.LoadToken());
   }

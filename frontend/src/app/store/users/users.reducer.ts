@@ -10,14 +10,7 @@ export interface State {
 const initialState: State = {
     fetching: false,
     error: false,
-    users: [
-        {
-            id: "03234-xx",
-            name: "Mario Rossi",
-            username: "mario",
-            privileges: ["read-a", "write-b"]
-        }
-    ]
+    users: []
 };
 
 export function reducer(state = initialState, action: UserActions.All): State {
@@ -34,7 +27,7 @@ export function reducer(state = initialState, action: UserActions.All): State {
         case UserActions.FETCH_USERS_SUCCESS: {
             return {
                 ...state,
-                fetching: true,
+                fetching: false,
                 error: false,
                 users: action.payload
             };

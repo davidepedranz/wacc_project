@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { State } from '../../store/reducers';
+import * as Users from '../../store/users/users.actions';
 
 @Component({
   selector: 'app-components',
@@ -7,9 +11,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ComponentsComponent implements OnInit {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
 }

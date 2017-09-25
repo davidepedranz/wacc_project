@@ -9,9 +9,7 @@ import * as fromRoot from '../../store/reducers';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(
-    private store: Store<fromRoot.State>
-  ) { }
+  constructor(private store: Store<fromRoot.State>) { }
 
   ngOnInit() {
   }

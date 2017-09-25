@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { User } from '../../models/user';
 import * as fromRoot from '../../store/reducers';
+import * as Users from '../../store/users/users.actions';
 
 @Component({
   selector: 'app-users',
@@ -21,5 +22,7 @@ export class UsersComponent implements OnInit {
     this.users$ = store.select(fromRoot.selectUsers);
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.store.dispatch(new Users.FetchUsers());
+  }
 }
