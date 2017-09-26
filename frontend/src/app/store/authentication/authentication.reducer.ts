@@ -8,7 +8,7 @@ export interface State {
     token: string | null;
 }
 
-const initialState: State = {
+export const initialState: State = {
     redirectPageAfterLogin: '/',
     loginPending: false,
     loginError: false,
