@@ -12,22 +12,22 @@ export class UsersService {
 
   private readonly fakeUsers = [
     {
-      id: "03234-xx",
-      name: "Mario Rossi",
-      username: "mario",
-      privileges: ["read-a", "write-b"]
+      id: '03234-xx',
+      name: 'Mario Rossi',
+      username: 'mario',
+      privileges: ['read-a', 'write-b']
     },
     {
-      id: "03214-tt",
-      name: "John Bon",
-      username: "john",
-      privileges: ["read-b", "write-b"]
+      id: '03214-tt',
+      name: 'John Bon',
+      username: 'john',
+      privileges: ['read-b', 'write-b']
     },
     {
-      id: "00000-zt",
-      name: "Mr. G",
-      username: "gg",
-      privileges: ["read-b", "write-b"]
+      id: '00000-zt',
+      name: 'Mr. G',
+      username: 'gg',
+      privileges: ['read-b', 'write-b']
     }
   ];
 
