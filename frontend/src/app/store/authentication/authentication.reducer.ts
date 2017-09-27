@@ -22,7 +22,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
             return {
                 ...state,
                 token: action.payload
-            }
+            };
         }
 
         case AuthenticationActions.LOGIN: {
