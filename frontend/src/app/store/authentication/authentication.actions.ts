@@ -1,7 +1,9 @@
 import { Action } from '@ngrx/store';
 import { Credentials } from '../../models/credentials';
 
+export const SAVE_TOKEN = '[Authentication] Save Token';
 export const LOAD_TOKEN = '[Authentication] Load Token';
+
 export const LOGIN = '[Authentication] Login';
 export const LOGIN_SUCCESS = '[Authentication] Login Success';
 export const LOGIN_FAILURE = '[Authentication] Login Failure';
@@ -11,6 +13,13 @@ export const LOGOUT = '[Authentication] Logout';
 // action dispatched to load the token from the local storage
 export class LoadToken implements Action {
     readonly type = LOAD_TOKEN;
+}
+
+// action dispatched to save the token in the store
+export class SaveToken implements Action {
+    readonly type = SAVE_TOKEN;
+
+    constructor(public payload: string) { }
 }
 
 // action dispatched to request a login (eg. from the login component)
@@ -46,6 +55,7 @@ export class Logout implements Action {
 
 export type All =
     | LoadToken
+    | SaveToken
     | Login
     | LoginSuccess
     | LoginFailure

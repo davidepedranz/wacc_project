@@ -18,6 +18,13 @@ export const initialState: State = {
 export function reducer(state = initialState, action: AuthenticationActions.All): State {
     switch (action.type) {
 
+        case AuthenticationActions.SAVE_TOKEN: {
+            return {
+                ...state,
+                token: action.payload
+            }
+        }
+
         case AuthenticationActions.LOGIN: {
             return {
                 ...state,
@@ -30,8 +37,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
             return {
                 ...state,
                 loginPending: false,
-                loginError: false,
-                token: action.payload
+                loginError: false
             };
         }
 

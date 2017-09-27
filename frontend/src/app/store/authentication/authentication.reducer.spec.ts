@@ -29,8 +29,7 @@ describe('Authentication Store', () => {
             const expectedState: State = {
                 ...initialState,
                 loginError: false,
-                loginPending: false,
-                token: 'a'
+                loginPending: false
             };
             const actualState = reducer(initialState, new AuthenticationActions.LoginSuccess('a'));
             expect(actualState).toEqual(expectedState);

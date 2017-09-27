@@ -25,14 +25,21 @@ export class AuthenticationEffects {
         .map(action => this.tokenService.readToken())
         .do(token => {
             if (token != null) {
-                this.store$.dispatch(new Authentication.LoginSuccess(token));
+                this.store$.dispatch(new Authentication.SaveToken(token));
             }
         });
+
+    @Effect({ dispatch: false })
+    saveToken$ = this.actions$
+        .ofType(Authentication.SAVE_TOKEN)
+        .map(action => action as Authentication.SaveToken)
+        .do(action => this.tokenService.saveToken(action.payload));
 
     @Effect({ dispatch: false })
     removeToken$ = this.actions$
         .ofType(Authentication.LOGOUT)
         .do(action => this.tokenService.removeToken());
+
 
     @Effect()
     login$ = this.actions$
@@ -45,11 +52,11 @@ export class AuthenticationEffects {
                 .catch(error => Observable.of(new Authentication.LoginFailure()))
         );
 
-    @Effect({ dispatch: false })
-    loginSuccessSaveToken$ = this.actions$
+    @Effect()
+    loginSuccessStoreToken$ = this.actions$
         .ofType(Authentication.LOGIN_SUCCESS)
-        .map(action => action as Authentication.LoginSuccess)
-        .do(action => this.tokenService.saveToken(action.payload));
+        .map((action: Authentication.LoginSuccess) => action.payload)
+        .map(token => new Authentication.SaveToken(token));
 
     @Effect({ dispatch: false })
     loginSuccessRedirect$ = this.actions$
