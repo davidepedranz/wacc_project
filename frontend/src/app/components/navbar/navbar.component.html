@@ -1,0 +1,8 @@
+<md-toolbar color="primary" *ngIf="show | async">
+  <a md-button routerLink="/">Home</a>
+  <a md-button routerLink="/components">Components</a>
+  <a md-button routerLink="/users">Users</a>
+  <span class="fill-remaining-space"></span>
+  <a md-button routerLink="/profile">Profile</a>
+  <button md-button (click)="logout()">Logout</button>
+</md-toolbar>

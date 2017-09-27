@@ -1,0 +1,11 @@
+<section>
+    <md-card *ngIf="!(fetching$ | async)">
+        <md-card-title>Users</md-card-title>
+        <md-card-content>
+            <app-users-table [fetching]="fetching$ | async" [error]="error$ | async" [users$]="users$"></app-users-table>
+        </md-card-content>
+    </md-card>
+    <div *ngIf="fetching$ | async" fxLayoutAlign="center center" class="container">
+        <md-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></md-progress-spinner>
+    </div>
+</section>

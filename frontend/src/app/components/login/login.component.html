@@ -1,0 +1,4 @@
+<div fxLayout fxLayoutAlign="center center" class="container">
+  <app-login-form *ngIf="!(pending$ | async)" [pending]="pending$ | async" [error]="error$ | async" (submitted)="onSubmit($event)"></app-login-form>
+  <md-progress-spinner mode="indeterminate" *ngIf="pending$ | async"></md-progress-spinner>
+</div>
