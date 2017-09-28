@@ -9,6 +9,8 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
+import { environment } from '../environments/environment';
+
 import { reducers } from './store/reducers';
 import { AuthenticationEffects } from './store/authentication/authentication.effects';
 import { UsersEffects } from './store/users/users.effects';
@@ -61,9 +63,7 @@ import { EventsComponent } from './components/events/events.component';
       UsersEffects,
       EventsEffects
     ]),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25
-    })
+    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : []
   ],
   providers: [
     AuthenticationGuard,

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Credentials } from '../../models/credentials';
 
@@ -49,7 +49,7 @@ export class LoginFormComponent implements OnInit {
     return this.form.get('password');
   }
 
-  invalid(field: FormControl) {
+  invalid(field: AbstractControl) {
     return field.invalid && (field.dirty || field.touched);
   }
 
