@@ -1,0 +1,17 @@
+#build docker image
+$ docker build -t dockerfile
+
+#init node as a swarm node
+$ docker swarm init
+
+#deploy a stack of containers
+$ docker stack deploy -c docker-stack.yml $NAME_WEB_SERVICE
+
+#see web service is running
+$ docker service ls
+
+#stop web service
+$ docker stack rm $NAME_WEB_SERVICE
+
+#stop docker swarm
+$ docker swarm leave --force
