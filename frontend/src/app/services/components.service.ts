@@ -42,7 +42,6 @@ export class ComponentsService {
   private readonly fakeComponents = this.createFakeComponents(100);
 
   fetchComponents(): Observable<ComponentUnit[]> {
-    console.log(this.fakeComponents);
     return Observable.of(this.fakeComponents).delay(1000);
   }
 }

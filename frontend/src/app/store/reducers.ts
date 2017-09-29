@@ -1,6 +1,7 @@
 import * as fromAuthentication from './authentication/authentication.reducer';
 import * as fromUsers from './users/users.reducer';
 import * as fromComponentUnits from './components/components.reducer';
+import * as fromEvents from './events/events.reducer';
 import { User } from '../models/user';
 import { ComponentUnit } from '../models/component';
 
@@ -9,13 +10,15 @@ export interface State {
     authentication: fromAuthentication.State;
     users: fromUsers.State;
     componentUnits: fromComponentUnits.State;
+    events: fromEvents.State;
 }
 
 // global reducer for the application
 export const reducers = {
     authentication: fromAuthentication.reducer,
     users: fromUsers.reducer,
-    componentUnits: fromComponentUnits.reducer
+    componentUnits: fromComponentUnits.reducer,
+    events: fromEvents.reducer
 };
 
 export function selectRedirectPathAfterLogin(state: State): string {

@@ -1,0 +1,37 @@
+<md-table #table [dataSource]="dataSource">
+
+  <!-- ID Column -->
+  <ng-container mdColumnDef="id">
+    <md-header-cell *mdHeaderCellDef> ID </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.id}} </md-cell>
+  </ng-container>
+
+  <!-- Timestamp Column -->
+  <ng-container mdColumnDef="timestamp">
+    <md-header-cell *mdHeaderCellDef> Timestamp </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.timestamp}} </md-cell>
+  </ng-container>
+
+  <!-- Component Column -->
+  <ng-container mdColumnDef="component">
+    <md-header-cell *mdHeaderCellDef> Component </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.component}} </md-cell>
+  </ng-container>
+
+  <!-- Action Column -->
+  <ng-container mdColumnDef="action">
+    <md-header-cell *mdHeaderCellDef> Action </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.action}} </md-cell>
+  </ng-container>
+
+  <!-- Description Column -->
+  <ng-container mdColumnDef="description">
+    <md-header-cell *mdHeaderCellDef> Description </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.description}} </md-cell>
+  </ng-container>
+
+  <!-- Header and Row Declarations -->
+  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+  <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+
+</md-table>

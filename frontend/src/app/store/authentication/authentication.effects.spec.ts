@@ -16,9 +16,7 @@ import { TokenService } from '../../services/token.service';
 
 describe('AuthenticationEffects', () => {
     let effects: AuthenticationEffects;
-    // let actions: Observable<any>;
     let actions: ReplaySubject<any>;
-
     let tokenService: TokenService;
 
     beforeEach(() => {
@@ -37,7 +35,7 @@ describe('AuthenticationEffects', () => {
         effects = TestBed.get(AuthenticationEffects);
         tokenService = TestBed.get(TokenService);
     });
-    
+
     describe('removeToken$', () => {
         it('should remove the token from the local storage', () => {
             tokenService.saveToken('some-token');
@@ -47,6 +45,6 @@ describe('AuthenticationEffects', () => {
                 const actual = tokenService.readToken();
                 expect(actual).toBeNull();
             });
-        })
+        });
     });
 });
