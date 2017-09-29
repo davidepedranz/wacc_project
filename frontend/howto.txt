@@ -1,5 +1,5 @@
-#build docker image
-$ docker build -t dockerfile
+#build docker image ($PATH_TO_DOCKERFILE = . if you are in ./frontend )
+$ docker build -t angular2docker $PATH_TO_DOCKERFILE
 
 #init node as a swarm node
 $ docker swarm init
