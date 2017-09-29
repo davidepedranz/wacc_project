@@ -16,6 +16,7 @@ import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/token.service';
 import { UsersService } from './services/users.service';
+import { ComponentsService } from './services/components.service';
 import { AppRoutes } from './app.routing';
 import { MaterialModule } from './material.module';
 import { AppComponent } from './components/app/app.component';
@@ -61,7 +62,8 @@ import { UsersTableComponent } from './components/users-table/users-table.compon
     AuthenticationGuard,
     AuthenticationService,
     TokenService,
-    UsersService
+    UsersService,
+    ComponentsService
   ],
   bootstrap: [
     AppComponent
