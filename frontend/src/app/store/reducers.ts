@@ -1,12 +1,15 @@
 import * as fromAuthentication from './authentication/authentication.reducer';
 import * as fromUsers from './users/users.reducer';
+import * as fromComponentUnits from './components/components.reducer';
 import * as fromEvents from './events/events.reducer';
 import { User } from '../models/user';
+import { ComponentUnit } from '../models/component';
 
 // global state for the application
 export interface State {
     authentication: fromAuthentication.State;
     users: fromUsers.State;
+    componentUnits: fromComponentUnits.State;
     events: fromEvents.State;
 }
 
@@ -14,6 +17,7 @@ export interface State {
 export const reducers = {
     authentication: fromAuthentication.reducer,
     users: fromUsers.reducer,
+    componentUnits: fromComponentUnits.reducer,
     events: fromEvents.reducer
 };
 
@@ -47,4 +51,8 @@ export function isFetchingUsersError(state: State): boolean {
 
 export function selectUsers(state: State): User[] {
     return state.users.users;
+}
+
+export function selectComponents(state: State): ComponentUnit[] {
+    return state.componentUnits.componentUnits;
 }

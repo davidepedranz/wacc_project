@@ -22,8 +22,8 @@ const routes: Routes = [
     },
     {
         path: 'components',
-        component: ComponentsComponent,
         pathMatch: 'full',
+        component: ComponentsComponent,
         canActivate: [AuthenticationGuard]
     },
     {

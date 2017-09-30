@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, Input } from '@angular/core';
 import { MdPaginator } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 
@@ -8,50 +8,39 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
+<<<<<<< HEAD
 
 import  {ButtonComponent} from '../button/button.component';
 
 /** Constants used to fill up our data base. */
 const STATUS = ['Running', 'Stop', 'Error', 'Starting'];
 const NAMES = ['MongoDB', 'Java Web Application', 'Cassandra', 'Consul', 'RabbitMQ'];
+=======
+import { ComponentUnit } from '../../models/component';
+import { ComponentsService } from '../../services/components.service';
+>>>>>>> 0d82eec93f140045439e6a0a637353c767da7d89
 
-export interface ComponentData {
-  id: string;
-  name: string;
-  status: string;
-  image: string;
-}
 
 /** An example database that the data source uses to retrieve data for the table. */
-export class ComponentDatabase {
+export class ComponentPagingDatabase {
   /** Stream that emits whenever the data has been modified. */
-  dataChange: BehaviorSubject<ComponentData[]> = new BehaviorSubject<ComponentData[]>([]);
-  get data(): ComponentData[] { return this.dataChange.value; }
+  dataChange: BehaviorSubject<ComponentUnit[]> = new BehaviorSubject<ComponentUnit[]>([]);
+  get data(): ComponentUnit[] { return this.dataChange.value; }
 
-  constructor() {
-    // Fill up the database with 100 users.
-    for (let i = 0; i < 100; i++) { this.addRow(); }
+  constructor(private componentUnits$: Observable<ComponentUnit[]>) {
   }
 
   /** Adds a new user to the database. */
-  addRow() {
+  addRow(newData) {
     const copiedData = this.data.slice();
-    copiedData.push(this.createNewRow());
+    copiedData.push(newData);
     this.dataChange.next(copiedData);
   }
 
-  /** Builds and returns a new User. */
-  private createNewRow() {
-    const name = NAMES[Math.round(Math.random() * (NAMES.length - 1))];
-    const image = name + ' - ' + Math.round(Math.random() * 10) + '.' + Math.round(Math.random() * 10);
-    const status = STATUS[Math.round(Math.random() * (STATUS.length - 1))];
-
-    return {
-      id: (this.data.length + 1).toString(),
-      name: name,
-      status: status,
-      image: image
-    };
+  readyCb() {
+    this.componentUnits$.forEach(function(element) {
+      this.addRow(element);
+    });
   }
 }
 
@@ -62,25 +51,29 @@ export class ComponentDatabase {
  * the underlying data. Instead, it only needs to take the data and send the table exactly what
  * should be rendered.
  */
-export class ComponentDataSource extends DataSource<any> {
-  constructor(private _exampleDatabase: ComponentDatabase, private _paginator: MdPaginator) {
+export class ComponentDataSource extends DataSource<ComponentUnit> {
+  constructor(private componentUnits$: Observable<ComponentUnit[]>, private _paginator: MdPaginator) {
     super();
   }
 
   /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<ComponentData[]> {
-    const displayDataChanges = [
-      this._exampleDatabase.dataChange,
-      this._paginator.page,
-    ];
-
-    return Observable.merge(...displayDataChanges).map(() => {
-      const data = this._exampleDatabase.data.slice();
-
-      // Grab the page's slice of data.
-      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      return data.splice(startIndex, this._paginator.pageSize);
-    });
+  connect(): Observable<ComponentUnit[]> {
+    return this.componentUnits$;
+    // const displayDataChanges = [
+    //   this.componentDatabase.dataChange,
+    //   this._paginator.page,
+    // ];
+    //
+    // this.componentDatabase.readyCb();
+    //
+    // return Observable.merge(...displayDataChanges).map(() => {
+    //   const data = this.componentDatabase.data.slice();
+    //
+    //   console.log(data);
+    //   // Grab the page's slice of data.
+    //   const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
+    //   return data.splice(startIndex, this._paginator.pageSize);
+    // });
   }
 
   disconnect() { }
@@ -89,17 +82,34 @@ export class ComponentDataSource extends DataSource<any> {
 @Component({
   selector: 'app-components-table',
   templateUrl: './components-table.component.html',
+<<<<<<< HEAD
   styleUrls: ['./components-table.component.css'] 
 })
 export class ComponentsTableComponent implements OnInit {
   displayedColumns = ['id', 'name', 'status', 'image','actions'];
   componentDatabase = new ComponentDatabase();
+=======
+  styleUrls: ['./components-table.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ComponentsTableComponent implements OnInit {
+  @Input()
+  fetching: boolean;
+
+  @Input()
+  error: boolean;
+
+  @Input()
+  componentUnits$: Observable<ComponentUnit[]>;
+
+  displayedColumns = ['id', 'name', 'status', 'image'];
+>>>>>>> 0d82eec93f140045439e6a0a637353c767da7d89
   dataSource: ComponentDataSource | null;
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
 
   ngOnInit() {
-    this.dataSource = new ComponentDataSource(this.componentDatabase, this.paginator);
+    this.dataSource = new ComponentDataSource(this.componentUnits$, this.paginator);
   }
 }
 

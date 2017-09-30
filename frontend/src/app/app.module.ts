@@ -19,6 +19,7 @@ import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/token.service';
 import { UsersService } from './services/users.service';
+import { ComponentsService } from './services/components.service';
 import { EventsService } from './services/events.service';
 import { AppRoutes } from './app.routing';
 
@@ -72,6 +73,7 @@ import {ButtonComponent} from './components/button/button.component';
     AuthenticationService,
     TokenService,
     UsersService,
+    ComponentsService,
     EventsService
   ],
   bootstrap: [
