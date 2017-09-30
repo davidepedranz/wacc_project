@@ -8,6 +8,9 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
+
+import  {ButtonComponent} from '../button/button.component';
+
 /** Constants used to fill up our data base. */
 const STATUS = ['Running', 'Stop', 'Error', 'Starting'];
 const NAMES = ['MongoDB', 'Java Web Application', 'Cassandra', 'Consul', 'RabbitMQ'];
@@ -86,10 +89,10 @@ export class ComponentDataSource extends DataSource<any> {
 @Component({
   selector: 'app-components-table',
   templateUrl: './components-table.component.html',
-  styleUrls: ['./components-table.component.css']
+  styleUrls: ['./components-table.component.css'] 
 })
 export class ComponentsTableComponent implements OnInit {
-  displayedColumns = ['id', 'name', 'status', 'image'];
+  displayedColumns = ['id', 'name', 'status', 'image','actions'];
   componentDatabase = new ComponentDatabase();
   dataSource: ComponentDataSource | null;
 

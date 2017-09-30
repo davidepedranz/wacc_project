@@ -34,6 +34,7 @@ import { UsersComponent } from './components/users/users.component';
 import { UsersTableComponent } from './components/users-table/users-table.component';
 import { EventsTableComponent } from './components/events-table/events-table.component';
 import { EventsComponent } from './components/events/events.component';
+import {ButtonComponent} from './components/button/button.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { EventsComponent } from './components/events/events.component';
     UsersComponent,
     UsersTableComponent,
     EventsTableComponent,
-    EventsComponent
+    EventsComponent,
+    ButtonComponent
   ],
   imports: [
     BrowserModule,

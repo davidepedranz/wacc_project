@@ -10,6 +10,8 @@
     <ng-container mdColumnDef="id">
       <md-header-cell *mdHeaderCellDef> ID </md-header-cell>
       <md-cell *mdCellDef="let row"> {{row.id}} </md-cell>
+      
+
     </ng-container>
 
     <!-- Name Column -->
@@ -27,12 +29,19 @@
     <!-- Image Column -->
     <ng-container mdColumnDef="image">
       <md-header-cell *mdHeaderCellDef> Image </md-header-cell>
-      <md-cell *mdCellDef="let row"> {{row.image}} </md-cell>
+      <md-cell *mdCellDef="let row"> {{row.image}}</md-cell>
+    </ng-container>
+
+    <ng-container mdColumnDef="actions">
+      <md-header-cell *mdHeaderCellDef>Actions </md-header-cell>
+      <md-cell *mdCellDef="let row">
+        <Button></Button>
+      </md-cell>
     </ng-container>
 
     <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
     <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
   </md-table>
-
+  
   <md-paginator #paginator [length]="componentDatabase.data.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]"></md-paginator>
 </div>
