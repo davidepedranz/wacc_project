@@ -8,17 +8,14 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-<<<<<<< HEAD
 
 import  {ButtonComponent} from '../button/button.component';
 
 /** Constants used to fill up our data base. */
 const STATUS = ['Running', 'Stop', 'Error', 'Starting'];
 const NAMES = ['MongoDB', 'Java Web Application', 'Cassandra', 'Consul', 'RabbitMQ'];
-=======
 import { ComponentUnit } from '../../models/component';
 import { ComponentsService } from '../../services/components.service';
->>>>>>> 0d82eec93f140045439e6a0a637353c767da7d89
 
 
 /** An example database that the data source uses to retrieve data for the table. */
@@ -82,13 +79,6 @@ export class ComponentDataSource extends DataSource<ComponentUnit> {
 @Component({
   selector: 'app-components-table',
   templateUrl: './components-table.component.html',
-<<<<<<< HEAD
-  styleUrls: ['./components-table.component.css'] 
-})
-export class ComponentsTableComponent implements OnInit {
-  displayedColumns = ['id', 'name', 'status', 'image','actions'];
-  componentDatabase = new ComponentDatabase();
-=======
   styleUrls: ['./components-table.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -103,7 +93,6 @@ export class ComponentsTableComponent implements OnInit {
   componentUnits$: Observable<ComponentUnit[]>;
 
   displayedColumns = ['id', 'name', 'status', 'image'];
->>>>>>> 0d82eec93f140045439e6a0a637353c767da7d89
   dataSource: ComponentDataSource | null;
 
   @ViewChild(MdPaginator) paginator: MdPaginator;
