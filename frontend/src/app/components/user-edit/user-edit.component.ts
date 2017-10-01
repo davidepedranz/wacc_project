@@ -16,7 +16,7 @@ import * as UsersActions from '../../store/users/users.actions';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserEditComponent implements OnInit {
-  private user$: Observable<User>;
+  user$: Observable<User>;
 
   constructor(
     private route: ActivatedRoute,

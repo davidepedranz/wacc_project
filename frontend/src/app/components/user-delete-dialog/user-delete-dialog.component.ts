@@ -7,7 +7,7 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
   styleUrls: ['./user-delete-dialog.component.css']
 })
 export class UserDeleteDialogComponent implements OnInit {
-  private username: string;
+  username: string;
 
   constructor(
     public dialogRef: MdDialogRef<UserDeleteDialogComponent>,
