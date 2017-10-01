@@ -24,6 +24,21 @@
     </md-cell>
   </ng-container>
 
+  <!-- Actions -->
+  <ng-container mdColumnDef="actions">
+    <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
+    <md-cell *mdCellDef="let row">
+      <button md-raised-button color="primary" [routerLink]="['/users', row.username, 'edit']">
+        <md-icon>edit</md-icon>
+        <span fxShow fxHide.lt-md="true">Edit</span>
+      </button>
+      <button md-raised-button color="warn" (click)="onDeleteUser(row.username)">
+        <md-icon>delete</md-icon> 
+        <span fxShow fxHide.lt-md="true">Delete</span>
+      </button>
+    </md-cell>
+  </ng-container>
+
   <!-- Header and Row Declarations -->
   <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
   <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>

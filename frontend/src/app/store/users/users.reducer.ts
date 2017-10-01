@@ -1,16 +1,18 @@
+import * as Immutable from 'immutable';
+
 import { User } from '../../models/user';
 import * as UserActions from './users.actions';
 
 export interface State {
     fetching: boolean;
     error: boolean;
-    users: User[];
+    users: Immutable.Map<string, User>;
 }
 
 const initialState: State = {
     fetching: false,
     error: false,
-    users: []
+    users: Immutable.Map<string, User>()
 };
 
 export function reducer(state = initialState, action: UserActions.All): State {
@@ -29,7 +31,9 @@ export function reducer(state = initialState, action: UserActions.All): State {
                 ...state,
                 fetching: false,
                 error: false,
-                users: action.payload
+                users: action.payload.reduce(
+                    (accumulator, current) => accumulator.set(current.username, current), Immutable.Map<string, User>()
+                )
             };
         }
 
@@ -38,6 +42,14 @@ export function reducer(state = initialState, action: UserActions.All): State {
                 ...state,
                 fetching: false,
                 error: true
+            };
+        }
+
+        // TODO: on success only!
+        case UserActions.DELETE_USER: {
+            return {
+                ...state,
+                users: state.users.delete(action.payload)
             };
         }
 

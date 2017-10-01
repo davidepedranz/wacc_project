@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
@@ -9,7 +9,8 @@ import * as Users from '../../store/users/users.actions';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  styleUrls: ['./users.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
   fetching$: Observable<boolean>;
@@ -24,5 +25,9 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(new Users.FetchUsers());
+  }
+
+  deleteUser(username: string) {
+    this.store.dispatch(new Users.DeleteUser(username));
   }
 }

@@ -33,9 +33,12 @@ import { ComponentsComponent } from './components/components/components.componen
 import { ComponentsTableComponent } from './components/components-table/components-table.component';
 import { UsersComponent } from './components/users/users.component';
 import { UsersTableComponent } from './components/users-table/users-table.component';
+import { UserEditComponent } from './components/user-edit/user-edit.component';
+import { UserFormComponent } from './components/user-form/user-form.component';
+import { UserDeleteDialogComponent } from './components/user-delete-dialog/user-delete-dialog.component';
 import { EventsTableComponent } from './components/events-table/events-table.component';
 import { EventsComponent } from './components/events/events.component';
-import {ButtonComponent} from './components/button/button.component';
+import { ButtonComponent } from './components/button/button.component';
 
 @NgModule({
   declarations: [
@@ -48,9 +51,15 @@ import {ButtonComponent} from './components/button/button.component';
     ComponentsTableComponent,
     UsersComponent,
     UsersTableComponent,
+    UserEditComponent,
+    UserFormComponent,
+    UserDeleteDialogComponent,
     EventsTableComponent,
     EventsComponent,
     ButtonComponent
+  ],
+  entryComponents: [
+    UserDeleteDialogComponent
   ],
   imports: [
     BrowserModule,

@@ -50,7 +50,7 @@ export function isFetchingUsersError(state: State): boolean {
 }
 
 export function selectUsers(state: State): User[] {
-    return state.users.users;
+    return state.users.users.valueSeq().toArray();
 }
 
 export function selectComponents(state: State): ComponentUnit[] {

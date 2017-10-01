@@ -1,9 +1,11 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MdDialog } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { User } from '../../models/user';
+import { UserDeleteDialogComponent } from '../user-delete-dialog/user-delete-dialog.component';
 
 // see: https://medium.com/@LewisGJ/ngrx-and-md-table-cea1bc9673ee
 export class UsersDataSource extends DataSource<User> {
@@ -37,16 +39,28 @@ export class UsersTableComponent implements OnInit {
   @Input()
   users$: Observable<User[]>;
 
-  readonly displayedColumns = ['username', 'name', 'permissions'];
+  readonly displayedColumns = ['username', 'name', 'permissions', 'actions'];
   dataSource: UsersDataSource | null;
 
-  // @Output()
-  // submitted = new EventEmitter<Credentials>();
+  @Output()
+  deleteUser = new EventEmitter<string>();
 
-  constructor() { }
+  constructor(public dialog: MdDialog) { }
 
   ngOnInit() {
     this.dataSource = new UsersDataSource(this.users$);
+  }
+
+  onDeleteUser(username: string) {
+    const dialogRef = this.dialog.open(UserDeleteDialogComponent, {
+      data: { username }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteUser.emit(username);
+      }
+    });
   }
 
 }
