@@ -1,0 +1,9 @@
+.git/
+.gitignore
+.dockerignore
+docker-stack.yml
+.vscode
+README.md
+LICENSE
+node_modules/
+dist/

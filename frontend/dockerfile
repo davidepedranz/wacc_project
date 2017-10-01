@@ -1,15 +1,36 @@
-FROM node:7
-# Create the target directory in the image
-RUN mkdir -p /usr/src/app
-# Set the created directory as the working directory
-WORKDIR /usr/src/app
-# Copy the package.json inside the working directory
-COPY package.json /usr/src/app
-# Install required dependencies
-RUN npm install
-# Copy the client application source files. You can use .dockerignore to exlcude files. Works just as .gitignore does.
-COPY . /usr/src/app
-# Open port 4200. This is the port that ng serve uses 
-EXPOSE 4200
-# Start the application. This is the same as running ng serve.
-CMD ["npm", "start"]
+# -----------------------------------------------------
+# STAGE 1: Build (using a dedicated container)
+# -----------------------------------------------------
+FROM node:8-alpine as builder
+
+# we use yarn to build the container
+RUN apk update && apk add yarn
+
+# create dedicated folder for the build
+RUN mkdir /app-build
+WORKDIR /app-build
+
+# install the dependencies
+COPY package.json package-lock.json yarn.lock ./
+RUN yarn install
+
+# copy the sources
+COPY . .
+
+# build angular application for production
+RUN $(yarn bin)/ng build --prod --build-optimizer
+
+
+# -----------------------------------------------------
+# STAGE 2: Package application in NGINX container
+# -----------------------------------------------------
+FROM nginx:1.13-alpine
+
+# prepare folder for the application
+RUN mkdir /application
+
+# copy the configuration for NGINX
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# copy bundle of the angular application
+COPY --from=builder /app-build/dist /application
