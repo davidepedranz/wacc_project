@@ -22,7 +22,7 @@ const routes: Routes = [
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'users/:id/edit',
+        path: 'users/:username/edit',
         pathMatch: 'full',
         component: UserEditComponent,
         canActivate: [AuthenticationGuard]

@@ -2,6 +2,7 @@ import * as fromAuthentication from './authentication/authentication.reducer';
 import * as fromUsers from './users/users.reducer';
 import * as fromComponentUnits from './components/components.reducer';
 import * as fromEvents from './events/events.reducer';
+
 import { User } from '../models/user';
 import { ComponentUnit } from '../models/component';
 
@@ -51,6 +52,12 @@ export function isFetchingUsersError(state: State): boolean {
 
 export function selectUsers(state: State): User[] {
     return state.users.users.valueSeq().toArray();
+}
+
+export function selectUserByUsername(username: string): (State) => User {
+    return function (state: State): User {
+        return state.users.users.get(username);
+    };
 }
 
 export function selectComponents(state: State): ComponentUnit[] {
