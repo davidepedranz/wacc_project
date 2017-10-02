@@ -1,5 +1,5 @@
-import { Event } from '../../models/event';
 import * as EventsActions from './events.actions';
+import { Event } from '../models/event';
 
 export interface State {
     events: Event[];
@@ -56,3 +56,5 @@ export function reducer(state = initialState, action: EventsActions.All): State 
         }
     }
 }
+
+export const getEvents = (state: State): Event[] => state.events;

@@ -4,9 +4,9 @@ import 'rxjs/add/operator/map';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 
-import * as fromRoot from '../index';
+import * as fromEvents from './index';
 import * as EventsActions from './events.actions';
-import { EventsService } from '../../services/events.service';
+import { EventsService } from '../services/events.service';
 
 @Injectable()
 export class EventsEffects {
@@ -16,7 +16,7 @@ export class EventsEffects {
         .map(event => new EventsActions.NewEvent(event));
 
     constructor(
-        private store$: Store<fromRoot.State>,
+        private store$: Store<fromEvents.State>,
         private actions$: Actions,
         private eventsService: EventsService
     ) { }

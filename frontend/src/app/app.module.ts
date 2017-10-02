@@ -12,9 +12,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 
 import { reducers } from './store';
-import { EventsEffects } from './store/events/events.effects';
 import { ComponentsService } from './services/components.service';
-import { EventsService } from './services/events.service';
 import { AppRoutes } from './app.routing';
 
 import { MaterialModule } from './material.module';
@@ -23,13 +21,10 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ComponentsComponent } from './components/components/components.component';
 import { ComponentsTableComponent } from './components/components-table/components-table.component';
-import { EventsTableComponent } from './components/events-table/events-table.component';
-import { EventsComponent } from './components/events/events.component';
 import { ButtonComponent } from './components/button/button.component';
 
 
-// modules
-// import { UsersModule } from './users/users.module';
+// modules (NB: some are lazy-loaded and are thus not listed here)
 import { AuthenticationModule } from './authentication/authentication.module';
 
 @NgModule({
@@ -39,8 +34,6 @@ import { AuthenticationModule } from './authentication/authentication.module';
     NavbarComponent,
     ComponentsComponent,
     ComponentsTableComponent,
-    EventsTableComponent,
-    EventsComponent,
     ButtonComponent
   ],
   imports: [
@@ -50,19 +43,13 @@ import { AuthenticationModule } from './authentication/authentication.module';
     MaterialModule,
     RouterModule.forRoot(AppRoutes),
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([
-      EventsEffects
-    ]),
+    EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
 
-    // we use lazy loading!
-    // my custom modules
-    // UsersModule
     AuthenticationModule
   ],
   providers: [
-    ComponentsService,
-    EventsService
+    ComponentsService
   ],
   bootstrap: [
     AppComponent

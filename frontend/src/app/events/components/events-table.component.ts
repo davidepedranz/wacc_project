@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter
 import { Observable } from 'rxjs/Observable';
 import { DataSource } from '@angular/cdk/collections';
 
-import { Event } from '../../models/event';
+import { Event } from '../models/event';
 
 // see: https://medium.com/@LewisGJ/ngrx-and-md-table-cea1bc9673ee
 class EventsDataSource extends DataSource<Event> {

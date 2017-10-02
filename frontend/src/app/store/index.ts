@@ -1,6 +1,5 @@
 import * as fromUsers from '../users/store/users.reducer';
 import * as fromComponentUnits from '../store/components/components.reducer';
-import * as fromEvents from '../store/events/events.reducer';
 
 import { ComponentUnit } from '../models/component';
 
@@ -9,7 +8,7 @@ export interface State {
     // authentication: fromAuthentication.State;
     // users: fromUsers.State;
     componentUnits: fromComponentUnits.State;
-    events: fromEvents.State;
+    // events: fromEvents.State;
 }
 
 // global reducer for the application
@@ -17,7 +16,7 @@ export const reducers = {
     // authentication: fromAuthentication.reducer,
     // users: fromUsers.reducer,
     componentUnits: fromComponentUnits.reducer,
-    events: fromEvents.reducer
+    // events: fromEvents.reducer
 };
 
 // export function selectRedirectPathAfterLogin(state: State): string {

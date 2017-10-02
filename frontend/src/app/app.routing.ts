@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ComponentsComponent } from './components/components/components.component';
-import { EventsComponent } from './components/events/events.component';
 
 const routes: Routes = [
     {
@@ -13,27 +12,23 @@ const routes: Routes = [
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'users',
-        pathMatch: 'full',
-        loadChildren: './users/users.module#UsersModule',
-        canActivate: [AuthenticationGuard]
-    },
-    {
         path: 'components',
         pathMatch: 'full',
         component: ComponentsComponent,
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'events',
-        component: EventsComponent,
+        path: 'users',
         pathMatch: 'full',
+        loadChildren: './users/users.module#UsersModule',
         canActivate: [AuthenticationGuard]
     },
-    // {
-    //     path: 'login',
-    //     component: LoginComponent
-    // },
+    {
+        path: 'events',
+        pathMatch: 'full',
+        loadChildren: './events/events.module#EventsModule',
+        canActivate: [AuthenticationGuard]
+    },
     {
         path: '**',
         redirectTo: '/'

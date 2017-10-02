@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { Event } from '../../models/event';
+import { Event } from '../models/event';
 
 export const STREAM_EVENTS = '[Events] Stream';
 export const STREAM_EVENTS_CONNECTED = '[Events] Stream Connected';
@@ -26,4 +26,8 @@ export class NewEvent implements Action {
     constructor(public payload: Event) { }
 }
 
-export type All = Action;
+export type All =
+    | StreamEvents
+    | StreamEventsConnected
+    | StreamEventsFailure
+    | NewEvent;
