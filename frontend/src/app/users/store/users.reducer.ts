@@ -1,7 +1,10 @@
 import * as Immutable from 'immutable';
 
-import { User } from '../../models/user';
 import * as UserActions from './users.actions';
+import { User } from './user.model';
+
+export type Action = UserActions.All;
+export type User = User;
 
 export interface State {
     fetching: boolean;
@@ -58,3 +61,9 @@ export function reducer(state = initialState, action: UserActions.All): State {
         }
     }
 }
+
+// selectors
+export const getUserByUsername = (username: string) => (state: State): User => state.users.get(username);
+export const getUsers = (state: State): User[] => state.users.valueSeq().toArray();
+export const isFetchingUsers = (state: State): boolean => state.fetching;
+export const isFetchingUsersError = (state: State): boolean => state.error;

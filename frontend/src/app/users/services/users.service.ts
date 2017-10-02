@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
 import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/delay';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../models/user';
+import { User } from '../store/user.model';
 
 @Injectable()
 export class UsersService {

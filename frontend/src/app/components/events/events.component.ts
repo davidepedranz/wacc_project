@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import * as fromRoot from '../../store/reducers';
+import * as fromRoot from '../../store';
 import { Event } from '../../models/event';
 import { EventsService } from '../../services/events.service';
 

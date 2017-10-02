@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
 import { Credentials } from '../../models/credentials';
-import * as fromRoot from '../../store/reducers';
+import * as fromRoot from '../../store';
 import * as Authentication from '../../store/authentication/authentication.actions';
 
 @Component({

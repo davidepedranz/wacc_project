@@ -1,5 +1,6 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -11,14 +12,12 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environment } from '../environments/environment';
 
-import { reducers } from './store/reducers';
+import { reducers } from './store';
 import { AuthenticationEffects } from './store/authentication/authentication.effects';
-import { UsersEffects } from './store/users/users.effects';
 import { EventsEffects } from './store/events/events.effects';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/token.service';
-import { UsersService } from './services/users.service';
 import { ComponentsService } from './services/components.service';
 import { EventsService } from './services/events.service';
 import { AppRoutes } from './app.routing';
@@ -31,14 +30,13 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ComponentsComponent } from './components/components/components.component';
 import { ComponentsTableComponent } from './components/components-table/components-table.component';
-import { UsersComponent } from './components/users/users.component';
-import { UsersTableComponent } from './components/users-table/users-table.component';
-import { UserEditComponent } from './components/user-edit/user-edit.component';
-import { UserFormComponent } from './components/user-form/user-form.component';
-import { UserDeleteDialogComponent } from './components/user-delete-dialog/user-delete-dialog.component';
 import { EventsTableComponent } from './components/events-table/events-table.component';
 import { EventsComponent } from './components/events/events.component';
 import { ButtonComponent } from './components/button/button.component';
+
+
+// modules
+// import { UsersModule } from './users/users.module';
 
 @NgModule({
   declarations: [
@@ -49,17 +47,9 @@ import { ButtonComponent } from './components/button/button.component';
     LoginFormComponent,
     ComponentsComponent,
     ComponentsTableComponent,
-    UsersComponent,
-    UsersTableComponent,
-    UserEditComponent,
-    UserFormComponent,
-    UserDeleteDialogComponent,
     EventsTableComponent,
     EventsComponent,
     ButtonComponent
-  ],
-  entryComponents: [
-    UserDeleteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -72,16 +62,18 @@ import { ButtonComponent } from './components/button/button.component';
     StoreModule.forRoot(reducers),
     EffectsModule.forRoot([
       AuthenticationEffects,
-      UsersEffects,
       EventsEffects
     ]),
-    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : []
+    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
+
+    // we use lazy loading!
+    // my custom modules
+    // UsersModule
   ],
   providers: [
     AuthenticationGuard,
     AuthenticationService,
     TokenService,
-    UsersService,
     ComponentsService,
     EventsService
   ],

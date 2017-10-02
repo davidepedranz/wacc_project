@@ -11,7 +11,7 @@ import { Observable } from 'rxjs/Observable';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 
-import * as fromRoot from '../reducers';
+import * as fromRoot from '../index';
 import * as Authentication from './authentication.actions';
 import { AuthenticationService } from '../../services/authentication.service';
 import { TokenService } from '../../services/token.service';

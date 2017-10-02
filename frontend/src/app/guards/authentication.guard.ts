@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
 import * as Authentication from '../store/authentication/authentication.actions';
-import * as fromRoot from '../store/reducers';
+import * as fromRoot from '../store';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {

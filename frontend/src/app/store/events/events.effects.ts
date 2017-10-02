@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 
-import * as fromRoot from '../reducers';
+import * as fromRoot from '../index';
 import * as EventsActions from './events.actions';
 import { EventsService } from '../../services/events.service';
 

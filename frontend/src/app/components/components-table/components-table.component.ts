@@ -8,8 +8,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-
-import  {ButtonComponent} from '../button/button.component';
+import { ButtonComponent } from '../button/button.component';
 
 /** Constants used to fill up our data base. */
 const STATUS = ['Running', 'Stop', 'Error', 'Starting'];
@@ -35,7 +34,7 @@ export class ComponentPagingDatabase {
   }
 
   readyCb() {
-    this.componentUnits$.forEach(function(element) {
+    this.componentUnits$.forEach(function (element) {
       this.addRow(element);
     });
   }
@@ -79,7 +78,6 @@ export class ComponentDataSource extends DataSource<ComponentUnit> {
 @Component({
   selector: 'app-components-table',
   templateUrl: './components-table.component.html',
-  styleUrls: ['./components-table.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComponentsTableComponent implements OnInit {

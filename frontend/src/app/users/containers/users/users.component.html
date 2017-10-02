@@ -6,7 +6,7 @@
             </app-users-table>
         </md-card-content>
     </md-card>
-    <div *ngIf="fetching$ | async" fxLayoutAlign="center center" class="container">
-        <md-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></md-progress-spinner>
+    <div *ngIf="fetching$ | async" fxLayout fxLayoutAlign="center center" class="container">
+        <md-progress-spinner mode="indeterminate"></md-progress-spinner>
     </div>
 </section>

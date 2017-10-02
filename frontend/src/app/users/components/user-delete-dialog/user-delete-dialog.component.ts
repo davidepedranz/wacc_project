@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Inject } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-user-delete-dialog',
   templateUrl: './user-delete-dialog.component.html',
-  styleUrls: ['./user-delete-dialog.component.css']
+  styleUrls: ['./user-delete-dialog.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDeleteDialogComponent implements OnInit {
   username: string;

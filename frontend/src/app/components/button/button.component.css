@@ -9,8 +9,6 @@ button {
     transition-duration: 0.4s;
 }
 
-
-
 button:hover {
     background-color: white;
     color: #3f51b5;

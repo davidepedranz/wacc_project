@@ -2,9 +2,9 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../../models/user';
-import * as fromRoot from '../../store/reducers';
-import * as Users from '../../store/users/users.actions';
+import { User } from '../../store/user.model';
+import * as UsersActions from '../../store/users.actions';
+import * as fromUsers from '../../store';
 
 @Component({
   selector: 'app-users',
@@ -17,17 +17,17 @@ export class UsersComponent implements OnInit {
   error$: Observable<boolean>;
   users$: Observable<User[]>;
 
-  constructor(private store: Store<fromRoot.State>) {
-    this.fetching$ = store.select(fromRoot.isFetchingUsers);
-    this.error$ = store.select(fromRoot.isFetchingUsersError);
-    this.users$ = store.select(fromRoot.selectUsers);
+  constructor(private store: Store<fromUsers.State>) {
+    this.fetching$ = store.select(fromUsers.isFetchingUsers);
+    this.error$ = store.select(fromUsers.isFetchingUsersError);
+    this.users$ = store.select(fromUsers.getUsers);
   }
 
   ngOnInit() {
-    this.store.dispatch(new Users.FetchUsers());
+    this.store.dispatch(new UsersActions.FetchUsers());
   }
 
   deleteUser(username: string) {
-    this.store.dispatch(new Users.DeleteUser(username));
+    this.store.dispatch(new UsersActions.DeleteUser(username));
   }
 }
