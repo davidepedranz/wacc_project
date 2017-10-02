@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
-import { Credentials } from '../../models/credentials';
+
+import { Credentials } from '../models/credentials';
 
 export const SAVE_TOKEN = '[Authentication] Save Token';
 export const LOAD_TOKEN = '[Authentication] Load Token';

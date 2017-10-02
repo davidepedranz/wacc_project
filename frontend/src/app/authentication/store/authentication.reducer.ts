@@ -1,5 +1,5 @@
-import { Credentials } from '../../models/credentials';
 import * as AuthenticationActions from './authentication.actions';
+import { Credentials } from '../models/credentials';
 
 export interface State {
     redirectPageAfterLogin: string;
@@ -65,3 +65,10 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
         }
     }
 }
+
+// selectors
+export const getToken = (state: State): string => state.token;
+export const isLoggedIn = (state: State): boolean => getToken(state) != null;
+export const isLoginPending = (state: State): boolean => state.loginPending;
+export const isLoginError = (state: State): boolean => state.loginError;
+export const getRedirectPathAfterLogin = (state: State): string => state.redirectPageAfterLogin;

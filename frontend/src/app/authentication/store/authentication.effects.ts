@@ -11,67 +11,67 @@ import { Observable } from 'rxjs/Observable';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 
-import * as fromRoot from '../index';
-import * as Authentication from './authentication.actions';
-import { AuthenticationService } from '../../services/authentication.service';
-import { TokenService } from '../../services/token.service';
+import * as fromAuthentication from './index';
+import * as AuthenticationActions from './authentication.actions';
+import { AuthenticationService } from '../services/authentication.service';
+import { TokenService } from '../services/token.service';
 
 @Injectable()
 export class AuthenticationEffects {
 
     @Effect({ dispatch: false })
     loadToken$ = this.actions$
-        .ofType(Authentication.LOAD_TOKEN)
+        .ofType(AuthenticationActions.LOAD_TOKEN)
         .map(action => this.tokenService.readToken())
         .do(token => {
             if (token != null) {
-                this.store$.dispatch(new Authentication.SaveToken(token));
+                this.store$.dispatch(new AuthenticationActions.SaveToken(token));
             }
         });
 
     @Effect({ dispatch: false })
     saveToken$ = this.actions$
-        .ofType(Authentication.SAVE_TOKEN)
-        .map(action => action as Authentication.SaveToken)
+        .ofType(AuthenticationActions.SAVE_TOKEN)
+        .map(action => action as AuthenticationActions.SaveToken)
         .do(action => this.tokenService.saveToken(action.payload));
 
     @Effect({ dispatch: false })
     removeToken$ = this.actions$
-        .ofType(Authentication.LOGOUT)
+        .ofType(AuthenticationActions.LOGOUT)
         .do(action => this.tokenService.removeToken());
 
 
     @Effect()
     login$ = this.actions$
-        .ofType(Authentication.LOGIN)
-        .map((action: Authentication.Login) => action.payload)
+        .ofType(AuthenticationActions.LOGIN)
+        .map((action: AuthenticationActions.Login) => action.payload)
         .exhaustMap(credentials =>
             this.authenticationService
                 .login(credentials)
-                .map(token => new Authentication.LoginSuccess(token))
-                .catch(error => Observable.of(new Authentication.LoginFailure()))
+                .map(token => new AuthenticationActions.LoginSuccess(token))
+                .catch(error => Observable.of(new AuthenticationActions.LoginFailure()))
         );
 
     @Effect()
     loginSuccessStoreToken$ = this.actions$
-        .ofType(Authentication.LOGIN_SUCCESS)
-        .map((action: Authentication.LoginSuccess) => action.payload)
-        .map(token => new Authentication.SaveToken(token));
+        .ofType(AuthenticationActions.LOGIN_SUCCESS)
+        .map((action: AuthenticationActions.LoginSuccess) => action.payload)
+        .map(token => new AuthenticationActions.SaveToken(token));
 
     @Effect({ dispatch: false })
     loginSuccessRedirect$ = this.actions$
-        .ofType(Authentication.LOGIN_SUCCESS)
+        .ofType(AuthenticationActions.LOGIN_SUCCESS)
         .withLatestFrom(this.store$)
-        .map(([action, state]) => fromRoot.selectRedirectPathAfterLogin(state))
+        .map(([action, state]) => fromAuthentication.getRedirectPathAfterLogin(state))
         .do(path => this.router.navigate([path]));
 
     @Effect({ dispatch: false })
     redirectToLogin$ = this.actions$
-        .ofType(Authentication.LOGIN_REDIRECT, Authentication.LOGOUT)
+        .ofType(AuthenticationActions.LOGIN_REDIRECT, AuthenticationActions.LOGOUT)
         .do(_ => this.router.navigate(['/login']));
 
     constructor(
-        private store$: Store<fromRoot.State>,
+        private store$: Store<fromAuthentication.State>,
         private actions$: Actions,
         private authenticationService: AuthenticationService,
         private tokenService: TokenService,

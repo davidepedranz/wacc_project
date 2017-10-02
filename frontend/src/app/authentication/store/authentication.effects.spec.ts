@@ -8,11 +8,11 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { RouterModule } from '@angular/router';
 import { AppRoutes } from '../../app.routing';
 
-import { reducers } from '../reducers';
+import { reducers } from './index';
 import * as AuthenticationActions from './authentication.actions';
 import { AuthenticationEffects } from './authentication.effects';
-import { AuthenticationService } from '../../services/authentication.service';
-import { TokenService } from '../../services/token.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { TokenService } from '../services/token.service';
 
 describe('AuthenticationEffects', () => {
     let effects: AuthenticationEffects;

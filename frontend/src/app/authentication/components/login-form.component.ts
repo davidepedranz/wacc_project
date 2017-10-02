@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { Credentials } from '../../models/credentials';
+import { Credentials } from '../models/credentials';
 
 @Component({
   selector: 'app-login-form',

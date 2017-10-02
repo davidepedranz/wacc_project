@@ -19,8 +19,8 @@ export class ComponentsComponent implements OnInit {
   constructor(private store: Store<fromRoot.State>) {
 
     // TODO!!!
-    this.fetching$ = store.select(fromRoot.isLoginPending);
-    this.error$ = store.select(fromRoot.isLoginError);
+    this.fetching$ = Observable.of(false);
+    this.error$ = Observable.of(false);
     this.componentUnits$ = store.select(fromRoot.selectComponents);
   }
 

@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 
-import { AuthenticationGuard } from './guards/authentication.guard';
+import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ComponentsComponent } from './components/components/components.component';
 import { EventsComponent } from './components/events/events.component';
-import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
     {
@@ -31,10 +30,10 @@ const routes: Routes = [
         pathMatch: 'full',
         canActivate: [AuthenticationGuard]
     },
-    {
-        path: 'login',
-        component: LoginComponent
-    },
+    // {
+    //     path: 'login',
+    //     component: LoginComponent
+    // },
     {
         path: '**',
         redirectTo: '/'

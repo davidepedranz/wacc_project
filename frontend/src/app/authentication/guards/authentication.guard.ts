@@ -6,13 +6,13 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
-import * as Authentication from '../store/authentication/authentication.actions';
-import * as fromRoot from '../store';
+import * as fromAuthentication from '../store';
+import * as AuthenticationActions from '../store/authentication.actions';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
 
-  constructor(private store: Store<fromRoot.State>) { }
+  constructor(private store: Store<fromAuthentication.State>) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.checkLogin(state.url);
@@ -24,12 +24,12 @@ export class AuthenticationGuard implements CanActivate {
 
   checkLogin(url: string): Observable<boolean> {
     return this.store
-      .select(fromRoot.isLoggedIn)
+      .select(fromAuthentication.isLoggedIn)
       .map(authenticated => {
         if (authenticated) {
           return true;
         } else {
-          this.store.dispatch(new Authentication.LoginRedirect(url));
+          this.store.dispatch(new AuthenticationActions.LoginRedirect(url));
           return false;
         }
       })
