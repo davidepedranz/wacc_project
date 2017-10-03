@@ -1,8 +1,8 @@
 .git/
 .gitignore
 .dockerignore
-docker-stack.yml
 .vscode
+dockerfile
 README.md
 LICENSE
 node_modules/

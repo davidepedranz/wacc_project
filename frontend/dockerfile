@@ -34,3 +34,7 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 # copy bundle of the angular application
 COPY --from=builder /app-build/dist /application
+
+# verify that the application is up and running
+HEALTHCHECK --interval=20s --timeout=3s --retries=3 \
+    CMD wget -U healthcheck -s http://localhost || exit 1
