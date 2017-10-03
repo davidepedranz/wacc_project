@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
 
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ComponentsComponent } from './components/components/components.component';
+import { DashboardComponent } from './core/containers/dashboard/dashboard.component';
 
-const routes: Routes = [
+export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
@@ -14,7 +13,7 @@ const routes: Routes = [
     {
         path: 'components',
         pathMatch: 'full',
-        component: ComponentsComponent,
+        loadChildren: './components/components.module#ComponentsModule',
         canActivate: [AuthenticationGuard]
     },
     {
@@ -34,5 +33,3 @@ const routes: Routes = [
         redirectTo: '/'
     }
 ];
-
-export { routes as AppRoutes };

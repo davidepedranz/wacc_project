@@ -1,22 +1,22 @@
-import { ComponentUnit } from '../../models/component';
-import * as ComponentUnitActions from './components.actions';
+import * as ComponentsActions from './components.actions';
+import { Component } from '../models/component';
 
 export interface State {
     fetching: boolean;
     error: boolean;
-    componentUnits: ComponentUnit[];
+    components: Component[];
 }
 
 const initialState: State = {
     fetching: false,
     error: false,
-    componentUnits: []
+    components: []
 };
 
-export function reducer(state = initialState, action: ComponentUnitActions.All): State {
+export function reducer(state = initialState, action: ComponentsActions.All): State {
     switch (action.type) {
 
-        case ComponentUnitActions.FETCH_COMPONENTS: {
+        case ComponentsActions.FETCH_COMPONENTS: {
             return {
                 ...state,
                 fetching: true,
@@ -24,16 +24,16 @@ export function reducer(state = initialState, action: ComponentUnitActions.All):
             };
         }
 
-        case ComponentUnitActions.FETCH_COMPONENTS_SUCCESS: {
+        case ComponentsActions.FETCH_COMPONENTS_SUCCESS: {
             return {
                 ...state,
                 fetching: false,
                 error: false,
-              componentUnits: action.payload
+                components: action.payload
             };
         }
 
-        case ComponentUnitActions.FETCH_COMPONENTS_FAILURE: {
+        case ComponentsActions.FETCH_COMPONENTS_FAILURE: {
             return {
                 ...state,
                 fetching: false,
@@ -46,3 +46,5 @@ export function reducer(state = initialState, action: ComponentUnitActions.All):
         }
     }
 }
+
+export const getComponents = (state: State): Component[] => state.components;

@@ -2,9 +2,9 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { ComponentUnit } from '../../models/component';
-import * as fromRoot from '../../store';
-import * as ComponentUnits from '../../store/components/components.actions';
+import { Component as MyComponent } from '../models/component';
+import * as ComponentUnits from '../store/components.actions';
+import * as fromComponents from '../store';
 
 @Component({
   selector: 'app-components',
@@ -14,14 +14,13 @@ import * as ComponentUnits from '../../store/components/components.actions';
 export class ComponentsComponent implements OnInit {
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
-  componentUnits$: Observable<ComponentUnit[]>;
+  components$: Observable<MyComponent[]>;
 
-  constructor(private store: Store<fromRoot.State>) {
-
-    // TODO!!!
+  // TODO!!!
+  constructor(private store: Store<fromComponents.State>) {
     this.fetching$ = Observable.of(false);
     this.error$ = Observable.of(false);
-    this.componentUnits$ = store.select(fromRoot.selectComponents);
+    this.components$ = store.select(fromComponents.getComponents);
   }
 
   ngOnInit() {

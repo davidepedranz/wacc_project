@@ -4,7 +4,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/delay';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../store/user.model';
+import { User } from '../models/user.model';
 
 @Injectable()
 export class UsersService {

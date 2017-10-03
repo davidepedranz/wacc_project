@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 
-import { User } from '../../store/user.model';
+import { User } from '../../models/user.model';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
 
@@ -19,7 +19,7 @@ export class UserEditComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store<fromUsers.UsersState>
+    private store: Store<fromUsers.State>
   ) {
     this.user$ = this.route.paramMap
       .map((params: ParamMap) => params.get('username'))

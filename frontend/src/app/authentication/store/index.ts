@@ -1,9 +1,8 @@
 import { ActionReducerMap, createSelector, createFeatureSelector } from '@ngrx/store';
 
-import * as fromRoot from '../../store';
 import * as fromAuthentication from './authentication.reducer';
 
-export interface State extends fromRoot.State {
+export interface State {
     authentication: AuthenticationState;
 }
 

@@ -4,7 +4,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../../store/user.model';
+import { User } from '../../models/user.model';
 import { UserDeleteDialogComponent } from '../user-delete-dialog/user-delete-dialog.component';
 
 // see: https://medium.com/@LewisGJ/ngrx-and-md-table-cea1bc9673ee
@@ -18,8 +18,7 @@ export class UsersDataSource extends DataSource<User> {
     return this.users$;
   }
 
-  disconnect(): void {
-  }
+  disconnect(): void { }
 }
 
 @Component({

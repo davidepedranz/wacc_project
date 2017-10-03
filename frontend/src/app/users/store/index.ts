@@ -1,24 +1,23 @@
 import { ActionReducerMap, createSelector, createFeatureSelector } from '@ngrx/store';
 
-import * as fromRoot from '../../store';
 import * as fromUsers from './users.reducer';
 
-export interface UsersState {
-    users: fromUsers.State;
-}
-
-export interface State extends fromRoot.State {
+export interface State {
     users: UsersState;
 }
 
+export interface UsersState {
+    status: fromUsers.State;
+}
+
 export const reducers: ActionReducerMap<any> = {
-    users: fromUsers.reducer
+    status: fromUsers.reducer
 };
 
 export const selectUsersState = createFeatureSelector<UsersState>('users');
-export const selectUsersUsersState = createSelector(selectUsersState, (state: UsersState) => state.users);
+export const selectUsersStatusState = createSelector(selectUsersState, (state: UsersState) => state.status);
 
-export const getUserByUsername = (username: string) => createSelector(selectUsersUsersState, fromUsers.getUserByUsername(username));
-export const getUsers = createSelector(selectUsersUsersState, fromUsers.getUsers);
-export const isFetchingUsers = createSelector(selectUsersUsersState, fromUsers.isFetchingUsers);
-export const isFetchingUsersError = createSelector(selectUsersUsersState, fromUsers.isFetchingUsersError);
+export const getUserByUsername = (username: string) => createSelector(selectUsersStatusState, fromUsers.getUserByUsername(username));
+export const getUsers = createSelector(selectUsersStatusState, fromUsers.getUsers);
+export const isFetchingUsers = createSelector(selectUsersStatusState, fromUsers.isFetchingUsers);
+export const isFetchingUsersError = createSelector(selectUsersStatusState, fromUsers.isFetchingUsersError);

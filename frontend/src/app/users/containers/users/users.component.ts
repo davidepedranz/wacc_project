@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { User } from '../../store/user.model';
+import { User } from '../../models/user.model';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
 

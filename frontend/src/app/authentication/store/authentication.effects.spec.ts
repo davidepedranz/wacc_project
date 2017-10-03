@@ -6,7 +6,6 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { RouterModule } from '@angular/router';
-import { AppRoutes } from '../../app.routing';
 
 import { reducers } from './index';
 import * as AuthenticationActions from './authentication.actions';

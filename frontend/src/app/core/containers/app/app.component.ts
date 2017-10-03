@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { State } from '../../store';
-import * as AuthenticationActions from '../../authentication/store/authentication.actions';
+import { State } from '../../../authentication/store';
+import * as AuthenticationActions from '../../../authentication/store/authentication.actions';
 
 @Component({
   selector: 'app-root',

@@ -3,8 +3,8 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
-import * as AuthenticationActions from '../../authentication/store/authentication.actions';
-import * as fromAuthentication from '../../authentication/store';
+import * as AuthenticationActions from '../../../authentication/store/authentication.actions';
+import * as fromAuthentication from '../../../authentication/store';
 
 @Component({
   selector: 'app-navbar',

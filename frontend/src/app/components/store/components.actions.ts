@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
-import { ComponentUnit } from '../../models/component';
+
+import { Component } from '../models/component';
 
 export const FETCH_COMPONENTS = '[Components] Fetch';
 export const FETCH_COMPONENTS_SUCCESS = '[Components] Fetch Success';
@@ -12,7 +13,7 @@ export class FetchComponents implements Action {
 export class FetchComponentsSuccess implements Action {
     readonly type = FETCH_COMPONENTS_SUCCESS;
 
-    constructor(public payload: ComponentUnit[]) { }
+    constructor(public payload: Component[]) { }
 }
 
 export class FetchComponentsFailure implements Action {

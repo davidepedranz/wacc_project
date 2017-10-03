@@ -2,31 +2,30 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/exhaustMap';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/exhaustMap';
 import { Observable } from 'rxjs/Observable';
 import { Effect, Actions } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 
-import * as fromRoot from '../index';
-import * as ComponentUnits from './components.actions';
-import { ComponentsService } from '../../services/components.service';
+import * as fromComponents from './index';
+import * as ComponentsActions from './components.actions';
+import { ComponentsService } from '../services/components.service';
 
 @Injectable()
 export class ComponentsEffects {
 
-    // TODO: fetch only once!
     @Effect()
     fetch$ = this.actions$
-        .ofType(ComponentUnits.FETCH_COMPONENTS)
+        .ofType(ComponentsActions.FETCH_COMPONENTS)
         .exhaustMap(_ => this.componentsService
             .fetchComponents()
-            .map(componentUnits => new ComponentUnits.FetchComponentsSuccess(componentUnits))
-            .catch(error => Observable.of(new ComponentUnits.FetchComponentsFailure()))
+            .map(components => new ComponentsActions.FetchComponentsSuccess(components))
+            .catch(error => Observable.of(new ComponentsActions.FetchComponentsFailure()))
         );
 
     constructor(
-        private store$: Store<fromRoot.State>,
+        private store$: Store<fromComponents.State>,
         private actions$: Actions,
         private componentsService: ComponentsService
     ) { }

@@ -1,10 +1,9 @@
 import * as Immutable from 'immutable';
 
 import * as UserActions from './users.actions';
-import { User } from './user.model';
+import { User } from '../models/user.model';
 
-export type Action = UserActions.All;
-export type User = User;
+// export type Action = UserActions.All;
 
 export interface State {
     fetching: boolean;
