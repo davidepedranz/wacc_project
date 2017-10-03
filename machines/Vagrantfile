@@ -1,0 +1,29 @@
+require 'ipaddr'
+
+# settings
+number_of_nodes = 3
+first_node_ip = '10.100.100.101'
+node_ip_addr = IPAddr.new first_node_ip
+
+# create the machines (setup Docker + Docker Swarm)
+Vagrant.configure(2) do |config|
+  config.vm.box = 'ubuntu/xenial64'
+
+  config.vm.provider 'virtualbox' do |vb|
+    vb.linked_clone = true    
+    vb.cpus = 1    
+    vb.memory = 1024
+  end
+
+  (1..number_of_nodes).each do |n|
+    name = "docker#{n}"
+    ip = node_ip_addr.to_s; node_ip_addr = node_ip_addr.succ
+
+    config.vm.define name do |config|
+      config.vm.hostname = name
+      config.vm.network :private_network, ip: ip
+      config.vm.provision 'shell', path: 'provision-docker.sh'
+      config.vm.provision 'shell', path: 'provision-swarm.sh', args: [ip, first_node_ip]
+    end
+  end
+end
