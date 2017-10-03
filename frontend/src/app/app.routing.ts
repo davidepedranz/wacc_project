@@ -12,19 +12,16 @@ export const routes: Routes = [
     },
     {
         path: 'components',
-        pathMatch: 'full',
         loadChildren: './components/components.module#ComponentsModule',
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'users',
-        pathMatch: 'full',
         loadChildren: './users/users.module#UsersModule',
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'events',
-        pathMatch: 'full',
         loadChildren: './events/events.module#EventsModule',
         canActivate: [AuthenticationGuard]
     },
