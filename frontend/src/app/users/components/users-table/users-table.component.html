@@ -1,0 +1,46 @@
+<md-table #table [dataSource]="dataSource">
+
+  <!-- Username Column -->
+  <ng-container mdColumnDef="username">
+    <md-header-cell *mdHeaderCellDef> Username </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.username}} </md-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container mdColumnDef="name">
+    <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
+    <md-cell *mdCellDef="let row"> {{row.name}} </md-cell>
+  </ng-container>
+
+  <!-- Permissions -->
+  <ng-container mdColumnDef="permissions">
+    <md-header-cell *mdHeaderCellDef> Permissions </md-header-cell>
+    <md-cell *mdCellDef="let row">
+      <md-chip-list>
+        <md-chip *ngFor="let privilege of row.privileges">
+          {{privilege}}
+        </md-chip>
+      </md-chip-list>
+    </md-cell>
+  </ng-container>
+
+  <!-- Actions -->
+  <ng-container mdColumnDef="actions">
+    <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
+    <md-cell *mdCellDef="let row">
+      <button md-raised-button color="primary" [routerLink]="['/users', row.username, 'edit']">
+        <md-icon>edit</md-icon>
+        <span fxShow fxHide.lt-md="true">Edit</span>
+      </button>
+      <button md-raised-button color="warn" (click)="onDeleteUser(row.username)">
+        <md-icon>delete</md-icon> 
+        <span fxShow fxHide.lt-md="true">Delete</span>
+      </button>
+    </md-cell>
+  </ng-container>
+
+  <!-- Header and Row Declarations -->
+  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+  <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+
+</md-table>

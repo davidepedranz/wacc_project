@@ -1,0 +1,7 @@
+.flex-spacer {
+    flex: 1 1 auto;
+}
+
+.mat-button {
+    min-width: 44px;
+}

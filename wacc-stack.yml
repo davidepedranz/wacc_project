@@ -1,0 +1,63 @@
+version: "3.3"
+services:
+
+  traefik:
+    image: traefik:alpine
+    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=localhost --docker.exposedbydefault=false --logLevel=INFO
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    networks:
+      - public
+      - internal
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: wacc-frontend:latest
+    build: ./frontend
+    networks:
+      - internal
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=frontend"
+        - "traefik.port=80"
+        - "traefik.docker.network=internal"
+        - "traefik.frontend.rule=Host:localhost"
+        # - "traefik.frontend.rule=PathPrefixStrip:/web"
+
+  backend:
+    image: wacc-backend:latest
+    networks:
+      - internal
+    environment:
+      APPLICATION_SECRET: "some-fake-secret-to-change"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=backend"
+        - "traefik.port=9000"
+        - "traefik.docker.network=internal"
+        - "traefik.frontend.rule=Host:api.localhost"
+
+networks:
+  public:
+    driver: overlay
+  internal:
+    driver: overlay
+    internal: true

@@ -1,0 +1,27 @@
+<md-toolbar color="primary" *ngIf="show | async">
+  <a md-button routerLink="/">
+    <md-icon>home</md-icon>
+    <span fxShow fxHide.xs="true">Home</span>
+  </a>
+  <a md-button routerLink="/components">
+    <md-icon>apps</md-icon>
+    <span fxShow fxHide.xs="true">Components</span>
+  </a>
+  <a md-button routerLink="/events">
+    <md-icon>history</md-icon>
+    <span fxShow fxHide.xs="true">Events</span>
+  </a>
+  <a md-button routerLink="/users">
+    <md-icon>supervisor_account</md-icon>
+    <span fxShow fxHide.xs="true">Users</span>
+  </a>
+  <span class="flex-spacer"></span>
+  <a md-button routerLink="/profile">
+    <md-icon>account_circle</md-icon>
+    <span fxShow fxHide.xs="true" fxHide.sm="true">Profile</span>
+  </a>
+  <button md-button (click)="logout()">
+      <md-icon>exit_to_app</md-icon>
+      <span fxShow fxHide.xs="true" fxHide.sm="true">Logout</span>
+    </button>
+</md-toolbar>

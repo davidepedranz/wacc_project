@@ -1,0 +1,11 @@
+<section>
+  <md-card>
+    <md-card-title>Events</md-card-title>
+    <md-card-content>
+      <app-events-table [events$]="events$"></app-events-table>
+    </md-card-content>
+  </md-card>
+  <!-- <div *ngIf="fetching$ | async" fxLayoutAlign="center center" class="container">
+      <md-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></md-progress-spinner>
+  </div> -->
+</section>
