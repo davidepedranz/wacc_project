@@ -12,6 +12,7 @@ This repository contains the project of the course Web and Cloud Computing (wint
 | ---------------------------- | ---------------------------------------- |
 | [architecture](architecture) | The folder contains the description of the general architecture of the project. |
 | [frontend](frontend)         | Implementation of the frontend using Angular 4 and Angular Material. |
+| [backend](backend)           | Implementation of the backend using Play Framework and Scala. |
 
 ## Setup
 
