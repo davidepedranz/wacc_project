@@ -2,9 +2,10 @@ package controllers
 
 import javax.inject._
 
-import models.{User, UsersRepository}
+import models.UserWithPassword
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
+import repositories.UsersRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,8 +19,8 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
   }
 
   def create = Action.async(parse.json) { req =>
-    req.body.validate[User] match {
-      case user: JsSuccess[User] => Future.successful(Ok)
+    req.body.validate[UserWithPassword] match {
+      case user: JsSuccess[UserWithPassword] => usersRepository.create(user.value).map(result => Ok(result.toString))
       case error: JsError => Future.successful(BadRequest(JsError.toJson(error)))
     }
   }

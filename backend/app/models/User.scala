@@ -1,53 +1,41 @@
 package models
 
-import com.google.inject.ImplementedBy
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
+import reactivemongo.bson.Macros.Annotations.Key
+import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros}
 
-import scala.collection.concurrent.TrieMap
-import scala.concurrent.Future
+sealed trait BaseUser {
+  def username: String
 
-case class Credentials(username: String, password: String)
-
-object Credentials {
-  implicit val credentialsWrites: OWrites[Credentials] = Json.writes[Credentials]
-  implicit val credentialsReads: Reads[Credentials] = (
-    (JsPath \ "username").read[String](minLength[String](5) keepAnd maxLength[String](20)) and
-      (JsPath \ "password").read[String](minLength[String](10) keepAnd maxLength[String](100))
-    ) (Credentials.apply _)
+  def permissions: Set[String]
 }
 
-case class User(id: String, credentials: Credentials, permissions: Set[String])
+case class User(@Key("_id") username: String, permissions: Set[String]) extends BaseUser
 
 object User {
-  implicit val usersWrites: OWrites[User] = Json.writes[User]
-  implicit val usersReads: Reads[User] = (
-    (JsPath \ "id").read[String](minLength[String](10)) and
-      (JsPath \ "credentials").read[Credentials] and
+  implicit val writes: OWrites[User] = Json.writes[User]
+
+  implicit val bsonRead: BSONDocumentReader[User] = Macros.reader[User]
+  implicit val bsonWrite: BSONDocumentWriter[User] = Macros.writer[User]
+  //  implicit val handler: BSONHandler[BSONDocument, User] = Macros.handler[User]
+}
+
+case class UserWithPassword(@Key("_id") username: String, password: String, permissions: Set[String]) extends BaseUser
+
+object UserWithPassword {
+  implicit val reads: Reads[UserWithPassword] = (
+    (JsPath \ "username").read[String](minLength[String](5) keepAnd maxLength[String](30)) and
+      (JsPath \ "password").read[String](minLength[String](5) keepAnd maxLength[String](100)) and
       (JsPath \ "permissions").read[Set[String]]
-    ) (User.apply _)
+    ) (UserWithPassword.apply _)
+
+  implicit val bsonRead: BSONDocumentReader[UserWithPassword] = Macros.reader[UserWithPassword]
+  implicit val bsonWrite: BSONDocumentWriter[UserWithPassword] = Macros.writer[UserWithPassword]
+  //  implicit val handler: BSONHandler[BSONDocument, UserWithPassword] = Macros.handler[UserWithPassword]
 }
 
-@ImplementedBy(classOf[InMemoryUsersRepository])
-trait UsersRepository {
-  def list: Future[Set[User]]
-}
 
-class InMemoryUsersRepository extends UsersRepository {
-  private val users = TrieMap.empty[String, User]
-  users.put("admin", User(
-    "admin",
-    Credentials(
-      "admin",
-      "password"
-    ),
-    Set(
-      "read-x"
-    )
-  ))
 
-  def list: Future[Set[User]] = {
-    Future.successful(users.values.to[Set])
-  }
-}
+
