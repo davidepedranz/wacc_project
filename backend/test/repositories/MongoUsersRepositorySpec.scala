@@ -12,6 +12,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.implicitConversions
+import scalaz.\/
 
 final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   private val injector: Injector = new GuiceApplicationBuilder().build.injector
@@ -29,7 +30,10 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
   )
 
   private def createUsers(users: UserWithPassword*): Unit = {
-    users.foreach(user => Await.result(repository.create(user), MAX_DURATION))
+    users.foreach(user => {
+      val result: \/[DuplicateUser, Unit] = Await.result(repository.create(user), MAX_DURATION)
+      result.isRight mustBe true
+    })
   }
 
   private def assertExists(user: UserWithPassword) = {
@@ -68,17 +72,30 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
       }
     }
 
+    "#create" should {
+      "create the user in the repository" in {
+        createUsers(TEST_USER_1)
+        assertExists(TEST_USER_1)
+      }
+      "do not create the user in the repository if there is already one with the same username" in {
+        createUsers(TEST_USER_1)
+        val result: \/[DuplicateUser, Unit] = Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        result.isLeft mustBe true
+        result.toEither.left.toOption.value mustBe DuplicateUser()
+      }
+    }
+
     "#list" should {
-      "return an empty list if the database is empty" in {
+      "return an empty list if the repository is empty" in {
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustBe empty
       }
-      "return a list with a single user if the database contains a single user" in {
+      "return a list with a single user if the repository contains a single user" in {
         createUsers(TEST_USER_1)
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustEqual Seq[User](TEST_USER_1)
       }
-      "return the list of the users in the database, ordered by username asc" in {
+      "return the list of the users in the repository, ordered by username asc" in {
         createUsers(TEST_USER_1, TEST_USER_2)
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustEqual Seq[User](TEST_USER_1, TEST_USER_2)
