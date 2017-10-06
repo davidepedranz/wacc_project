@@ -51,6 +51,13 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     )
   }
 
+  override def read(username: String): Future[Option[User]] = {
+    usersCollection.flatMap(_
+      .find(BSONDocument(FIELD_USERNAME -> username))
+      .one[User]
+    )
+  }
+
   override def delete(username: String): Future[Unit] = {
     usersCollection
       .flatMap(_.remove(BSONDocument(FIELD_USERNAME -> username)))

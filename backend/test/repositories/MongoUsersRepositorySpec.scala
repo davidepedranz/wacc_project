@@ -32,10 +32,16 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
     users.foreach(user => Await.result(repository.create(user), MAX_DURATION))
   }
 
-  private def assertExists(user: UserWithPassword) = ???
+  private def assertExists(user: UserWithPassword) = {
+    val result: Option[User] = Await.result(repository.read(user.username), MAX_DURATION)
+    result mustBe defined
+    result must contain(userWithPasswordToUser(user))
+  }
 
-  private def assertNotExists(user: UserWithPassword) = ???
-
+  private def assertNotExists(user: UserWithPassword) = {
+    val result: Option[User] = Await.result(repository.read(user.username), MAX_DURATION)
+    result mustBe empty
+  }
 
   override protected def beforeEach(): Unit = {
     Await.ready(mongo.database.map(db => db.drop()), MAX_DURATION)
@@ -76,6 +82,17 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
         createUsers(TEST_USER_1, TEST_USER_2)
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustEqual Seq[User](TEST_USER_1, TEST_USER_2)
+      }
+    }
+
+    "#read" should {
+      "return empty if there is no user with the given username" in {
+        createUsers(TEST_USER_1)
+        assertNotExists(TEST_USER_2)
+      }
+      "return the user with the given username" in {
+        createUsers(TEST_USER_1)
+        assertExists(TEST_USER_1)
       }
     }
 

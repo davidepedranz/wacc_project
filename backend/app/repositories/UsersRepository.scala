@@ -31,7 +31,7 @@ trait UsersRepository {
     * to this method might return an error in case of duplicated users.
     *
     * @param user The new user to insert.
-    * @return A future that can either return an error or nothing (if the operation is successful).
+    * @return Future containing either an error or nothing (if the operation is successful).
     */
   def create(user: UserWithPassword): Future[DuplicateUser \/ Unit]
 
@@ -41,6 +41,14 @@ trait UsersRepository {
     * @return List of users, in ascending order by username.
     */
   def list: Future[Seq[User]]
+
+  /**
+    * Retrieve the user with the given username from the repository.
+    *
+    * @param username Username.
+    * @return Future containing the user if found, empty otherwise.
+    */
+  def read(username: String): Future[Option[User]]
 
   /**
     * Delete the user with the specified username from the repository. If there is no user
