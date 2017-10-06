@@ -34,6 +34,26 @@ class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Bef
   }
 
   "MongoUsersRepository" when {
+
+    "#authenticate" should {
+      "return empty if the username does not match any user" in {
+        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate("fake-user", "password"), MAX_DURATION)
+        result mustBe empty
+      }
+      "return empty if the username matches a user but the password is wrong" in {
+        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate("admin", "wrong-password"), MAX_DURATION)
+        result mustBe empty
+      }
+      "return the user matching username and password" in {
+        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        Await.result(repository.create(TEST_USER_2), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate("admin", "password"), MAX_DURATION)
+        result must contain(userWithPasswordToUser(TEST_USER_1))
+      }
+    }
+
     "#list" should {
       "return an empty list if the database is empty" in {
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)

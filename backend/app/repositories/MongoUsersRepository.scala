@@ -16,9 +16,21 @@ import scalaz.{-\/, \/, \/-}
 class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends UsersRepository with ReactiveMongoComponents {
 
-  private val USERS_COLLECTION = "users"
+  private val COLLECTION_USERS = "users"
+  private val FIELD_USERNAME = "_id"
+  private val FIELD_PASSWORD = "password"
 
-  private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection(USERS_COLLECTION))
+  private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection(COLLECTION_USERS))
+
+  override def authenticate(username: String, password: String): Future[Option[User]] = {
+    usersCollection.flatMap(_
+      .find(BSONDocument(
+        FIELD_USERNAME -> username,
+        FIELD_PASSWORD -> password
+      ))
+      .one[User]
+    )
+  }
 
   override def create(user: UserWithPassword): Future[DuplicateUser \/ Unit] = {
     usersCollection.flatMap(_.insert(user))
@@ -36,4 +48,5 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
       .collect[Seq](-1, Cursor.FailOnError[Seq[User]]())
     )
   }
+
 }
