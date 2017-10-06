@@ -12,6 +12,8 @@ import reactivemongo.core.errors.DatabaseException
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz.{-\/, \/, \/-}
 
+// TODO: write and read concerns!
+
 @Singleton
 class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends UsersRepository with ReactiveMongoComponents {
@@ -49,4 +51,9 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     )
   }
 
+  override def delete(username: String): Future[Unit] = {
+    usersCollection
+      .flatMap(_.remove(BSONDocument(FIELD_USERNAME -> username)))
+      .map(_ => None)
+  }
 }

@@ -13,20 +13,29 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.implicitConversions
 
-class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
-  val injector: Injector = new GuiceApplicationBuilder().build.injector
-  val mongo: ReactiveMongoApi = injector.instanceOf[ReactiveMongoApi]
-  val repository: UsersRepository = injector.instanceOf[MongoUsersRepository]
+final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
+  private val injector: Injector = new GuiceApplicationBuilder().build.injector
+  private val mongo: ReactiveMongoApi = injector.instanceOf[ReactiveMongoApi]
+  private val repository: UsersRepository = injector.instanceOf[MongoUsersRepository]
 
-  val MAX_DURATION: FiniteDuration = 2 seconds
+  private val MAX_DURATION: FiniteDuration = 2 seconds
 
-  val TEST_USER_1 = UserWithPassword("admin", "password", Set("admin"))
-  val TEST_USER_2 = UserWithPassword("test", "password", Set("read-a", "write-b"))
+  private val TEST_USER_1 = UserWithPassword("admin", "password", Set("admin"))
+  private val TEST_USER_2 = UserWithPassword("test", "password", Set("read-a", "write-b"))
 
-  implicit def userWithPasswordToUser(user: UserWithPassword): User = User(
+  private implicit def userWithPasswordToUser(user: UserWithPassword): User = User(
     username = user.username,
     permissions = user.permissions
   )
+
+  private def createUsers(users: UserWithPassword*): Unit = {
+    users.foreach(user => Await.result(repository.create(user), MAX_DURATION))
+  }
+
+  private def assertExists(user: UserWithPassword) = ???
+
+  private def assertNotExists(user: UserWithPassword) = ???
+
 
   override protected def beforeEach(): Unit = {
     Await.ready(mongo.database.map(db => db.drop()), MAX_DURATION)
@@ -37,19 +46,18 @@ class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Bef
 
     "#authenticate" should {
       "return empty if the username does not match any user" in {
-        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        createUsers(TEST_USER_1)
         val result: Option[User] = Await.result(repository.authenticate("fake-user", "password"), MAX_DURATION)
         result mustBe empty
       }
       "return empty if the username matches a user but the password is wrong" in {
-        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
-        val result: Option[User] = Await.result(repository.authenticate("admin", "wrong-password"), MAX_DURATION)
+        createUsers(TEST_USER_1)
+        val result: Option[User] = Await.result(repository.authenticate(TEST_USER_1.username, "wrong-password"), MAX_DURATION)
         result mustBe empty
       }
       "return the user matching username and password" in {
-        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
-        Await.result(repository.create(TEST_USER_2), MAX_DURATION)
-        val result: Option[User] = Await.result(repository.authenticate("admin", "password"), MAX_DURATION)
+        createUsers(TEST_USER_1, TEST_USER_2)
+        val result: Option[User] = Await.result(repository.authenticate(TEST_USER_1.username, TEST_USER_1.password), MAX_DURATION)
         result must contain(userWithPasswordToUser(TEST_USER_1))
       }
     }
@@ -60,15 +68,34 @@ class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Bef
         result mustBe empty
       }
       "return a list with a single user if the database contains a single user" in {
-        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        createUsers(TEST_USER_1)
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustEqual Seq[User](TEST_USER_1)
       }
       "return the list of the users in the database, ordered by username asc" in {
-        Await.result(repository.create(TEST_USER_2), MAX_DURATION)
-        Await.result(repository.create(TEST_USER_1), MAX_DURATION)
+        createUsers(TEST_USER_1, TEST_USER_2)
         val result: Seq[User] = Await.result(repository.list, MAX_DURATION)
         result mustEqual Seq[User](TEST_USER_1, TEST_USER_2)
+      }
+    }
+
+    "#delete" should {
+      "do nothing if there is no user with the given username" in {
+        createUsers(TEST_USER_1)
+        Await.result(repository.delete("not-existing-user"), MAX_DURATION)
+        assertExists(TEST_USER_1)
+      }
+      "do nothing if the user with the given username has already been remove" in {
+        createUsers(TEST_USER_1)
+        Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
+        Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
+        assertNotExists(TEST_USER_1)
+      }
+      "remove the user with the given username from the repository" in {
+        createUsers(TEST_USER_1, TEST_USER_2)
+        Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
+        assertNotExists(TEST_USER_1)
+        assertExists(TEST_USER_2)
       }
     }
   }

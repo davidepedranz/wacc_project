@@ -42,4 +42,12 @@ trait UsersRepository {
     */
   def list: Future[Seq[User]]
 
+  /**
+    * Delete the user with the specified username from the repository. If there is no user
+    * with the given username, this method has no effect.
+    *
+    * @param username Username of the user to delete.
+    * @return Future that represent the async operation. No content is returned in case of success.
+    */
+  def delete(username: String): Future[Unit]
 }
