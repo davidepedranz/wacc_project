@@ -21,6 +21,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
   override def list: Future[Seq[User]] = {
     usersCollection.flatMap(_
       .find(BSONDocument())
+      .sort(BSONDocument("_id" -> 1))
       .cursor[User](ReadPreference.primary)
       .collect[Seq](-1, Cursor.FailOnError[Seq[User]]())
     )
