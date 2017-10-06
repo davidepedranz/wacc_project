@@ -25,3 +25,7 @@ libraryDependencies ++= Seq(
 // see http://www.scala-sbt.org/sbt-native-packager/formats/docker.html
 enablePlugins(DockerPlugin)
 version in Docker := "latest"
+
+
+// scalaz -> we use EitherT
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.15"

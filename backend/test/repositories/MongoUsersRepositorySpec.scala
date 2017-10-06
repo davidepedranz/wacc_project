@@ -11,6 +11,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.language.implicitConversions
 
 class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   val injector: Injector = new GuiceApplicationBuilder().build.injector
