@@ -1,6 +1,6 @@
 package repositories
 
-import models.{User, UserWithPassword}
+import models.{Credentials, User, UserWithPassword}
 
 import scala.concurrent.Future
 import scalaz.\/
@@ -20,11 +20,10 @@ trait UsersRepository {
   /**
     * Try to match a user in the repository with the given username and password.
     *
-    * @param username Username.
-    * @param password Password.
+    * @param credentials Username and password.
     * @return Future containing the user if found, empty otherwise.
     */
-  def authenticate(username: String, password: String): Future[Option[User]]
+  def authenticate(credentials: Credentials): Future[Option[User]]
 
   /**
     * Create a new user in the repository. Users are required to have an unique identifiers,

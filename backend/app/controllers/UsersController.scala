@@ -16,13 +16,12 @@ import scalaz.{-\/, \/-}
 class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, bodyParsers: PlayBodyParsers, handler: DeadboltHandler,
                                 actionBuilders: ActionBuilders, usersRepository: UsersRepository) extends AbstractController(cc) {
 
-  // TODO: return always JSON as error?
   def create: Action[JsValue] = actionBuilders.PatternAction(value = Permission.USERS_WRITE, patternType = PatternType.EQUALITY).apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
       case user: JsSuccess[UserWithPassword] => {
         usersRepository.create(user.value).map {
           case \/-(_) => Ok
-          case -\/(_: DuplicateUser) => Conflict("Username already taken")
+          case -\/(_: DuplicateUser) => Conflict
         }.recover {
           case _ => ServiceUnavailable
         }

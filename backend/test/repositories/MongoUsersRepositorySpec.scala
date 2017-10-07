@@ -1,6 +1,6 @@
 package repositories
 
-import models.{User, UserWithPassword}
+import models.{Credentials, User, UserWithPassword}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -57,17 +57,17 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
     "#authenticate" should {
       "return empty if the username does not match any user" in {
         createUsers(TEST_USER_1)
-        val result: Option[User] = Await.result(repository.authenticate("fake-user", "password"), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate(Credentials("fake-user", "password")), MAX_DURATION)
         result mustBe empty
       }
       "return empty if the username matches a user but the password is wrong" in {
         createUsers(TEST_USER_1)
-        val result: Option[User] = Await.result(repository.authenticate(TEST_USER_1.username, "wrong-password"), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate(Credentials(TEST_USER_1.username, "wrong-password")), MAX_DURATION)
         result mustBe empty
       }
       "return the user matching username and password" in {
         createUsers(TEST_USER_1, TEST_USER_2)
-        val result: Option[User] = Await.result(repository.authenticate(TEST_USER_1.username, TEST_USER_1.password), MAX_DURATION)
+        val result: Option[User] = Await.result(repository.authenticate(Credentials(TEST_USER_1.username, TEST_USER_1.password)), MAX_DURATION)
         result must contain(userWithPasswordToUser(TEST_USER_1))
       }
     }

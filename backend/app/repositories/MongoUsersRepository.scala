@@ -2,7 +2,7 @@ package repositories
 
 import javax.inject.{Inject, Singleton}
 
-import models.{User, UserWithPassword}
+import models.{Credentials, User, UserWithPassword}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.{Cursor, ReadPreference}
@@ -24,11 +24,11 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
 
   private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection(COLLECTION_USERS))
 
-  override def authenticate(username: String, password: String): Future[Option[User]] = {
+  override def authenticate(credentials: Credentials): Future[Option[User]] = {
     usersCollection.flatMap(_
       .find(BSONDocument(
-        FIELD_USERNAME -> username,
-        FIELD_PASSWORD -> password
+        FIELD_USERNAME -> credentials.username,
+        FIELD_PASSWORD -> credentials.password
       ))
       .one[User]
     )
