@@ -28,5 +28,4 @@ class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
       }
     }
   }
-
 }

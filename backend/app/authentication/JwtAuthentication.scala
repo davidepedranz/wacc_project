@@ -6,16 +6,30 @@ import io.igl.jwt._
 
 import scala.util.{Success, Try}
 
-class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication {
+/**
+  * Implements the user authentication using JSON Web Token.
+  *
+  * @param secret Secret key used to sign the JWT.
+  */
+final class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication {
+
+  // JWT header section
+  private val typ: String = "JWT"
+  private val algorithm: Algorithm = Algorithm.HS256
+
+  // JWT body section
+  private val issuer: Iss = Iss("wacc")
+
+  // TODO: add claims for duration etc
 
   override def generateToken(username: String): String = {
     new DecodedJwt(
       Seq(
-        Alg(Algorithm.HS256),
-        Typ("JWT")
+        Typ(typ),
+        Alg(algorithm)
       ),
       Seq(
-        Iss("wacc"),
+        issuer,
         Sub(username)
       )
     ).encodedAndSigned(secret)
@@ -28,17 +42,11 @@ class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication
       DecodedJwt.validateEncodedJwt(
         jwt = token,
         key = secret,
-        requiredAlg = Algorithm.HS256,
+        requiredAlg = algorithm,
         requiredHeaders = Set(Typ),
         requiredClaims = Set(Iss),
-        iss = Some(Iss("wacc"))
+        iss = Some(issuer)
       ).map(jwt => jwt.getClaim[Iss].get.value)
     }
   }
-}
-
-object JwtAuthentication {
-  val algorithm: Alg = Alg(Algorithm.HS256)
-
-  val issuer = Iss("wacc")
 }

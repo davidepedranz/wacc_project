@@ -39,5 +39,4 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
       case _ => ServiceUnavailable
     }
   }
-
 }

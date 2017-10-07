@@ -2,6 +2,8 @@ package models
 
 import be.objectify.deadbolt.scala.models.{Role, Subject => DeadboldSubject}
 
+import scala.language.implicitConversions
+
 case class Subject(identifier: String, permissions: List[Permission]) extends DeadboldSubject {
   override def roles: List[Role] = List.empty
 }
