@@ -11,7 +11,7 @@ import play.modules.reactivemongo.ReactiveMongoApi
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import scalaz.\/
 
 final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {

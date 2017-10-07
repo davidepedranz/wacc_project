@@ -2,7 +2,9 @@ package controllers
 
 import javax.inject._
 
-import models.UserWithPassword
+import be.objectify.deadbolt.scala.models.PatternType
+import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltHandler}
+import models.{Permission, UserWithPassword}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import repositories.{DuplicateUser, UsersRepository}
@@ -11,18 +13,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scalaz.{-\/, \/-}
 
 @Singleton
-class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, usersRepository: UsersRepository) extends AbstractController(cc) {
-
-  def list = Action.async {
-    usersRepository.list.map { users =>
-      Ok(Json.toJson(users))
-    }.recover {
-      case _ => ServiceUnavailable
-    }
-  }
+class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, bodyParsers: PlayBodyParsers, handler: DeadboltHandler,
+                                actionBuilders: ActionBuilders, usersRepository: UsersRepository) extends AbstractController(cc) {
 
   // TODO: return always JSON as error?
-  def create = Action.async(parse.json) { req =>
+  def create = actionBuilders.PatternAction(value = Permission.USERS_WRITE, patternType = PatternType.EQUALITY).apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
       case user: JsSuccess[UserWithPassword] => {
         usersRepository.create(user.value).map {
@@ -35,6 +30,14 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
       case error: JsError => {
         Future.successful(BadRequest(JsError.toJson(error)))
       }
+    }
+  }
+
+  def list: Action[AnyContent] = actionBuilders.PatternAction(value = Permission.USERS_READ, patternType = PatternType.EQUALITY).defaultHandler() {
+    usersRepository.list.map { users =>
+      Ok(Json.toJson(users))
+    }.recover {
+      case _ => ServiceUnavailable
     }
   }
 

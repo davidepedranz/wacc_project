@@ -29,3 +29,8 @@ version in Docker := "latest"
 
 // scalaz -> we use EitherT
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.15"
+
+// authorization -> http://deadbolt.ws/
+libraryDependencies ++= Seq(
+  "be.objectify" %% "deadbolt-scala" % "2.6.0"
+)
