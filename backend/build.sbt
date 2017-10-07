@@ -34,3 +34,6 @@ libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.15"
 libraryDependencies ++= Seq(
   "be.objectify" %% "deadbolt-scala" % "2.6.0"
 )
+
+// JWT support
+libraryDependencies += "io.igl" %% "jwt" % "1.2.2"

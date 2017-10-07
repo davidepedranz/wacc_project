@@ -5,7 +5,7 @@ import javax.inject._
 import be.objectify.deadbolt.scala.models.PatternType
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltHandler}
 import models.{Permission, UserWithPassword}
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc._
 import repositories.{DuplicateUser, UsersRepository}
 
@@ -17,7 +17,7 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
                                 actionBuilders: ActionBuilders, usersRepository: UsersRepository) extends AbstractController(cc) {
 
   // TODO: return always JSON as error?
-  def create = actionBuilders.PatternAction(value = Permission.USERS_WRITE, patternType = PatternType.EQUALITY).apply(parse.json) { req =>
+  def create: Action[JsValue] = actionBuilders.PatternAction(value = Permission.USERS_WRITE, patternType = PatternType.EQUALITY).apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
       case user: JsSuccess[UserWithPassword] => {
         usersRepository.create(user.value).map {

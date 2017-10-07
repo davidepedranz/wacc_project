@@ -1,13 +1,12 @@
 package authorization
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{DeadboltHandler, HandlerKey}
 
 @Singleton
-class DefaultHandlerCache extends HandlerCache {
-  val defaultHandler: DeadboltHandler = new DefaultDeadboltHandler
+class DefaultHandlerCache @Inject()(defaultHandler: DeadboltHandler) extends HandlerCache {
 
   // TODO: is this correct?
   val handlers: Map[Any, DeadboltHandler] = Map.empty
