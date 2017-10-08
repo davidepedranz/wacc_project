@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/delay';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
 
 import { Credentials } from '../models/credentials';
 
 @Injectable()
 export class AuthenticationService {
+  private readonly BASE = '/api';
 
-  login({ username, password }: Credentials): Observable<string> {
-    if (username === 'admin') {
-      return Observable.of('fake-token').delay(1000);
-    } else {
-      return Observable.of('fake-token').delay(1000).map(_ => { throw Error('Some error'); });
-    }
+  constructor(private http: Http) { }
+
+  login(credentials: Credentials): Observable<string> {
+    return this.http
+      .post(this.BASE + '/v1/login', credentials)
+      .map(response => response.json().token as string);
   }
 }

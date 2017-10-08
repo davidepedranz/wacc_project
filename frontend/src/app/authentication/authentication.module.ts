@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { StoreModule, ActionReducerMap } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -22,6 +23,7 @@ import { LoginFormComponent } from './components/login-form.component';
   imports: [
     CommonModule,
     FormsModule,
+    HttpModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     StoreModule.forFeature('authentication', reducers),

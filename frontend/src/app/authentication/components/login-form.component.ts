@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Credentials } from '../models/credentials';
@@ -8,7 +8,7 @@ import { Credentials } from '../models/credentials';
   templateUrl: './login-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginFormComponent implements OnInit {
+export class LoginFormComponent implements AfterViewInit {
 
   @Input()
   set pending(isPending: boolean) {
@@ -25,13 +25,17 @@ export class LoginFormComponent implements OnInit {
   @Output()
   submitted = new EventEmitter<Credentials>();
 
+  @ViewChild('username')
+  private usernameRef: ElementRef;
+
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.createForm();
   }
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
+    this.usernameRef.nativeElement.focus();
   }
 
   createForm() {
@@ -58,5 +62,6 @@ export class LoginFormComponent implements OnInit {
       username: this.username.value,
       password: this.password.value
     });
+    this.usernameRef.nativeElement.focus();
   }
 }

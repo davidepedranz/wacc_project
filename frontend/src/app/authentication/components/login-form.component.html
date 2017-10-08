@@ -6,7 +6,7 @@
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <p>
         <md-form-field>
-          <input mdInput required placeholder="Username" type="text" formControlName="username" autofocus>
+          <input mdInput required placeholder="Username" type="text" formControlName="username" #username>
           <md-error *ngIf="invalid(username) && username.errors.required">
             Please enter your username.
           </md-error>
