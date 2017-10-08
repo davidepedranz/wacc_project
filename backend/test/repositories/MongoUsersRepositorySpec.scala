@@ -132,5 +132,34 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
         assertExists(TEST_USER_2)
       }
     }
+
+    "#addPermission" should {
+      "return an error is the user does not exist" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.addPermission(TEST_USER_2.username, "some-new-permission"), MAX_DURATION
+        )
+        result.toEither mustBe 'left
+        assertExists(TEST_USER_1)
+      }
+      "do nothing if the user already has the permission" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.addPermission(TEST_USER_1.username, TEST_USER_1.permissions.toSeq.head), MAX_DURATION
+        )
+        result.toEither mustBe 'right
+        assertExists(TEST_USER_1)
+      }
+      "add the permission to the user" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.addPermission(TEST_USER_1.username, "some-new-permission"), MAX_DURATION
+        )
+        result.toEither mustBe 'right
+        assertExists(TEST_USER_1.copy(permissions = TEST_USER_1.permissions + "some-new-permission"))
+      }
+    }
+
+    // TODO: test removePermission!
   }
 }

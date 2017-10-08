@@ -12,6 +12,9 @@ sealed trait UserError
 
 final case class DuplicateUser() extends UserError
 
+final case class UserNotFound() extends UserError
+
+
 /**
   * Trait for the users' repository.
   */
@@ -57,4 +60,22 @@ trait UsersRepository {
     * @return Future that represent the async operation. No content is returned in case of success.
     */
   def delete(username: String): Future[Unit]
+
+  /**
+    * Add a given permission to the specified user. The implementation should make sure not to store duplicates.
+    *
+    * @param username   Username.
+    * @param permission Permission to add.
+    * @return Future that represent the async operation. No content is returned in case of success.
+    */
+  def addPermission(username: String, permission: String): Future[UserNotFound \/ Unit]
+
+  /**
+    * Remove a given permission from the specified user.
+    *
+    * @param username   Username.
+    * @param permission Permission to remove.
+    * @return Future that represent the async operation. No content is returned in case of success.
+    */
+  def removePermission(username: String, permission: String): Future[UserNotFound \/ Unit]
 }

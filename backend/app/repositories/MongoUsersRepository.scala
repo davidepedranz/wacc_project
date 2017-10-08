@@ -21,6 +21,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
   private val COLLECTION_USERS = "users"
   private val FIELD_USERNAME = "_id"
   private val FIELD_PASSWORD = "password"
+  private val FIELD_PERMISSIONS = "permissions"
 
   private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection(COLLECTION_USERS))
 
@@ -38,7 +39,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     usersCollection.flatMap(_.insert(user))
       .map(result => \/-(assert(result.ok)))
       .recoverWith {
-        case _: DatabaseException => Future.successful(-\/(DuplicateUser()))
+        case _: DatabaseException => Future(-\/(DuplicateUser()))
       }
   }
 
@@ -58,9 +59,26 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     )
   }
 
+  // TODO: user not found?
   override def delete(username: String): Future[Unit] = {
     usersCollection
       .flatMap(_.remove(BSONDocument(FIELD_USERNAME -> username)))
       .map(_ => None)
   }
+
+  override def addPermission(username: String, permission: String): Future[UserNotFound \/ Unit] = {
+    usersCollection.flatMap(_
+      .findAndUpdate(
+        BSONDocument(FIELD_USERNAME -> username),
+        BSONDocument("$addToSet" -> BSONDocument(FIELD_PERMISSIONS -> permission))
+      )
+      .map(result => result.lastError.get.n)
+      .map {
+        case 1 => \/-(Unit)
+        case _ => -\/(UserNotFound())
+      }
+    )
+  }
+
+  override def removePermission(username: String, permission: String) = ???
 }
