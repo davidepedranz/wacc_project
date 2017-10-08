@@ -23,7 +23,6 @@ services:
 
   frontend:
     image: wacc-frontend:latest
-    build: ./frontend
     networks:
       - internal
     deploy:
@@ -53,7 +52,7 @@ services:
         - "traefik.backend=backend"
         - "traefik.port=9000"
         - "traefik.docker.network=internal"
-        - "traefik.frontend.rule=Host:api.localhost"
+        - "traefik.frontend.rule=PathPrefixStrip:/api"
 
 networks:
   public:
