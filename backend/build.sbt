@@ -20,3 +20,7 @@ libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
 // see http://www.scala-sbt.org/sbt-native-packager/formats/docker.html
 enablePlugins(DockerPlugin)
 version in Docker := "latest"
+
+libraryDependencies ++= Seq(
+  ws
+)
