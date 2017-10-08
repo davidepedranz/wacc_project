@@ -20,7 +20,7 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
     req.body.validate[UserWithPassword] match {
       case user: JsSuccess[UserWithPassword] => {
         usersRepository.create(user.value).map {
-          case \/-(_) => Ok
+          case \/-(_: Unit) => Ok
           case -\/(_: DuplicateUser) => Conflict
         }.recover {
           case _ => ServiceUnavailable

@@ -35,7 +35,6 @@ services:
         - "traefik.port=80"
         - "traefik.docker.network=internal"
         - "traefik.frontend.rule=Host:localhost"
-        # - "traefik.frontend.rule=PathPrefixStrip:/web"
 
   backend:
     image: wacc-backend:latest
@@ -43,6 +42,7 @@ services:
       - internal
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
+      MONGODB_URI: "mongodb://mongo:27017/wacc"
     deploy:
       replicas: 3
       restart_policy:
@@ -54,9 +54,27 @@ services:
         - "traefik.docker.network=internal"
         - "traefik.frontend.rule=PathPrefixStrip:/api"
 
+  mongo:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=false"
+
 networks:
   public:
     driver: overlay
   internal:
     driver: overlay
     internal: true
+
+volumes:
+  mongo_data: {}
