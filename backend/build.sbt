@@ -37,3 +37,6 @@ libraryDependencies ++= Seq(
 
 // JWT support
 libraryDependencies += "io.igl" %% "jwt" % "1.2.2"
+
+// Mockito (test mocks)
+libraryDependencies += "org.mockito" % "mockito-core" % "2.10.0" % "test"
