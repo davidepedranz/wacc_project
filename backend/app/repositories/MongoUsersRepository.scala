@@ -80,5 +80,17 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     )
   }
 
-  override def removePermission(username: String, permission: String) = ???
+  override def removePermission(username: String, permission: String): Future[UserNotFound \/ Unit] = {
+    usersCollection.flatMap(_
+      .findAndUpdate(
+        BSONDocument(FIELD_USERNAME -> username),
+        BSONDocument("$pull" -> BSONDocument(FIELD_PERMISSIONS -> permission))
+      )
+      .map(result => result.lastError.get.n)
+      .map {
+        case 1 => \/-(Unit)
+        case _ => -\/(UserNotFound())
+      }
+    )
+  }
 }

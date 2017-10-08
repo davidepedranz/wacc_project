@@ -160,6 +160,31 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
       }
     }
 
-    // TODO: test removePermission!
+    "#removePermission" should {
+      "return an error is the user does not exists" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.removePermission(TEST_USER_2.username, "some-new-permission"), MAX_DURATION
+        )
+        result.toEither mustBe 'left
+        assertExists(TEST_USER_1)
+      }
+      "do nothing if the user does not have the permission" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.removePermission(TEST_USER_1.username, "some-not-existing-permission"), MAX_DURATION
+        )
+        result.toEither mustBe 'right
+        assertExists(TEST_USER_1)
+      }
+      "remove the permission from the user" in {
+        createUsers(TEST_USER_1)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.removePermission(TEST_USER_1.username, TEST_USER_1.permissions.toSeq.head), MAX_DURATION
+        )
+        result.toEither mustBe 'right
+        assertExists(TEST_USER_1.copy(permissions = TEST_USER_1.permissions - TEST_USER_1.permissions.toSeq.head))
+      }
+    }
   }
 }
