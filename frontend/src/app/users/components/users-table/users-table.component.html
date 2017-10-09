@@ -6,18 +6,12 @@
     <md-cell *mdCellDef="let row"> {{row.username}} </md-cell>
   </ng-container>
 
-  <!-- Name Column -->
-  <ng-container mdColumnDef="name">
-    <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.name}} </md-cell>
-  </ng-container>
-
   <!-- Permissions -->
   <ng-container mdColumnDef="permissions">
     <md-header-cell *mdHeaderCellDef> Permissions </md-header-cell>
     <md-cell *mdCellDef="let row">
       <md-chip-list>
-        <md-chip *ngFor="let privilege of row.privileges">
+        <md-chip *ngFor="let privilege of row.permissions">
           {{privilege}}
         </md-chip>
       </md-chip-list>

@@ -38,7 +38,7 @@ export class UsersTableComponent implements OnInit {
   @Input()
   users$: Observable<User[]>;
 
-  readonly displayedColumns = ['username', 'name', 'permissions', 'actions'];
+  readonly displayedColumns = ['username', 'permissions', 'actions'];
   dataSource: UsersDataSource | null;
 
   @Output()
