@@ -15,6 +15,10 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 GET     /containers                 controllers.ComponentListController.getContainers
 
+GET     /containersAll                 controllers.ComponentListController.getContainersAll
+
+GET      /images                    controllers.ComponentListController.getImages
+
 POST    /containers/:id/stop        controllers.ComponentListController.postContainerStop(id:String) 
 
 POST    /containers/:id/start        controllers.ComponentListController.postContainerStart(id:String) 
