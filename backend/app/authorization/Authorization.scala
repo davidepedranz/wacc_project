@@ -24,8 +24,8 @@ final class Authorization @Inject()(authentication: Authentication, usersReposit
   // make sure the token in present (NB: we must return None as a result to apply this step)
   override def beforeAuthCheck[A](request: Request[A]): Future[Option[Result]] = {
     request.headers.get("Authorization") match {
-      case Some(_: String) => Future.successful(None)
-      case None => Future.successful(Option(Unauthorized))
+      case Some(_: String) => Future(None)
+      case None => Future(Option(Unauthorized))
     }
   }
 
@@ -34,10 +34,11 @@ final class Authorization @Inject()(authentication: Authentication, usersReposit
     val token: String = request.headers.get("Authorization").getOrElse[String]("")
     authentication.parseToken(token) match {
       case Failure(_) => Future(Option.empty)
-      case Success(username: String) => usersRepository.read(username).map {
-        case Some(user) => Option(Subject.fromUser(user))
-        case None => Option.empty
-      }
+      case Success(username: String) =>
+        usersRepository.read(username).map {
+          case Some(user) => Option(Subject.fromUser(user))
+          case None => Option.empty
+        }
     }
   }
 
