@@ -41,8 +41,8 @@ final class JwtAuthentication @Inject()(@Secret secret: String) extends Authenti
       key = secret,
       requiredAlg = algorithm,
       requiredHeaders = Set(Typ),
-      requiredClaims = Set(Iss),
+      requiredClaims = Set(Iss, Sub),
       iss = Some(issuer)
-    ).map(jwt => jwt.getClaim[Iss].get.value)
+    ).map(jwt => jwt.getClaim[Sub].get.value)
   }
 }

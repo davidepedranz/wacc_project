@@ -29,7 +29,7 @@ final class UsersController @Inject()(implicit ec: ExecutionContext, cc: Control
 
   def create: Action[JsValue] = usersWritePermission.apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
-      case error: JsError => Future.successful(BadRequest(JsError.toJson(error)))
+      case error: JsError => Future(BadRequest(JsError.toJson(error)))
       case user: JsSuccess[UserWithPassword] => usersRepository.create(user.value).map {
         case \/-(_: Unit) => Created
         case -\/(_: DuplicateUser) => Conflict
