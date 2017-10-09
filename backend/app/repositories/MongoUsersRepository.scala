@@ -59,11 +59,14 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
     )
   }
 
-  // TODO: user not found?
-  override def delete(username: String): Future[Unit] = {
+  override def delete(username: String): Future[UserNotFound \/ Unit] = {
     usersCollection
       .flatMap(_.remove(BSONDocument(FIELD_USERNAME -> username)))
-      .map(_ => None)
+      .map(result => result.n)
+      .map {
+        case 1 => \/-(Unit)
+        case _ => -\/(UserNotFound())
+      }
   }
 
   override def addPermission(username: String, permission: String): Future[UserNotFound \/ Unit] = {

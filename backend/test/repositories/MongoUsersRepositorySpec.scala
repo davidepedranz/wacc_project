@@ -119,15 +119,21 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
         Await.result(repository.delete("not-existing-user"), MAX_DURATION)
         assertExists(TEST_USER_1)
       }
-      "do nothing if the user with the given username has already been remove" in {
+      "return an error if the user with the given username has already been removed" in {
         createUsers(TEST_USER_1)
         Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
-        Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.delete(TEST_USER_1.username), MAX_DURATION
+        )
+        result.toEither mustBe 'left
         assertNotExists(TEST_USER_1)
       }
       "remove the user with the given username from the repository" in {
         createUsers(TEST_USER_1, TEST_USER_2)
-        Await.result(repository.delete(TEST_USER_1.username), MAX_DURATION)
+        val result: \/[UserNotFound, Unit] = Await.result(
+          repository.delete(TEST_USER_1.username), MAX_DURATION
+        )
+        result.toEither mustBe 'right
         assertNotExists(TEST_USER_1)
         assertExists(TEST_USER_2)
       }

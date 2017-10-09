@@ -59,7 +59,7 @@ trait UsersRepository {
     * @param username Username of the user to delete.
     * @return Future that represent the async operation. No content is returned in case of success.
     */
-  def delete(username: String): Future[Unit]
+  def delete(username: String): Future[UserNotFound \/ Unit]
 
   /**
     * Add a given permission to the specified user. The implementation should make sure not to store duplicates.
