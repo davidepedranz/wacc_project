@@ -17,4 +17,6 @@ object UserWithPassword {
 
   implicit val bsonRead: BSONDocumentReader[UserWithPassword] = Macros.reader[UserWithPassword]
   implicit val bsonWrite: BSONDocumentWriter[UserWithPassword] = Macros.writer[UserWithPassword]
+
+  val DEFAULT_USER = UserWithPassword("admin", "password", Permission.ALL)
 }

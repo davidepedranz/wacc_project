@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import io.igl.jwt._
 
-import scala.util.{Success, Try}
+import scala.util.Try
 
 /**
   * Implements the user authentication using JSON Web Token.
@@ -36,17 +36,13 @@ final class JwtAuthentication @Inject()(@Secret secret: String) extends Authenti
   }
 
   override def parseToken(token: String): Try[String] = {
-    if (token == "token") {
-      Success("admin")
-    } else {
-      DecodedJwt.validateEncodedJwt(
-        jwt = token,
-        key = secret,
-        requiredAlg = algorithm,
-        requiredHeaders = Set(Typ),
-        requiredClaims = Set(Iss),
-        iss = Some(issuer)
-      ).map(jwt => jwt.getClaim[Iss].get.value)
-    }
+    DecodedJwt.validateEncodedJwt(
+      jwt = token,
+      key = secret,
+      requiredAlg = algorithm,
+      requiredHeaders = Set(Typ),
+      requiredClaims = Set(Iss),
+      iss = Some(issuer)
+    ).map(jwt => jwt.getClaim[Iss].get.value)
   }
 }

@@ -13,9 +13,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scalaz.{-\/, \/-}
 
 @Singleton
-class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, bodyParsers: PlayBodyParsers,
-                                handler: DeadboltHandler, actionBuilders: ActionBuilders,
-                                usersRepository: UsersRepository) extends AbstractController(cc) {
+final class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, bodyParsers: PlayBodyParsers,
+                                      handler: DeadboltHandler, actionBuilders: ActionBuilders,
+                                      usersRepository: UsersRepository) extends AbstractController(cc) {
 
   private val usersReadPermission: actionBuilders.PatternAction.PatternActionBuilder = {
     actionBuilders.PatternAction(value = Permission.USERS_READ, patternType = PatternType.EQUALITY)
@@ -49,7 +49,7 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
 
   def delete(username: String): Action[AnyContent] = usersWritePermission.defaultHandler() { request =>
     request.subject.get.identifier match {
-      // make sure we do not delete our user
+      // make sure a user can not delete itself
       case `username` => Future(Forbidden)
       case _ => usersRepository.delete(username).map {
         case \/-(_: Unit) => NoContent
@@ -61,7 +61,7 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
   }
 
   def addPermission(username: String, permission: String): Action[AnyContent] = usersWritePermission.defaultHandler() {
-    //noinspection SimplifyBooleanMatch
+    // noinspection SimplifyBooleanMatch
     Permission.validate(permission) match {
       case false => Future(BadRequest)
       case true => usersRepository.addPermission(username, permission).map {
@@ -75,6 +75,7 @@ class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
 
   def removePermission(username: String, permission: String): Action[AnyContent] = usersWritePermission.defaultHandler() { request =>
     (request.subject.get.identifier, permission) match {
+      // make sure the user can not revoke its own write privilege
       case (`username`, Permission.USERS_WRITE) => Future(Forbidden)
       case _ => usersRepository.removePermission(username, permission).map {
         case \/-(_: Unit) => NoContent

@@ -15,6 +15,9 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
 
   override def configure(): Unit = {
 
+    // bootstrap
+    bind(classOf[Bootstrap]).asEagerSingleton()
+
     // authentication
     val secret: String = ConfigFactory.load().getString("play.http.secret.key")
     bind(classOf[String]).annotatedWith(classOf[Secret]).toInstance(secret)
