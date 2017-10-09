@@ -9,7 +9,6 @@ import com.typesafe.config.ConfigFactory
 import net.codingwell.scalaguice.ScalaModule
 import play.api.{Configuration, Environment}
 import repositories.{MongoUsersRepository, UsersRepository}
-import v1.post._
 
 class Module(environment: Environment, configuration: Configuration) extends AbstractModule with ScalaModule {
 
@@ -29,9 +28,5 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
 
     // users
     bind[UsersRepository].to[MongoUsersRepository].in[Singleton]
-
-
-    // to remove
-    bind[PostRepository].to[PostRepositoryImpl].in[Singleton]
   }
 }
