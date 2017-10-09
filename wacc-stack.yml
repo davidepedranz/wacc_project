@@ -15,7 +15,7 @@ services:
       - public
       - internal
     deploy:
-      replicas: 1
+      replicas: 3
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -33,7 +33,6 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
         - "traefik.port=80"
-        - "traefik.docker.network=internal"
         - "traefik.frontend.rule=Host:localhost"
 
   backend:
@@ -51,7 +50,6 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=backend"
         - "traefik.port=9000"
-        - "traefik.docker.network=internal"
         - "traefik.frontend.rule=PathPrefixStrip:/api"
 
   mongo:
