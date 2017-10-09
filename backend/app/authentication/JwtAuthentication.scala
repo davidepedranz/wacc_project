@@ -1,9 +1,12 @@
 package authentication
 
+import java.util.UUID
 import javax.inject.Inject
 
 import io.igl.jwt._
 
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Try
 
 /**
@@ -13,24 +16,30 @@ import scala.util.Try
   */
 final class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication {
 
-  // JWT header section
-  private val typ: String = "JWT"
-  private val algorithm: Algorithm = Algorithm.HS256
+  // JWT header
+  private val JWT_TYPE: String = "JWT"
+  private val JWT_ALGORITHM: Algorithm = Algorithm.HS256
 
-  // JWT body section
-  private val issuer: Iss = Iss("wacc")
-
-  // TODO: add claims for duration etc
+  // JWT body
+  private val APPLICATION_NAME: String = "wacc"
+  private val NOT_BEFORE_LEEWAY_SECONDS: Long = (2 minutes).toSeconds
+  private val DURATION_SECONDS: Long = (7 days).toSeconds
 
   override def generateToken(username: String): String = {
+    val now: Long = System.currentTimeMillis() / 1000
     new DecodedJwt(
       Seq(
-        Typ(typ),
-        Alg(algorithm)
+        Typ(JWT_TYPE),
+        Alg(JWT_ALGORITHM)
       ),
       Seq(
-        issuer,
-        Sub(username)
+        Jti(UUID.randomUUID().toString),
+        Iss(APPLICATION_NAME),
+        Aud(APPLICATION_NAME),
+        Sub(username),
+        Nbf(now - NOT_BEFORE_LEEWAY_SECONDS),
+        Iat(now),
+        Exp(now + DURATION_SECONDS)
       )
     ).encodedAndSigned(secret)
   }
@@ -39,10 +48,11 @@ final class JwtAuthentication @Inject()(@Secret secret: String) extends Authenti
     DecodedJwt.validateEncodedJwt(
       jwt = token,
       key = secret,
-      requiredAlg = algorithm,
+      requiredAlg = JWT_ALGORITHM,
       requiredHeaders = Set(Typ),
-      requiredClaims = Set(Iss, Sub),
-      iss = Some(issuer)
+      requiredClaims = Set(Jti, Iss, Aud, Sub, Nbf, Iat, Exp),
+      iss = Some(Iss(APPLICATION_NAME)),
+      aud = Some(Aud(APPLICATION_NAME))
     ).map(jwt => jwt.getClaim[Sub].get.value)
   }
 }
