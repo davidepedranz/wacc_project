@@ -22,3 +22,6 @@ GET      /images                    controllers.ComponentListController.getImage
 POST    /containers/:id/stop        controllers.ComponentListController.postContainerStop(id:String) 
 
 POST    /containers/:id/start        controllers.ComponentListController.postContainerStart(id:String) 
+
+GET      /containers/:id         controllers.ComponentListController.getContainersInfo(id : String)
+
