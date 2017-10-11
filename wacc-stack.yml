@@ -71,16 +71,10 @@ services:
 
   cassandra:
     image: cassandra:3.0
-    ports:
-        - "7000:7000"
     networks:
       - internal
     volumes:
       - cassandra_data:/cassandra/data/db
-    expose:
-        - 7000
-        - 7001
-        - 7199
     deploy:
       replicas: 1
       placement:
