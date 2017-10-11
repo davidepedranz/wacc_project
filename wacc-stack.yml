@@ -90,6 +90,19 @@ services:
         - "traefik.port=9000"
         - "traefik.frontend.rule=PathPrefixStrip:/api"
 
+  docker-socket-proxy:
+    image: wacc-docker-socket-proxy:latest
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
   mongo:
     image: mongo:3.4
     networks:

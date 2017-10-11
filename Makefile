@@ -18,6 +18,11 @@ build:
 	@echo "---------------------------------------"
 	@(cd ./backend && sbt docker:publishLocal)
 	@echo ""
+	@echo "---------------------------------------"
+	@echo "  Backend --> Docker"
+	@echo "---------------------------------------"
+	@docker build -t wacc-docker-socket-proxy:latest docker-socket-proxy
+	@echo ""
 
 undeploy:
 	@echo "---------------------------------------"
