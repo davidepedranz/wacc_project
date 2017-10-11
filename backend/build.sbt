@@ -40,3 +40,23 @@ libraryDependencies += "io.igl" %% "jwt" % "1.2.2"
 
 // Mockito (test mocks)
 libraryDependencies += "org.mockito" % "mockito-core" % "2.10.0" % "test"
+
+// connector of cassandra
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.3.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-mapping" % "3.3.0"
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-extras" % "3.3.0"
+libraryDependencies ++= Seq(
+  "com.chuusai" %% "shapeless" % "2.3.2"
+)
+
+resolvers ++= Seq(
+  Resolver.typesafeRepo("releases"),
+  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots")
+)
+
+libraryDependencies ++= Seq(
+  "com.outworkers"  %% "phantom-dsl" % "2.14.5"
+)
+// libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
+

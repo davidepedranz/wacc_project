@@ -69,6 +69,27 @@ services:
       labels:
         - "traefik.enable=false"
 
+  cassandra:
+    image: cassandra:3.0
+    ports:
+        - "7000:7000"
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    expose:
+        - 7000
+        - 7001
+        - 7199
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.enable=false"
+
 networks:
   public:
     driver: overlay
@@ -78,3 +99,4 @@ networks:
 
 volumes:
   mongo_data: {}
+  cassandra_data: {}
