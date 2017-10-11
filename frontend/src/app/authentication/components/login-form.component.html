@@ -1,33 +1,33 @@
-<md-card>
-  <md-card-title>
+<mat-card>
+  <mat-card-title>
     Login
-  </md-card-title>
-  <md-card-content>
+  </mat-card-title>
+  <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <p>
-        <md-form-field>
-          <input mdInput required placeholder="Username" type="text" formControlName="username" #username>
-          <md-error *ngIf="invalid(username) && username.errors.required">
+        <mat-form-field>
+          <input matInput required placeholder="Username" type="text" formControlName="username" #username>
+          <mat-error *ngIf="invalid(username) && username.errors.required">
             Please enter your username.
-          </md-error>
-        </md-form-field>
+          </mat-error>
+        </mat-form-field>
       </p>
       <p>
-        <md-form-field>
-          <input mdInput required placeholder="Password" type="password" formControlName="password">
-          <md-error *ngIf="invalid(password) && password.errors.required">
+        <mat-form-field>
+          <input matInput required placeholder="Password" type="password" formControlName="password">
+          <mat-error *ngIf="invalid(password) && password.errors.required">
             Please enter your password.
-          </md-error>
-        </md-form-field>
+          </mat-error>
+        </mat-form-field>
       </p>
       <p *ngIf="error">
-        <md-error>
+        <mat-error>
           Wrong username or password.
-        </md-error>
+        </mat-error>
       </p>
       <p>
-        <button md-raised-button color="primary" type="submit" [disabled]="form.invalid">Login</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Login</button>
       </p>
     </form>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

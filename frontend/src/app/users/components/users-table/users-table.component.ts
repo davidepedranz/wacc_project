@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -47,7 +47,7 @@ export class UsersTableComponent implements OnInit {
   readonly displayedColumns = ['username', 'permissions', 'actions'];
   dataSource: UsersDataSource | null;
 
-  constructor(public dialog: MdDialog) { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
     this.dataSource = new UsersDataSource(this.users$);
