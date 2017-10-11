@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { StoreModule, ActionReducerMap } from '@ngrx/store';
@@ -15,6 +16,7 @@ import { AuthenticationEffects } from './store/authentication.effects';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/token.service';
+import { TokenInterceptor } from './services/token.interceptor';
 import { LoginComponent } from './containers/login.component';
 import { LoginFormComponent } from './components/login-form.component';
 
@@ -39,4 +41,15 @@ import { LoginFormComponent } from './components/login-form.component';
     TokenService
   ]
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: AuthenticationModule,
+      providers: [{
+        provide: HTTP_INTERCEPTORS,
+        useClass: TokenInterceptor,
+        multi: true
+      }]
+    };
+  }
+}

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/retry';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/exhaustMap';
@@ -48,6 +50,7 @@ export class AuthenticationEffects {
         .exhaustMap(credentials =>
             this.authenticationService
                 .login(credentials)
+                .retry(1)
                 .map(token => new AuthenticationActions.LoginSuccess(token))
                 .catch(error => Observable.of(new AuthenticationActions.LoginFailure()))
         );

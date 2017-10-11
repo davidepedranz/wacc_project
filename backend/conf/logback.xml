@@ -59,7 +59,6 @@
   <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
   <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
-  <logger name="v1.post" level="TRACE" />
 
   <root level="WARN">
     <appender-ref ref="ASYNCFILE" />
