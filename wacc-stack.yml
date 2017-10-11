@@ -1,5 +1,43 @@
+# please this command before deploying this stack:
+# docker network create consul-net -d overlay --internal --subnet=172.20.0.0/24
+
 version: "3.3"
 services:
+
+  consul:
+    image: sdelrio/consul:latest
+    labels: [app=consul]
+    ports:
+      - "8500:8500"
+    networks:
+      - consul-net
+      - internal
+    environment:
+      - 'CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt": true}'
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL=consul
+      - CONSUL_CHECK_LEADER=true
+    deploy:
+      replicas: 3
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+
+  registrator:
+    image: gliderlabs/registrator:latest
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    networks:
+      - consul-net
+    command: ["-internal", "consul://consul:8500"]
 
   traefik:
     image: traefik:alpine
@@ -15,7 +53,7 @@ services:
       - public
       - internal
     deploy:
-      replicas: 1
+      replicas: 3
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -33,7 +71,6 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
         - "traefik.port=80"
-        - "traefik.docker.network=internal"
         - "traefik.frontend.rule=Host:localhost"
 
   backend:
@@ -51,8 +88,20 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=backend"
         - "traefik.port=9000"
-        - "traefik.docker.network=internal"
         - "traefik.frontend.rule=PathPrefixStrip:/api"
+
+  docker-socket-proxy:
+    image: wacc-docker-socket-proxy:latest
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
 
   mongo:
     image: mongo:3.4
@@ -90,6 +139,8 @@ networks:
   internal:
     driver: overlay
     internal: true
+  consul-net:
+    external: true
 
 volumes:
   mongo_data: {}

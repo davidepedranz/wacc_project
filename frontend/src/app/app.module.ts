@@ -10,12 +10,19 @@ import { environment } from '../environments/environment';
 import { routes } from './app.routing';
 import { CoreModule } from './core/core.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+// import { UsersModule } from './users/users.module';
+
 import { AppComponent } from './core/containers/app/app.component';
+
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './authentication/services/token.interceptor';
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+
+    HttpClientModule,
 
     RouterModule.forRoot(routes),
     StoreModule.forRoot({}),
@@ -23,10 +30,18 @@ import { AppComponent } from './core/containers/app/app.component';
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
 
     CoreModule,
-    AuthenticationModule
+    AuthenticationModule.forRoot(),
+    // UsersModule
   ],
   bootstrap: [
     AppComponent
-  ]
+  ],
+  // providers: [
+  //   {
+  //     provide: HTTP_INTERCEPTORS,
+  //     useClass: TokenInterceptor,
+  //     multi: true
+  //   }
+  // ]
 })
 export class AppModule { }

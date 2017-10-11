@@ -21,6 +21,13 @@ import scala.util.{Failure, Success}
   */
 final class Authorization @Inject()(authentication: Authentication, usersRepository: UsersRepository) extends DeadboltHandler with Results {
 
+  private def parseAuthorizationHeader(header: String): Option[String] = {
+    header.split("""\s""") match {
+      case Array("Bearer", token) => Option(token)
+      case _ ⇒ None
+    }
+  }
+
   // make sure the token in present (NB: we must return None as a result to apply this step)
   override def beforeAuthCheck[A](request: Request[A]): Future[Option[Result]] = {
     request.headers.get("Authorization") match {
@@ -31,14 +38,13 @@ final class Authorization @Inject()(authentication: Authentication, usersReposit
 
   // TODO: find better way to convert from Future[Option[User]] to Future[Option[Subject]]
   override def getSubject[A](request: AuthenticatedRequest[A]): Future[Option[Subject]] = {
-    val token: String = request.headers.get("Authorization").getOrElse[String]("")
+    val token: String = request.headers.get("Authorization").flatMap(parseAuthorizationHeader).getOrElse[String]("")
     authentication.parseToken(token) match {
       case Failure(_) => Future(Option.empty)
-      case Success(username: String) =>
-        usersRepository.read(username).map {
-          case Some(user) => Option(Subject.fromUser(user))
-          case None => Option.empty
-        }
+      case Success(username: String) => usersRepository.read(username).map {
+        case Some(user) => Option(Subject.fromUser(user))
+        case None => Option.empty
+      }
     }
   }
 
