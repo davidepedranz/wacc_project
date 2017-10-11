@@ -14,7 +14,7 @@ import { UsersService } from './services/users.service';
 import { UsersEffects } from './store/users.effects';
 import { UsersComponent } from './containers/users/users.component';
 import { UsersTableComponent } from './components/users-table/users-table.component';
-import { UserEditComponent } from './containers/user-edit/user-edit.component';
+import { UserAddComponent } from './containers/user-add/user-add.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { UserDeleteDialogComponent } from './components/user-delete-dialog/user-delete-dialog.component';
 
@@ -30,7 +30,7 @@ import { UserDeleteDialogComponent } from './components/user-delete-dialog/user-
   declarations: [
     UsersComponent,
     UsersTableComponent,
-    UserEditComponent,
+    UserAddComponent,
     UserFormComponent,
     UserDeleteDialogComponent
   ],

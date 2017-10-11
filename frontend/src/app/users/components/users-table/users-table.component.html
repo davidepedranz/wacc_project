@@ -22,10 +22,6 @@
   <ng-container mdColumnDef="actions">
     <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
     <md-cell *mdCellDef="let row">
-      <button md-raised-button color="primary" [routerLink]="['/users', row.username, 'edit']">
-        <md-icon>edit</md-icon>
-        <span fxShow fxHide.lt-md="true">Edit</span>
-      </button>
       <button md-raised-button color="warn" (click)="onDeleteUser(row.username)" [disabled]="row.username == currentUser">
         <md-icon>delete</md-icon> 
         <span fxShow fxHide.lt-md="true">Delete</span>
