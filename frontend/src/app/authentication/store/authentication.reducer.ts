@@ -68,6 +68,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
 
 // selectors
 export const getToken = (state: State): string => state.token;
+export const getUsername = (state: State): string => 'admin';
 export const isLoggedIn = (state: State): boolean => getToken(state) != null;
 export const isLoginPending = (state: State): boolean => state.loginPending;
 export const isLoginError = (state: State): boolean => state.loginError;

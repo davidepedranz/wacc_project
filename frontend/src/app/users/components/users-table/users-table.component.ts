@@ -30,6 +30,9 @@ export class UsersDataSource extends DataSource<User> {
 export class UsersTableComponent implements OnInit {
 
   @Input()
+  currentUser: string | null;
+
+  @Input()
   fetching: boolean;
 
   @Input()
@@ -38,11 +41,11 @@ export class UsersTableComponent implements OnInit {
   @Input()
   users$: Observable<User[]>;
 
-  readonly displayedColumns = ['username', 'permissions', 'actions'];
-  dataSource: UsersDataSource | null;
-
   @Output()
   deleteUser = new EventEmitter<string>();
+
+  readonly displayedColumns = ['username', 'permissions', 'actions'];
+  dataSource: UsersDataSource | null;
 
   constructor(public dialog: MdDialog) { }
 
