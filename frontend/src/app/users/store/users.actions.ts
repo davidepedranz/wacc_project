@@ -8,6 +8,8 @@ export const FETCH_USERS_SUCCESS = '[Users] Fetch Success';
 export const FETCH_USERS_FAILURE = '[Users] Fetch Failure';
 
 export const CREATE_USER = '[Users] Create User';
+export const CREATE_USER_SUCCESS = '[Users] Create User Success';
+export const CREATE_USER_FAILURE = '[Users] Create User Failure';
 export const DELETE_USER = '[Users] Delete User';
 export const ADD_PERMISSION = '[Users] Add Permission';
 export const REMOVE_PERMISSION = '[Users] Remove Permission';
@@ -30,6 +32,16 @@ export class CreateUser implements Action {
     readonly type = CREATE_USER;
 
     constructor(public payload: UserWithPassword) { }
+}
+
+export class CreateUserSuccess implements Action {
+    readonly type = CREATE_USER_SUCCESS;
+}
+
+export class CreateUserFailure implements Action {
+    readonly type = CREATE_USER_FAILURE;
+
+    constructor(public payload: string) { }
 }
 
 export class DeleteUser implements Action {
@@ -55,6 +67,8 @@ export type All =
     | FetchUsersSuccess
     | FetchUsersFailure
     | CreateUser
+    | CreateUserSuccess
+    | CreateUserFailure
     | DeleteUser
     | AddPermission
     | RemovePermission;

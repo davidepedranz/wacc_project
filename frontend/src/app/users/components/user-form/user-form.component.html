@@ -1,3 +1,58 @@
-<p>
-  user-form works!
-</p>
+<mat-card>
+  <mat-card-title>
+    New User
+  </mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <p>
+        <mat-form-field>
+          <input matInput required placeholder="Username" type="text" formControlName="username" #usernameRef>
+          <mat-error *ngIf="invalid(username) && username.errors.required">
+            Please enter a username for the new user.
+          </mat-error>
+          <mat-error *ngIf="invalid(username) && !username.errors.required && username.errors.minlength">
+            The username must be at least {{username.errors.minlength?.requiredLength}} characters.
+          </mat-error>
+          <mat-error *ngIf="invalid(username) && username.errors.maxlength">
+            The username can not be longer than {{username.errors.maxlength?.requiredLength}} characters.
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <div formGroupName="passwords">
+        <p>
+          <mat-form-field>
+            <input matInput required placeholder="Password" type="password" formControlName="password">
+            <mat-error *ngIf="invalid(password) && password.errors.required">
+              Please enter a password for the new user.
+            </mat-error>
+            <mat-error *ngIf="invalid(password) && password.errors.minlength">
+              The password must be at least {{password.errors.minlength?.requiredLength}} characters.
+            </mat-error>
+            <mat-error *ngIf="invalid(password) && password.errors.maxlength">
+              The password can not be longer than {{password.errors.maxlength?.requiredLength}} characters.
+            </mat-error>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input matInput required placeholder="Confirm Password" type="password" formControlName="confirmPassword">
+            <mat-error *ngIf="invalid(confirmPassword) && confirmPassword.errors.required">
+              Please repeat the password for the new user.
+            </mat-error>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-error *ngIf="!invalid(confirmPassword) && passwords.errors?.notSame">
+            Password not matching.
+          </mat-error>
+          <mat-error *ngIf="error">
+            Server returned error: {{error}}.
+          </mat-error>
+        </p>
+      </div>
+      <p>
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Save User</button>
+      </p>
+    </form>
+  </mat-card-content>
+</mat-card>

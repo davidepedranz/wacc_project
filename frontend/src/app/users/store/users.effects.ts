@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { Effect, Actions } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/exhaustMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { Observable } from 'rxjs/Observable';
-import { Effect, Actions } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
 
 import * as UsersActions from './users.actions';
 import { UsersService } from '../services/users.service';
@@ -27,21 +26,30 @@ export class UsersEffects {
     createUser$ = this.actions$
         .ofType(UsersActions.CREATE_USER)
         .map((action: UsersActions.CreateUser) => action.payload)
-        .exhaustMap(this.usersService.createUser);
+        .exhaustMap(user => this.usersService
+            .createUser(user)
+            .map(_ => new UsersActions.CreateUserSuccess())
+            .catch(error => Observable.of(new UsersActions.CreateUserFailure(error)))
+        );
 
-    @Effect()
+    @Effect({ dispatch: false })
+    createUserSuccessRedirect$ = this.actions$
+        .ofType(UsersActions.CREATE_USER_SUCCESS)
+        .do(path => this.router.navigate(['/users']));
+
+    @Effect({ dispatch: false })
     deleteUser$ = this.actions$
         .ofType(UsersActions.DELETE_USER)
         .map((action: UsersActions.DeleteUser) => action.payload)
         .exhaustMap(username => this.usersService.deleteUser(username));
 
-    @Effect()
+    @Effect({ dispatch: false })
     addPermission$ = this.actions$
         .ofType(UsersActions.ADD_PERMISSION)
         .map((action: UsersActions.AddPermission) => action.payload)
         .exhaustMap(o => this.usersService.addPermission(o.username, o.permission));
 
-    @Effect()
+    @Effect({ dispatch: false })
     removePermission$ = this.actions$
         .ofType(UsersActions.REMOVE_PERMISSION)
         .map((action: UsersActions.RemovePermission) => action.payload)
@@ -49,6 +57,7 @@ export class UsersEffects {
 
     constructor(
         private actions$: Actions,
-        private usersService: UsersService
+        private usersService: UsersService,
+        private router: Router
     ) { }
 }

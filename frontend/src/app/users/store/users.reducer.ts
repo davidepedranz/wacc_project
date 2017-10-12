@@ -3,18 +3,26 @@ import * as Immutable from 'immutable';
 import * as UserActions from './users.actions';
 import { User } from '../models/user.model';
 
-// export type Action = UserActions.All;
+export interface AddUserState {
+    running: boolean;
+    error: string | null;
+}
 
 export interface State {
     fetching: boolean;
     error: boolean;
     users: Immutable.Map<string, User>;
+    create: AddUserState;
 }
 
 const initialState: State = {
     fetching: false,
     error: false,
-    users: Immutable.Map<string, User>()
+    users: Immutable.Map<string, User>(),
+    create: {
+        running: false,
+        error: null
+    }
 };
 
 export function reducer(state = initialState, action: UserActions.All): State {
@@ -47,6 +55,36 @@ export function reducer(state = initialState, action: UserActions.All): State {
             };
         }
 
+        case UserActions.CREATE_USER: {
+            return {
+                ...state,
+                create: {
+                    running: true,
+                    error: null
+                }
+            };
+        }
+
+        case UserActions.CREATE_USER_SUCCESS: {
+            return {
+                ...state,
+                create: {
+                    running: false,
+                    error: null
+                }
+            };
+        }
+
+        case UserActions.CREATE_USER_FAILURE: {
+            return {
+                ...state,
+                create: {
+                    running: false,
+                    error: action.payload
+                }
+            };
+        }
+
         // TODO: on success only!
         case UserActions.DELETE_USER: {
             return {
@@ -66,3 +104,5 @@ export const getUserByUsername = (username: string) => (state: State): User => s
 export const getUsers = (state: State): User[] => state.users.valueSeq().toArray();
 export const isFetchingUsers = (state: State): boolean => state.fetching;
 export const isFetchingUsersError = (state: State): boolean => state.error;
+export const isCreatingUser = (state: State): boolean => state.create.running;
+export const isCreatingUserError = (state: State): string | null => state.create.error;

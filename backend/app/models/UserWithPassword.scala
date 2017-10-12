@@ -11,7 +11,7 @@ case class UserWithPassword(@Key("_id") username: String, password: String, perm
 object UserWithPassword {
   implicit val reads: Reads[UserWithPassword] = (
     (JsPath \ "username").read[String](minLength[String](5) keepAnd maxLength[String](30)) and
-      (JsPath \ "password").read[String](minLength[String](5) keepAnd maxLength[String](100)) and
+      (JsPath \ "password").read[String](minLength[String](8) keepAnd maxLength[String](100)) and
       (JsPath \ "permissions").read[Set[String]]
     ) (UserWithPassword.apply _)
 
