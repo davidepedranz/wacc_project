@@ -13,15 +13,16 @@ GET       /                       controllers.HomeController.index
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-GET     /containers                 controllers.ComponentListController.getContainers
+GET     /containers                    controllers.ComponentsController.getContainers
 
-GET     /containersAll                 controllers.ComponentListController.getContainersAll
+GET     /containersAll                 controllers.ComponentsController.getContainersAll
 
-GET      /images                    controllers.ComponentListController.getImages
+GET      /images                    controllers.ComponentsController.getImages
 
-POST    /containers/:id/stop        controllers.ComponentListController.postContainerStop(id:String) 
+POST    /containers/:id/stop        controllers.ComponentsController.postContainerStop(id:String)
 
-POST    /containers/:id/start        controllers.ComponentListController.postContainerStart(id:String) 
+POST    /containers/:id/start        controllers.ComponentsController.postContainerStart(id:String)
 
-GET      /containers/:id         controllers.ComponentListController.getContainersInfo(id : String)
+GET      /containers/:id         controllers.ComponentsController.getContainersInfo(id : String)
 
+#POST    /containers/create     controllers.ComponentsController.createContainer()
