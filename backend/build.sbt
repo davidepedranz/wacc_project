@@ -25,7 +25,8 @@ libraryDependencies ++= Seq(
 // see http://www.scala-sbt.org/sbt-native-packager/formats/docker.html
 enablePlugins(DockerPlugin)
 version in Docker := "latest"
-
+// dockerUsername in Docker := Option("wacccourse")
+// dockerAlias in Docker := new com.typesafe.sbt.packager.docker.DockerAlias(Option("index.docker.io"),Option("wacccourse"), "backend", Option("latest"))
 
 // scalaz -> we use EitherT
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.15"

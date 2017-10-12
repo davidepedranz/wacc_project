@@ -60,7 +60,7 @@ services:
         condition: on-failure
 
   frontend:
-    image: wacc-frontend:latest
+    image: wacccourse/frontend:latest
     networks:
       - internal
     deploy:
@@ -74,7 +74,7 @@ services:
         - "traefik.frontend.rule=Host:localhost"
 
   backend:
-    image: wacc-backend:latest
+    image: wacccourse/backend:latest
     networks:
       - internal
     environment:
@@ -91,7 +91,7 @@ services:
         - "traefik.frontend.rule=PathPrefixStrip:/api"
 
   docker-socket-proxy:
-    image: wacc-docker-socket-proxy:latest
+    image: wacccourse/docker-socket-proxy:latest
     networks:
       - internal
     volumes:

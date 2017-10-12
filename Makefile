@@ -11,17 +11,27 @@ build:
 	@echo "---------------------------------------"
 	@echo "  Frontend --> Docker"
 	@echo "---------------------------------------"
-	@docker build -t wacc-frontend:latest frontend
+	@docker build -t wacccourse/frontend:latest frontend
 	@echo ""
 	@echo "---------------------------------------"
 	@echo "  Backend --> Docker"
 	@echo "---------------------------------------"
 	@(cd ./backend && sbt docker:publishLocal)
+	@docker tag wacc-backend wacccourse/backend
 	@echo ""
 	@echo "---------------------------------------"
 	@echo "  Backend --> Docker"
 	@echo "---------------------------------------"
-	@docker build -t wacc-docker-socket-proxy:latest docker-socket-proxy
+	@docker build -t wacccourse/docker-socket-proxy:latest docker-socket-proxy
+	@echo ""
+
+push: build
+	@echo "---------------------------------------"
+	@echo "  Pushing Imanges to Docker Hub"
+	@echo "---------------------------------------"
+	docker push wacccourse/frontend
+	docker push wacccourse/backend
+	docker push wacccourse/docker-socket-proxy
 	@echo ""
 
 undeploy:
