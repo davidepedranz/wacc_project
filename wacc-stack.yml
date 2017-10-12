@@ -44,7 +44,7 @@ services:
       - internal
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
-      DOCKER_HOST : "http://localhost:2375"
+      DOCKER_HOST : "http://docker-socket-proxy:2375"
     deploy:
       replicas: 3
       restart_policy:
