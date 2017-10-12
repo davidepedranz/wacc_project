@@ -1,5 +1,5 @@
-<section>
-  <mat-card *ngIf="!(fetching$ | async)">
+<section fxLayout fxLayoutAlign="center" class="container">
+  <mat-card *ngIf="!(fetching$ | async)" fxFlex="100">
     <mat-card-title>Components</mat-card-title>
     <mat-card-content>
       <app-components-table [fetching]="fetching$ | async" [error]="error$ | async" [components$]="components$"></app-components-table>

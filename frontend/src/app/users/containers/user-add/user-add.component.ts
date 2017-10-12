@@ -11,7 +11,6 @@ import * as fromUsers from '../../store';
 @Component({
   selector: 'app-user-add',
   templateUrl: './user-add.component.html',
-  styleUrls: ['./user-add.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserAddComponent {
