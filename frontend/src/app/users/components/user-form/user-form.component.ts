@@ -11,6 +11,8 @@ import { UserWithPassword } from '../../models/user-with-password.model';
 })
 export class UserFormComponent implements AfterViewInit {
 
+  readonly ALL_PERMISSIONS = ['users.read', 'users.write'];
+
   @Input()
   set pending(isPending: boolean) {
     if (isPending) {
@@ -45,8 +47,16 @@ export class UserFormComponent implements AfterViewInit {
       passwords: this.fb.group({
         password: ['', Validators.compose([Validators.required, Validators.minLength(8), Validators.maxLength(100)])],
         confirmPassword: ['', Validators.required]
-      }, { validator: this.checkPasswords })
+      }, { validator: this.checkPasswords }),
+      permissions: this.buildPermissions()
     });
+  }
+
+  buildPermissions() {
+    const arr = this.ALL_PERMISSIONS.map(permission => {
+      return this.fb.control(false);
+    });
+    return this.fb.array(arr);
   }
 
   checkPasswords(group: FormGroup) {
@@ -71,6 +81,10 @@ export class UserFormComponent implements AfterViewInit {
     return this.passwords.get('confirmPassword');
   }
 
+  get permissions() {
+    return this.form.get('permissions');
+  }
+
   invalid(field: AbstractControl) {
     return field.invalid && (field.dirty || field.touched);
   }
@@ -79,7 +93,7 @@ export class UserFormComponent implements AfterViewInit {
     this.submitted.emit({
       username: this.username.value,
       password: this.password.value,
-      permissions: []
+      permissions: this.permissions.value.reduce((acc, selected, i) => selected ? [...acc, this.ALL_PERMISSIONS[i]] : acc, [])
     });
     this.usernameRef.nativeElement.focus();
   }
