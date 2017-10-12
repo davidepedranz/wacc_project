@@ -3,7 +3,7 @@
         <mat-card-title>Users</mat-card-title>
         <mat-card-content>
             <app-users-table [currentUser]="currentUser$ | async" [fetching]="fetching$ | async" [error]="error$ | async" [users$]="users$"
-                (deleteUser)="deleteUser($event)">
+                (changePermission)=changePermission($event) (deleteUser)="deleteUser($event)">
             </app-users-table>
         </mat-card-content>
         <mat-card-actions>

@@ -47,13 +47,19 @@ export class UsersEffects {
     addPermission$ = this.actions$
         .ofType(UsersActions.ADD_PERMISSION)
         .map((action: UsersActions.AddPermission) => action.payload)
-        .exhaustMap(o => this.usersService.addPermission(o.username, o.permission));
+        .exhaustMap(o => this.usersService
+            .addPermission(o.username, o.permission)
+            .catch(error => Observable.of())
+        );
 
     @Effect({ dispatch: false })
     removePermission$ = this.actions$
         .ofType(UsersActions.REMOVE_PERMISSION)
         .map((action: UsersActions.RemovePermission) => action.payload)
-        .exhaustMap(o => this.usersService.removePermission(o.username, o.permission));
+        .exhaustMap(o => this.usersService
+            .removePermission(o.username, o.permission)
+            .catch(error => Observable.of())
+        );
 
     constructor(
         private actions$: Actions,

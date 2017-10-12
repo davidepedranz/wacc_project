@@ -6,6 +6,7 @@ import { User } from '../../models/user.model';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
 import * as fromAuthentication from '../../../authentication/store';
+import { ChangePermission } from '../../components/users-table/users-table.component';
 
 @Component({
   selector: 'app-users',
@@ -28,6 +29,20 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     this.usersStore.dispatch(new UsersActions.FetchUsers());
+  }
+
+  changePermission($event: ChangePermission) {
+    if ($event.status) {
+      this.usersStore.dispatch(new UsersActions.AddPermission({
+        username: $event.username,
+        permission: $event.permission
+      }));
+    } else {
+      this.usersStore.dispatch(new UsersActions.RemovePermission({
+        username: $event.username,
+        permission: $event.permission
+      }));
+    }
   }
 
   deleteUser(username: string) {

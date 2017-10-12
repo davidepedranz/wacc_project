@@ -10,6 +10,9 @@ import 'rxjs/add/operator/switchMap';
 import { User } from '../models/user.model';
 import { UserWithPassword } from '../models/user-with-password.model';
 
+// list of permissions available for the users
+export const PERMISSIONS = ['users.read', 'users.write'];
+
 @Injectable()
 export class UsersService {
 
@@ -37,7 +40,7 @@ export class UsersService {
 
   addPermission(username: string, permission: string): Observable<{}> {
     return this.http
-      .post(this.BASE + `/v1/users/${username}/permissions/${permission}`, null);
+      .post(this.BASE + `/v1/users/${username}/permissions/${permission}`, null, { responseType: 'text' });
   }
 
   removePermission(username: string, permission: string): Observable<{}> {

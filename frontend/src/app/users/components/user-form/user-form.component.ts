@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, AfterViewInit, Input, Output, Event
 import { AbstractControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { UserWithPassword } from '../../models/user-with-password.model';
+import { PERMISSIONS } from '../../services/users.service';
 
 @Component({
   selector: 'app-user-form',
@@ -11,7 +12,7 @@ import { UserWithPassword } from '../../models/user-with-password.model';
 })
 export class UserFormComponent implements AfterViewInit {
 
-  readonly ALL_PERMISSIONS = ['users.read', 'users.write'];
+  readonly ALL_PERMISSIONS = PERMISSIONS;
 
   @Input()
   set pending(isPending: boolean) {

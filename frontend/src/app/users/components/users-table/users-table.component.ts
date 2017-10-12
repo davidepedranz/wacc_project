@@ -1,11 +1,18 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatCheckboxChange } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { User } from '../../models/user.model';
 import { UserDeleteDialogComponent } from '../user-delete-dialog/user-delete-dialog.component';
+import { PERMISSIONS } from '../../services/users.service';
+
+export interface ChangePermission {
+  username: string;
+  permission: string;
+  status: boolean;
+}
 
 // see: https://medium.com/@LewisGJ/ngrx-and-md-table-cea1bc9673ee
 export class UsersDataSource extends DataSource<User> {
@@ -29,6 +36,8 @@ export class UsersDataSource extends DataSource<User> {
 })
 export class UsersTableComponent implements OnInit {
 
+  readonly ALL_PERMISSIONS = PERMISSIONS;
+
   @Input()
   currentUser: string | null;
 
@@ -42,6 +51,9 @@ export class UsersTableComponent implements OnInit {
   users$: Observable<User[]>;
 
   @Output()
+  changePermission = new EventEmitter<ChangePermission>();
+
+  @Output()
   deleteUser = new EventEmitter<string>();
 
   readonly displayedColumns = ['username', 'permissions', 'actions'];
@@ -53,11 +65,27 @@ export class UsersTableComponent implements OnInit {
     this.dataSource = new UsersDataSource(this.users$);
   }
 
-  onDeleteUser(username: string) {
+  hasPrivilege(user: User, permission: string): boolean {
+    return user.permissions.indexOf(permission) !== -1;
+  }
+
+  canEdit(user: User, permission: string): boolean {
+    return user.username !== this.currentUser || (permission !== 'users.read' && permission !== 'users.write');
+  }
+
+  onChangePermission(user: User, permission: string, $event: MatCheckboxChange) {
+    this.changePermission.emit({
+      username: user.username,
+      permission: permission,
+      status: $event.checked
+    });
+  }
+
+  onDeleteUser(user: User) {
+    const username = user.username;
     const dialogRef = this.dialog.open(UserDeleteDialogComponent, {
       data: { username }
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.deleteUser.emit(username);
