@@ -6,6 +6,7 @@ import { UserWithPassword } from '../../models/user-with-password.model';
 @Component({
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
+  styleUrls: ['./user-form-component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserFormComponent implements AfterViewInit {

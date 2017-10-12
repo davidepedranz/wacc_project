@@ -3,9 +3,9 @@
     New User
   </mat-card-title>
   <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="form">
       <p>
-        <mat-form-field>
+        <mat-form-field class="full-width">
           <input matInput required placeholder="Username" type="text" formControlName="username" #usernameRef>
           <mat-error *ngIf="invalid(username) && username.errors.required">
             Please enter a username for the new user.
@@ -20,7 +20,7 @@
       </p>
       <div formGroupName="passwords">
         <p>
-          <mat-form-field>
+          <mat-form-field class="full-width">
             <input matInput required placeholder="Password" type="password" formControlName="password">
             <mat-error *ngIf="invalid(password) && password.errors.required">
               Please enter a password for the new user.
@@ -34,7 +34,7 @@
           </mat-form-field>
         </p>
         <p>
-          <mat-form-field>
+          <mat-form-field class="full-width">
             <input matInput required placeholder="Confirm Password" type="password" formControlName="confirmPassword">
             <mat-error *ngIf="invalid(confirmPassword) && confirmPassword.errors.required">
               Please repeat the password for the new user.
