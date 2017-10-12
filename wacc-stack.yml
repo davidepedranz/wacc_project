@@ -41,7 +41,7 @@ services:
 
   traefik:
     image: traefik:alpine
-    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=localhost --docker.exposedbydefault=false --logLevel=INFO
+    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=INFO
     ports:
       - "80:80"
       - "443:443"
@@ -53,7 +53,7 @@ services:
       - public
       - internal
     deploy:
-      replicas: 3
+      mode: global
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -71,7 +71,7 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
         - "traefik.port=80"
-        - "traefik.frontend.rule=Host:localhost"
+        - traefik.frontend.rule=Host:${DOMAIN:-localhost}
 
   backend:
     image: wacccourse/backend:latest
