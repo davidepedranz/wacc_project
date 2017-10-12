@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { User } from '../../models/user.model';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
+import * as fromAuthentication from '../../../authentication/store';
 
 @Component({
   selector: 'app-users',
@@ -13,21 +14,23 @@ import * as fromUsers from '../../store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
+  currentUser$: Observable<string>;
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
   users$: Observable<User[]>;
 
-  constructor(private store: Store<fromUsers.State>) {
-    this.fetching$ = store.select(fromUsers.isFetchingUsers);
-    this.error$ = store.select(fromUsers.isFetchingUsersError);
-    this.users$ = store.select(fromUsers.getUsers);
+  constructor(private authenticationStore: Store<fromAuthentication.State>, private usersStore: Store<fromUsers.State>) {
+    this.currentUser$ = authenticationStore.select(fromAuthentication.getUsername);
+    this.fetching$ = usersStore.select(fromUsers.isFetchingUsers);
+    this.error$ = usersStore.select(fromUsers.isFetchingUsersError);
+    this.users$ = usersStore.select(fromUsers.getUsers);
   }
 
   ngOnInit() {
-    this.store.dispatch(new UsersActions.FetchUsers());
+    this.usersStore.dispatch(new UsersActions.FetchUsers());
   }
 
   deleteUser(username: string) {
-    this.store.dispatch(new UsersActions.DeleteUser(username));
+    this.usersStore.dispatch(new UsersActions.DeleteUser(username));
   }
 }

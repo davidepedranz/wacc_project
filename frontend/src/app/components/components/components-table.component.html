@@ -1,4 +1,4 @@
-<md-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource">
 
   <!--
       Note that these columns can be defined in any order.
@@ -6,39 +6,39 @@
     -->
 
   <!-- ID Column -->
-  <ng-container mdColumnDef="id">
-    <md-header-cell *mdHeaderCellDef> ID </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.id}} </md-cell>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
   </ng-container>
 
   <!-- Name Column -->
-  <ng-container mdColumnDef="name">
-    <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.name}} </md-cell>
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
   </ng-container>
 
   <!-- Status Column -->
-  <ng-container mdColumnDef="status">
-    <md-header-cell *mdHeaderCellDef> Status </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.status}} </md-cell>
+  <ng-container matColumnDef="status">
+    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
   </ng-container>
 
   <!-- Image Column -->
-  <ng-container mdColumnDef="image">
-    <md-header-cell *mdHeaderCellDef> Image </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.image}}</md-cell>
+  <ng-container matColumnDef="image">
+    <mat-header-cell *matHeaderCellDef> Image </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.image}}</mat-cell>
   </ng-container>
 
   <!-- Actions Column -->
-  <ng-container mdColumnDef="actions">
-    <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
-    <md-cell *mdCellDef="let row">
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+    <mat-cell *matCellDef="let row">
       <!-- <Button></Button> -->
-    </md-cell>
+    </mat-cell>
   </ng-container>
 
   <!-- Header and Row Declarations -->
-  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-  <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
-</md-table>
+</mat-table>

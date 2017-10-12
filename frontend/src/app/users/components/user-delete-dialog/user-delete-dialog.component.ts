@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, Inject } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-user-delete-dialog',
@@ -11,8 +11,8 @@ export class UserDeleteDialogComponent implements OnInit {
   username: string;
 
   constructor(
-    public dialogRef: MdDialogRef<UserDeleteDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any
+    public dialogRef: MatDialogRef<UserDeleteDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.username = data.username;
   }

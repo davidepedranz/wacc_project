@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { UsersComponent } from './containers/users/users.component';
-import { UserEditComponent } from './containers/user-edit/user-edit.component';
+import { UserAddComponent } from './containers/user-add/user-add.component';
 
 export const routes: Routes = [
     {
@@ -10,9 +10,9 @@ export const routes: Routes = [
         component: UsersComponent
     },
     {
-        path: ':username/edit',
+        path: 'new',
         pathMatch: 'full',
-        component: UserEditComponent
+        component: UserAddComponent
     },
     {
         path: '**',
