@@ -71,5 +71,15 @@ gcp:
 	ssh wacc1 'docker network create consul-net -d overlay --subnet=172.20.0.0/24 || exit 0'
 	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-stack.yml'
 	@echo ""
+
+gcp-clean:
+	@echo "---------------------------------------"
+	@echo "  Cleanup Google Cloud Platform"
+	@echo "---------------------------------------"
+	ssh wacc1 'rm -r ~/repository || exit 0'
+	ssh wacc1 'docker stack rm wacc'
+	ssh wacc1 'docker network rm consul-net || exit 0'
+	@echo ""
+
 	
 all: build deploy

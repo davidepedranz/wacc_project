@@ -88,7 +88,7 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=backend"
         - "traefik.port=9000"
-        - "traefik.frontend.rule=PathPrefixStrip:/api"
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost};PathPrefixStrip:/api"
 
   docker-socket-proxy:
     image: wacccourse/docker-socket-proxy:latest
