@@ -1,5 +1,5 @@
-<section>
-    <mat-card *ngIf="!(fetching$ | async)">
+<section fxLayout fxLayoutAlign="center" class="container">
+    <mat-card *ngIf="!(fetching$ | async)" fxFlex="100">
         <mat-card-title>Users</mat-card-title>
         <mat-card-content>
             <app-users-table [currentUser]="currentUser$ | async" [fetching]="fetching$ | async" [error]="error$ | async" [users$]="users$"
@@ -7,9 +7,8 @@
             </app-users-table>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-raised-button color="primary" [routerLink]="['/users', 'new']">
-                <mat-icon>edit</mat-icon>
-                <span fxShow fxHide.lt-mat="true">New User</span>
+            <button [routerLink]="['/users', 'new']" mat-fab color="primary" class="add-button">
+                <mat-icon>add</mat-icon>
             </button>
         </mat-card-actions>
     </mat-card>

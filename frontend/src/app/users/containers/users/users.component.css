@@ -1,4 +1,9 @@
 .container {
-    height: 80vh;
+    height: calc(100vh - 64px);
 }
-  
+
+.add-button {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+}
