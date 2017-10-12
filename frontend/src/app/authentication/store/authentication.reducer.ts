@@ -1,18 +1,21 @@
 import * as AuthenticationActions from './authentication.actions';
 import { Credentials } from '../models/credentials';
+import { User } from '../../users/models/user.model';
 
 export interface State {
     redirectPageAfterLogin: string;
     loginPending: boolean;
     loginError: boolean;
     token: string | null;
+    currentUser: User | null;
 }
 
 export const initialState: State = {
     redirectPageAfterLogin: '/',
     loginPending: false,
     loginError: false,
-    token: null
+    token: null,
+    currentUser: null
 };
 
 export function reducer(state = initialState, action: AuthenticationActions.All): State {
@@ -22,6 +25,13 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
             return {
                 ...state,
                 token: action.payload
+            };
+        }
+
+        case AuthenticationActions.ME: {
+            return {
+                ...state,
+                currentUser: action.payload
             };
         }
 
@@ -37,7 +47,8 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
             return {
                 ...state,
                 loginPending: false,
-                loginError: false
+                loginError: false,
+                currentUser: action.payload.user
             };
         }
 
@@ -68,7 +79,7 @@ export function reducer(state = initialState, action: AuthenticationActions.All)
 
 // selectors
 export const getToken = (state: State): string => state.token;
-export const getUsername = (state: State): string => 'admin';
+export const getCurrentUser = (state: State): User | null => state.currentUser;
 export const isLoggedIn = (state: State): boolean => getToken(state) != null;
 export const isLoginPending = (state: State): boolean => state.loginPending;
 export const isLoginError = (state: State): boolean => state.loginError;

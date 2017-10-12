@@ -42,7 +42,7 @@
           </mat-form-field>
         </p>
         <div fxLayout="column">
-          <mat-checkbox *ngFor="let permission of permissions.controls; let i=index" [formControl]="permission">{{ALL_PERMISSIONS[i]}}</mat-checkbox>
+          <mat-checkbox *ngFor="let permission of permissions['controls']; let i=index" [formControl]="permission">{{ALL_PERMISSIONS[i]}}</mat-checkbox>
         </div>
         <p>
           <mat-error *ngIf="!invalid(confirmPassword) && passwords.errors?.notSame">

@@ -15,13 +15,13 @@ import { ChangePermission } from '../../components/users-table/users-table.compo
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
-  currentUser$: Observable<string>;
+  currentUser$: Observable<string | null>;
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
   users$: Observable<User[]>;
 
   constructor(private authenticationStore: Store<fromAuthentication.State>, private usersStore: Store<fromUsers.State>) {
-    this.currentUser$ = authenticationStore.select(fromAuthentication.getUsername);
+    this.currentUser$ = authenticationStore.select(fromAuthentication.getCurrentUser).map(user => user && user.username || null);
     this.fetching$ = usersStore.select(fromUsers.isFetchingUsers);
     this.error$ = usersStore.select(fromUsers.isFetchingUsersError);
     this.users$ = usersStore.select(fromUsers.getUsers);

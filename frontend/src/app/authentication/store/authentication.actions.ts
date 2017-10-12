@@ -1,9 +1,13 @@
 import { Action } from '@ngrx/store';
 
 import { Credentials } from '../models/credentials';
+import { Token } from '../models/token';
+import { User } from '../../users/models/user.model';
 
 export const SAVE_TOKEN = '[Authentication] Save Token';
 export const LOAD_TOKEN = '[Authentication] Load Token';
+
+export const ME = '[Authentication] Me';
 
 export const LOGIN = '[Authentication] Login';
 export const LOGIN_SUCCESS = '[Authentication] Login Success';
@@ -23,6 +27,13 @@ export class SaveToken implements Action {
     constructor(public payload: string) { }
 }
 
+// action dispatched when got the information about the current user
+export class Me implements Action {
+    readonly type = ME;
+
+    constructor(public payload: User) { }
+}
+
 // action dispatched to request a login (eg. from the login component)
 export class Login implements Action {
     readonly type = LOGIN;
@@ -34,7 +45,7 @@ export class Login implements Action {
 export class LoginSuccess implements Action {
     readonly type = LOGIN_SUCCESS;
 
-    constructor(public payload: string) { }
+    constructor(public payload: Token) { }
 }
 
 // action dispatched as the result of a failed login
@@ -57,6 +68,7 @@ export class Logout implements Action {
 export type All =
     | LoadToken
     | SaveToken
+    | Me
     | Login
     | LoginSuccess
     | LoginFailure

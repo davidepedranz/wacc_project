@@ -82,7 +82,7 @@ export class UserFormComponent implements AfterViewInit {
     return this.passwords.get('confirmPassword');
   }
 
-  get permissions() {
+  get permissions(): AbstractControl {
     return this.form.get('permissions');
   }
 

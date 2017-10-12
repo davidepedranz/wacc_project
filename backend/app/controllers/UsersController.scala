@@ -3,8 +3,8 @@ package controllers
 import javax.inject._
 
 import be.objectify.deadbolt.scala.models.PatternType
-import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltHandler}
-import models.{Permission, UserWithPassword}
+import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions, DeadboltHandler}
+import models.{Permission, Subject, UserWithPassword}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc._
 import repositories.{DuplicateUser, UserNotFound, UsersRepository}
@@ -14,7 +14,7 @@ import scalaz.{-\/, \/-}
 
 @Singleton
 final class UsersController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, bodyParsers: PlayBodyParsers,
-                                      handler: DeadboltHandler, actionBuilders: ActionBuilders,
+                                      handler: DeadboltHandler, deadbolt: DeadboltActions, actionBuilders: ActionBuilders,
                                       usersRepository: UsersRepository) extends AbstractController(cc) {
 
   private val usersReadPermission: actionBuilders.PatternAction.PatternActionBuilder = {
@@ -25,7 +25,9 @@ final class UsersController @Inject()(implicit ec: ExecutionContext, cc: Control
     actionBuilders.PatternAction(value = Permission.USERS_WRITE, patternType = PatternType.EQUALITY)
   }
 
-  // TODO: add errors descriptions as json?
+  def me: Action[AnyContent] = deadbolt.SubjectPresent()() { req =>
+    Future(Ok(Json.toJson(Subject.toUser(req.subject.get))))
+  }
 
   def create: Action[JsValue] = usersWritePermission.apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
