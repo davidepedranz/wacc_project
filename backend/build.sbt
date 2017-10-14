@@ -59,5 +59,11 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.outworkers"  %% "phantom-dsl" % "2.14.5"
 )
-// libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
 
+//json
+val circeVersion = "0.8.0"
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)

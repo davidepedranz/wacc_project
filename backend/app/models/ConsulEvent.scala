@@ -1,35 +1,15 @@
 package models
 import java.util.UUID
-import com.outworkers.phantom.dsl._
 
-import scala.concurrent.Future
+import org.joda.time.DateTime
+
 
 /**
-  * Create the Cassandra representation of the Songs table
+  *
+  * This is the Scala representation of Songs, following the Datastax example
   */
-abstract class SongsModel extends Table[SongsModel, Song] {
-
-  override def tableName: String = "songs"
-
-  object id extends TimeUUIDColumn with PartitionKey {
-    override lazy val name = "song_id"
-  }
-
-  object artist extends StringColumn
-  object title extends StringColumn
-  object album extends StringColumn
-
-  def getBySongId(id: UUID): Future[Option[Song]] = {
-    select
-      .where(_.id eqs id)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .one()
-  }
-
-  def deleteById(id: UUID): Future[ResultSet] = {
-    delete
-      .where(_.id eqs id)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .future()
-  }
-}
+case class ConsulEvent(
+                 id: UUID,
+                 events: ConsulEventItem,
+                 datetime: DateTime
+               )
