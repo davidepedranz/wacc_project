@@ -80,6 +80,7 @@ services:
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
       MONGODB_URI: "mongodb://mongo:27017/wacc"
+      CASSANDRA_URI: "cassandradb://cassandra:9042"
     deploy:
       replicas: 3
       restart_policy:
