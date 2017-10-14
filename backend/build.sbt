@@ -61,3 +61,7 @@ libraryDependencies ++= Seq(
 )
 // libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
 
+
+libraryDependencies ++= Seq(
+  ws
+)

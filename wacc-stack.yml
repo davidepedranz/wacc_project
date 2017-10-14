@@ -80,6 +80,7 @@ services:
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
       MONGODB_URI: "mongodb://mongo:27017/wacc"
+      DOCKER_HOST : "http://docker-socket-proxy:2375"
     deploy:
       replicas: 3
       restart_policy:
