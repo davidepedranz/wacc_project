@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -30,6 +30,9 @@ export class UsersDataSource extends DataSource<User> {
 export class UsersTableComponent implements OnInit {
 
   @Input()
+  currentUser: string | null;
+
+  @Input()
   fetching: boolean;
 
   @Input()
@@ -38,13 +41,13 @@ export class UsersTableComponent implements OnInit {
   @Input()
   users$: Observable<User[]>;
 
-  readonly displayedColumns = ['username', 'permissions', 'actions'];
-  dataSource: UsersDataSource | null;
-
   @Output()
   deleteUser = new EventEmitter<string>();
 
-  constructor(public dialog: MdDialog) { }
+  readonly displayedColumns = ['username', 'permissions', 'actions'];
+  dataSource: UsersDataSource | null;
+
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
     this.dataSource = new UsersDataSource(this.users$);

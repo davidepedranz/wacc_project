@@ -1,12 +1,19 @@
 <section>
-    <md-card *ngIf="!(fetching$ | async)">
-        <md-card-title>Users</md-card-title>
-        <md-card-content>
-            <app-users-table [fetching]="fetching$ | async" [error]="error$ | async" [users$]="users$" (deleteUser)="deleteUser($event)">
+    <mat-card *ngIf="!(fetching$ | async)">
+        <mat-card-title>Users</mat-card-title>
+        <mat-card-content>
+            <app-users-table [currentUser]="currentUser$ | async" [fetching]="fetching$ | async" [error]="error$ | async" [users$]="users$"
+                (deleteUser)="deleteUser($event)">
             </app-users-table>
-        </md-card-content>
-    </md-card>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" [routerLink]="['/users', 'new']">
+                <mat-icon>edit</mat-icon>
+                <span fxShow fxHide.lt-mat="true">New User</span>
+            </button>
+        </mat-card-actions>
+    </mat-card>
     <div *ngIf="fetching$ | async" fxLayout fxLayoutAlign="center center" class="container">
-        <md-progress-spinner mode="indeterminate"></md-progress-spinner>
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
 </section>
