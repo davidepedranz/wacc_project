@@ -6,6 +6,7 @@ import akka.actor.{ActorSystem, Scheduler}
 import akka.pattern.after
 import akka.stream.scaladsl.Source
 import play.Logger
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
 
@@ -14,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 @Singleton
-final class Swarm @Inject()(implicit ec: ExecutionContext, ws: WSClient, actorSystem: ActorSystem) {
+final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration, actorSystem: ActorSystem, ws: WSClient) {
   implicit val s: Scheduler = actorSystem.scheduler
 
   private def retryPeriodically[T](f: => Future[T], delay: FiniteDuration, callback: (FiniteDuration, Throwable) => Any)
@@ -26,7 +27,9 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, ws: WSClient, actorSy
     }
   }
 
-  private val events: WSRequest = ws.url("http://localhost:2375/events")
+  private val swarmUrl: String = config.get[String]("swarmUrl")
+
+  private val events: WSRequest = ws.url(swarmUrl + "/events")
     .addQueryStringParameters("filters" -> Json.obj("type" -> Seq("service")).toString())
     .addHttpHeaders("Accept" -> "application/json")
 
