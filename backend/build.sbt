@@ -7,6 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.3"
 
+libraryDependencies += ws
+
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
@@ -61,3 +63,5 @@ libraryDependencies ++= Seq(
 )
 // libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
 
+// kakfa support
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "0.17"
