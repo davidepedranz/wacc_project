@@ -61,7 +61,16 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.outworkers"  %% "phantom-dsl" % "2.14.5"
 )
-// libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
 
 // kakfa support
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "0.17"
+
+//json
+libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.6"
+
+val circeVersion = "0.8.0"
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)

@@ -3,8 +3,8 @@ import javax.inject._
 import akka.stream.Materializer
 import models.UserWithPassword
 import org.apache.kafka.clients.producer.ProducerRecord
-import play.api.inject.ApplicationLifecycle
 import play.api.{Configuration, Logger}
+import play.api.inject.ApplicationLifecycle
 import repositories.UsersRepository
 import services.{Kafka, Swarm}
 

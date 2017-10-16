@@ -15,3 +15,6 @@ DELETE        /v1/users/:username/permissions/:permission        controllers.Use
 
 # events Websocket
 GET           /v1/events                                         controllers.EventsController.socket
+
+GET           /v1/db                                             controllers.CassandraController.test
+GET           /v1/db/:id                                         controllers.CassandraController.list(id: String)
