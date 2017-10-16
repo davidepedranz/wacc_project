@@ -29,3 +29,5 @@ GET      /containers/:id         controllers.ComponentsController.getContainersI
 POST    /services/create      controllers.ComponentsController.createService
 
 POST    /services/:id/update/:version    controllers.ComponentsController.updateService( id : String , version : String  )
+
+DELETE     /services/:id        controllers.ComponentsController.deleteService(id : String)

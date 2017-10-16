@@ -95,4 +95,12 @@ def updateService(id : String, version : String) = Action.async {
 }
 
 
+def deleteService (id : String) = Action.async {
+  request => 
+  val deleteServiceURL = ws.url(host+"/services/"+id)
+  deleteServiceURL.execute("DELETE").map {
+    response => Ok(response.body)
+  }
+}
+
 }
