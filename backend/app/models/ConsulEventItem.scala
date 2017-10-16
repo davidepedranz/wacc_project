@@ -1,7 +1,11 @@
 package models
 
 import com.outworkers.phantom.builder.primitives.Primitive
-import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+import play.api.libs.json.Json
 
 
 /**
@@ -23,4 +27,5 @@ object ConsulEventItem {
   implicit val jsonPrimitive: Primitive[ConsulEventItem] = {
     Primitive.json[ConsulEventItem](obj => obj.asJson.noSpaces)(str => decode[ConsulEventItem](str).fold(e => throw new Exception(e), identity))
   }
+  implicit val consulEventItemReads  = Json.format[ConsulEventItem]
 }

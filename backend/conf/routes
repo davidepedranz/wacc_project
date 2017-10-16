@@ -11,3 +11,6 @@ POST          /v1/users                                          controllers.Use
 DELETE        /v1/users/:username                                controllers.UsersController.delete(username: String)
 POST          /v1/users/:username/permissions/:permission        controllers.UsersController.addPermission(username:String, permission:String)
 DELETE        /v1/users/:username/permissions/:permission        controllers.UsersController.removePermission(username:String, permission:String)
+
+GET           /v1/db                                               controllers.CassandraController.test
+GET           /v1/db/:id                                           controllers.CassandraController.list(id: String)

@@ -61,6 +61,8 @@ libraryDependencies ++= Seq(
 )
 
 //json
+libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.6"
+
 val circeVersion = "0.8.0"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",

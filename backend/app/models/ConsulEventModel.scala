@@ -1,5 +1,4 @@
 package models
-import java.util.UUID
 
 import com.outworkers.phantom.dsl._
 
@@ -12,7 +11,7 @@ abstract class ConsulEventModel extends Table[ConsulEventModel, ConsulEvent] {
 
   override def tableName: String = "consul_events"
 
-  object id extends UUIDColumn with PartitionKey {
+  object id extends StringColumn with PartitionKey {
     override lazy val name = "consul_event_id"
   }
 
@@ -28,16 +27,30 @@ abstract class ConsulEventModel extends Table[ConsulEventModel, ConsulEvent] {
     )
   }
 
-  def getByConsulEventId(id: UUID): Future[Option[ConsulEvent]] = {
+  def getByConsulEventId(id: String): Future[List[ConsulEvent]] = {
     select
       .where(_.id eqs id)
+      .consistencyLevel_=(ConsistencyLevel.ONE)
+        .fetch()
+  }
+
+  def getByConsulEventIdAndTime(id: String, datetime: DateTime): Future[Option[ConsulEvent]] = {
+    select
+      .where(_.id eqs id).and(_.datetime eqs datetime)
       .consistencyLevel_=(ConsistencyLevel.ONE)
       .one()
   }
 
-  def deleteById(id: UUID): Future[ResultSet] = {
+  def deleteById(id: String): Future[ResultSet] = {
     delete
       .where(_.id eqs id)
+      .consistencyLevel_=(ConsistencyLevel.ONE)
+      .future()
+  }
+
+  def deleteByConsulEventIdAndTime(id: String, datetime: DateTime): Future[ResultSet] = {
+    delete
+      .where(_.id eqs id).and(_.datetime eqs datetime)
       .consistencyLevel_=(ConsistencyLevel.ONE)
       .future()
   }

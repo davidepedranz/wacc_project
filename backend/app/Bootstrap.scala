@@ -23,9 +23,4 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
     }
   }
 
-
-//  val event = new ConsulEvent(UUID.fromString("da2e5a79-2d6b-48eb-99a3-1cdc0aa4cd40"), "S", "Hi", "Hi")
-  Logger.debug("Try to save to cassandra")
-  consulEventDatabase.start()
-  Logger.debug("Saved to cassandra")
 }

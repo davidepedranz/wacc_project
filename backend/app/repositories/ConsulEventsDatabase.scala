@@ -1,8 +1,6 @@
 package repositories
 
-import javax.inject.{Inject, Singleton}
-
-import Connector._
+import Connector.{connector, _}
 import models._
 import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.dsl._
@@ -17,32 +15,63 @@ import scala.concurrent.{Await, Future}
   * for example: One for production and other for testing
   */
 
+//@Singleton
 class ConsulEventsDatabase (override val connector: CassandraConnection) extends Database[ConsulEventsDatabase](connector) {
   object ConsulEventModel extends ConsulEventModel with connector.Connector
-
+//  ConsulEventsDatabase(connector)
 
   /**
-    * Save a song in both tables
+    * Save/update an event
     *
     * @param events
     * @return
     */
   def saveOrUpdate(events: ConsulEvent): Future[ResultSet] = {
     for {
-      byArtist <- ConsulEventModel.store(events).future
-    } yield byArtist
+      byEvent <- ConsulEventModel.store(events).future
+    } yield byEvent
   }
 
   /**
-    * Delete a song in both table
+    * read an event
+    *
+    * @param id
+    * @return
+    */
+  def read(id: String): Future[List[ConsulEvent]] = {
+    for {
+      byEvents <- ConsulEventModel.getByConsulEventId(id)
+    } yield byEvents
+  }
+
+  def readByDatetime(id: String, datetime: DateTime): Future[Option[ConsulEvent]] = {
+    for {
+      byEvents <- ConsulEventModel.getByConsulEventIdAndTime(id, datetime)
+    } yield byEvents
+  }
+
+  /**
+    * Delete a event
     *
     * @param event
     * @return
     */
   def delete(event: ConsulEvent): Future[ResultSet] = {
     for {
-      byArtist <- ConsulEventModel.deleteById(event.id)
-    } yield byArtist
+      byEvent <- ConsulEventModel.deleteById(event.id)
+    } yield byEvent
+  }
+
+  def deleteById(id: String): Future[ResultSet] = {
+    for {
+      byEvent <- ConsulEventModel.deleteById(id)
+    } yield byEvent
+  }
+
+  def deleteByDatetime(id: String, datetime: DateTime): Future[ResultSet] = {
+    for {
+      byEvents <- ConsulEventModel.deleteByConsulEventIdAndTime(id, datetime)
+    } yield byEvents
   }
 
   def start()={
