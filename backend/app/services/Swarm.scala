@@ -27,7 +27,7 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
     }
   }
 
-  private val swarmUrl: String = config.get[String]("swarmUrl")
+  private val swarmUrl: String = config.get[String]("docker_host")
 
   private val events: WSRequest = ws.url(swarmUrl + "/events")
     .addQueryStringParameters("filters" -> Json.obj("type" -> Seq("service")).toString())

@@ -1,0 +1,10 @@
+version: "3"
+services:
+  scala2docker:
+    image: scala2docker #put image name here
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "9000:9000"

@@ -36,6 +36,6 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
         }
       }
       .to(kafka.sink)
-      .run()
+      .run()(materializer)
   }
 }
