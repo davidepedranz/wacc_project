@@ -31,20 +31,15 @@ DELETE        /services/:id                                      controllers.Com
 GET           /v1/db                                             controllers.CassandraController.test
 GET           /v1/db/:id                                         controllers.CassandraController.list(id: String)
 
-GET     /containersAll                 controllers.ComponentsController.getContainersAll
 
-GET      /images                    controllers.ComponentsController.getImages
-
-POST    /containers/:id/stop        controllers.ComponentsController.postContainerStop(id:String)
-
-POST    /containers/:id/start        controllers.ComponentsController.postContainerStart(id:String)
-
-GET      /containers/:id         controllers.ComponentsController.getContainersInfo(id : String)
-
-POST    /services/create      controllers.ComponentsController.createService
-
-POST    /services/:id/update/:version    controllers.ComponentsController.updateService( id : String , version : String  )
-
-DELETE     /services/:id        controllers.ComponentsController.deleteService(id : String)
-
-GET      /services/:id         controllers.ComponentsController.getServicesInfo(id : String)
+# docker swarm API 
+GET       /containersAll                                         controllers.ComponentsController.getContainersAll
+GET       /images                                                controllers.ComponentsController.getImages
+POST      /containers/:id/stop                                   controllers.ComponentsController.postContainerStop(id:String)
+POST      /containers/:id/start                                  controllers.ComponentsController.postContainerStart(id:String)
+GET       /containers/:id                                        controllers.ComponentsController.getContainersInfo(id : String)
+POST      /services/create                                       controllers.ComponentsController.createService
+POST      /services/:id/update/:version                          controllers.ComponentsController.updateService( id : String , version : String  )
+DELETE    /services/:id                                          controllers.ComponentsController.deleteService(id : String)
+GET       /services/:id                                          controllers.ComponentsController.getServicesInfo(id : String)
+GET       /services/:id/*command                                 controllers.ComponentsController.cannotGet
