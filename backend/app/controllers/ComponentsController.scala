@@ -103,4 +103,11 @@ def deleteService (id : String) = Action.async {
   }
 }
 
+def getServiceInfo (id : String ) = Action.async {
+  val request = ws.url(host+"/services/"+id)
+  request.get().map {
+    response => Ok(response.body)
+  }
+}
+
 }
