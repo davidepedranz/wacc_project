@@ -1,27 +1,27 @@
-<md-toolbar color="primary" *ngIf="show | async">
-  <a md-button routerLink="/">
-    <md-icon>home</md-icon>
+<mat-toolbar color="primary" *ngIf="show | async">
+  <a mat-button routerLink="/">
+    <mat-icon>home</mat-icon>
     <span fxShow fxHide.xs="true">Home</span>
   </a>
-  <a md-button routerLink="/components">
-    <md-icon>apps</md-icon>
+  <a mat-button routerLink="/components">
+    <mat-icon>apps</mat-icon>
     <span fxShow fxHide.xs="true">Components</span>
   </a>
-  <a md-button routerLink="/events">
-    <md-icon>history</md-icon>
+  <a mat-button routerLink="/events">
+    <mat-icon>history</mat-icon>
     <span fxShow fxHide.xs="true">Events</span>
   </a>
-  <a md-button routerLink="/users">
-    <md-icon>supervisor_account</md-icon>
+  <a mat-button routerLink="/users">
+    <mat-icon>supervisor_account</mat-icon>
     <span fxShow fxHide.xs="true">Users</span>
   </a>
   <span class="flex-spacer"></span>
-  <a md-button routerLink="/profile">
-    <md-icon>account_circle</md-icon>
+  <a mat-button routerLink="/profile">
+    <mat-icon>account_circle</mat-icon>
     <span fxShow fxHide.xs="true" fxHide.sm="true">Profile</span>
   </a>
-  <button md-button (click)="logout()">
-      <md-icon>exit_to_app</md-icon>
-      <span fxShow fxHide.xs="true" fxHide.sm="true">Logout</span>
-    </button>
-</md-toolbar>
+  <button mat-button (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span fxShow fxHide.xs="true" fxHide.sm="true">Logout</span>
+  </button>
+</mat-toolbar>

@@ -1,11 +1,11 @@
-<section>
-  <md-card>
-    <md-card-title>Events</md-card-title>
-    <md-card-content>
+<section fxLayout fxLayoutAlign="center" class="container">
+  <mat-card fxFlex="100">
+    <mat-card-title>Events</mat-card-title>
+    <mat-card-content>
       <app-events-table [events$]="events$"></app-events-table>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
   <!-- <div *ngIf="fetching$ | async" fxLayoutAlign="center center" class="container">
-      <md-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></md-progress-spinner>
+      <mat-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></mat-progress-spinner>
   </div> -->
 </section>

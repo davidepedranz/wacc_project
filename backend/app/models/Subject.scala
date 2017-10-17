@@ -13,4 +13,9 @@ object Subject {
     identifier = user.username,
     permissions = user.permissions.map(value => Permission(value)).toList
   )
+
+  implicit def toUser(subject: DeadboldSubject): User = User(
+    username = subject.identifier,
+    permissions = subject.permissions.map(permission => permission.value).toSet
+  )
 }

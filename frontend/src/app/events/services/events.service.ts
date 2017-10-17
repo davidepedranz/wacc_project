@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
+import 'rxjs/add/observable/dom/webSocket';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/share';
-import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/retry';
+import 'rxjs/add/operator/retryWhen';
+import 'rxjs/add/operator/delay';
 
 import { Event } from '../models/event';
 
@@ -20,8 +23,21 @@ export class EventsService {
     constructor() {
         // simulate websocket by generating random events
         this.events$ = Observable.interval(2500)
-            .map(EventsService.randomEvent)
-            .share();
+            .map(EventsService.randomEvent);
+            // .share();
+
+        const subject1 = Observable.webSocket('ws://localhost:9000/v1/events?token=test').share();
+        const subject2 = subject1.retryWhen(error => error.delay(5000));
+        subject1.subscribe(
+            (msg) => console.log('sub1', msg),
+            (err) => console.log('sub1', err),
+            () => console.log('sub1', 'complete')
+        );
+        subject2.subscribe(
+            (msg) => console.log('sub2', msg),
+            (err) => console.log('sub2', err),
+            () => console.log('sub2', 'complete')
+        );
     }
 
     private static randomEvent(id: number): Event {

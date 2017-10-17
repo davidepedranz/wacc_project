@@ -4,6 +4,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { Credentials } from '../models/credentials';
+import { Token } from '../models/token';
+import { User } from '../../users/models/user.model';
 
 @Injectable()
 export class AuthenticationService {
@@ -13,9 +15,15 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) { }
 
-  login(credentials: Credentials): Observable<string> {
+  login(credentials: Credentials): Observable<Token> {
     return this.http
       .post(this.BASE + '/v1/login', credentials)
-      .map(response => response['token'] as string);
+      .map(response => response as Token);
+  }
+
+  me(): Observable<User> {
+    return this.http
+      .get(this.BASE + '/v1/users/@me')
+      .map(response => response as User);
   }
 }

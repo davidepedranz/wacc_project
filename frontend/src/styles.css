@@ -42,3 +42,7 @@ html, body {
     /* Support for IE. */
     font-feature-settings: 'liga';
 }
+
+.container {
+    height: calc(100vh - 64px);
+}

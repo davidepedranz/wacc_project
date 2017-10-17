@@ -21,3 +21,5 @@ export const getUserByUsername = (username: string) => createSelector(selectUser
 export const getUsers = createSelector(selectUsersStatusState, fromUsers.getUsers);
 export const isFetchingUsers = createSelector(selectUsersStatusState, fromUsers.isFetchingUsers);
 export const isFetchingUsersError = createSelector(selectUsersStatusState, fromUsers.isFetchingUsersError);
+export const isCreatingUser = createSelector(selectUsersStatusState, fromUsers.isCreatingUser);
+export const isCreatingUserError = createSelector(selectUsersStatusState, fromUsers.isCreatingUserError);

@@ -6,11 +6,16 @@
 POST          /v1/login                                          controllers.LoginController.login
 
 # users APIs
+GET           /v1/users/@me                                      controllers.UsersController.me
 GET           /v1/users                                          controllers.UsersController.list
 POST          /v1/users                                          controllers.UsersController.create
 DELETE        /v1/users/:username                                controllers.UsersController.delete(username: String)
 POST          /v1/users/:username/permissions/:permission        controllers.UsersController.addPermission(username:String, permission:String)
 DELETE        /v1/users/:username/permissions/:permission        controllers.UsersController.removePermission(username:String, permission:String)
 
+# cassandra
 GET           /v1/db                                               controllers.CassandraController.test
 GET           /v1/db/:id                                           controllers.CassandraController.list(id: String)
+
+# events Websocket
+GET           /v1/events                                         controllers.EventsController.socket

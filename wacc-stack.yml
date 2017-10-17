@@ -9,6 +9,8 @@ services:
     labels: [app=consul]
     ports:
       - "8500:8500"
+    volumes:
+      - consul_data:/consul/data
     networks:
       - consul-net
       - internal
@@ -18,7 +20,7 @@ services:
       - CONSUL=consul
       - CONSUL_CHECK_LEADER=true
     deploy:
-      replicas: 3
+      mode: global
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -44,7 +46,6 @@ services:
     command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=INFO
     ports:
       - "80:80"
-      - "443:443"
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -71,7 +72,7 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
         - "traefik.port=80"
-        - traefik.frontend.rule=Host:${DOMAIN:-localhost}
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost}"
 
   backend:
     image: wacccourse/backend:latest
@@ -144,5 +145,6 @@ networks:
     external: true
 
 volumes:
+  consul_data: {}
   mongo_data: {}
   cassandra_data: {}
