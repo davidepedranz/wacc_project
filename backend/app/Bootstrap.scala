@@ -1,11 +1,15 @@
 import javax.inject._
 
+import akka.kafka.Subscriptions
 import akka.stream.Materializer
-import models.UserWithPassword
+import models.{Event, UserWithPassword}
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.TopicPartition
 import play.api.{Configuration, Logger}
 import play.api.inject.ApplicationLifecycle
-import repositories.UsersRepository
+import play.api.libs.json.Json
+import reactivemongo.api.DB
+import repositories.{UsersRepository, eventDatabase}
 import services.{Kafka, Swarm}
 
 import scala.concurrent.ExecutionContext
@@ -32,6 +36,8 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
       .map {
         elem => {
           Logger.debug("[Docker Swarm] -> " + elem)
+          val event = Json.parse(elem).as[Event]
+          eventDatabase.saveOrUpdate(event)
           new ProducerRecord[Array[Byte], String](topic, elem)
         }
       }

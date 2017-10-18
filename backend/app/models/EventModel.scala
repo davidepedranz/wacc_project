@@ -39,12 +39,12 @@ abstract class EventModel extends Table[EventModel, Event] {
         .fetch()
   }
 
-  def getEventsByDateAfter(date: Date): Future[List[Event]] = {
-    select
-      .where(_.date gte date)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .fetch()
-  }
+//  def getEventsByDateAfter(date: Date): Future[List[Event]] = {
+//    select
+//      .where(_.date eqs date)
+//      .consistencyLevel_=(ConsistencyLevel.ONE)
+//      .fetch()
+//  }
 
   def getEventsByDateTime(date: Date, time: Long): Future[Option[Event]] = {
     select
@@ -55,7 +55,7 @@ abstract class EventModel extends Table[EventModel, Event] {
 
   def deleteByDate(date: Date): Future[ResultSet] = {
     delete
-      .where(_.date gte date)
+      .where(_.date eqs date)
       .consistencyLevel_=(ConsistencyLevel.ONE)
       .future()
   }

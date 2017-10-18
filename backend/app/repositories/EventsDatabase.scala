@@ -54,6 +54,12 @@ class EventsDatabase (override val connector: CassandraConnection) extends Datab
     } yield byEvents
   }
 
+//  def readAfter(date: Date): Future[List[Event]] = {
+//    for {
+//      byEvents <- EventModel.getEventsByDateAfter(convertDateToDateOnly(date))
+//    } yield byEvents
+//  }
+
   def readByDatetime(date: Date, time: Long): Future[Option[Event]] = {
     for {
       byEvents <- EventModel.getEventsByDateTime(convertDateToDateOnly(date), time)
