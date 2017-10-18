@@ -22,8 +22,8 @@ abstract class ConsulEventModel extends Table[ConsulEventModel, ConsulEvent] {
   override def fromRow(row: Row): ConsulEvent = {
     ConsulEvent(
       id(row),
-      events(row),
-      datetime(row)
+      datetime(row),
+      events(row)
     )
   }
 

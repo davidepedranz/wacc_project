@@ -11,9 +11,9 @@ import { routes } from './events.routing';
 import { reducers } from './store';
 
 import { EventsEffects } from './store/events.effects';
-import { EventsService } from './services/events.service';
 import { EventsComponent } from './containers/events.component';
 import { EventsTableComponent } from './components/events-table.component';
+import { EventsService } from './services/events.service';
 
 @NgModule({
   imports: [

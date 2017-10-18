@@ -7,6 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.3"
 
+libraryDependencies += ws
+
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
@@ -59,6 +61,9 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.outworkers"  %% "phantom-dsl" % "2.14.5"
 )
+
+// kakfa support
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "0.17"
 
 //json
 libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.6"

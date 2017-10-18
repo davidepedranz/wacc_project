@@ -12,8 +12,8 @@ import play.api.libs.json.JodaReads
   */
 case class ConsulEvent(
                  id: String,
-                 events: ConsulEventItem,
-                 datetime: DateTime
+                 datetime: DateTime,
+                 events: ConsulEventItem
                )
 
 
