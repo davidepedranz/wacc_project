@@ -112,7 +112,7 @@ def getServiceInfo (id : String ) = Action.async {
 
 
 def cannotGet = Action.async {
-  BadRequest("cannot get on this page")
+  BadRequest("cannot perform GET on this page")
 }
 
 }

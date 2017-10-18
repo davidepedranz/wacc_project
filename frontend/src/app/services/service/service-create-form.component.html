@@ -1,0 +1,28 @@
+<div>
+  <h2>Service</h2>
+  <form [formGroup]="serviceForm" novalidate> <!-->(ngSubmit)="post(serviceForm)" <!-->
+    <div class="form-group">
+      <label class="center-block">Name:
+          
+        <input class="form-control" formControlName="name">
+        <small *ngIf="!serviceForm.controls.name.valid" class="text-danger">
+            Name is required (minimum 5 characters).
+        </small>
+      </label>
+    </div>
+
+    <task-template-form ></task-template-form>
+
+    <mode-form></mode-form>
+
+    <div formArrayName="Ports">
+      <div *ngFor=" let i=index" >
+          <div>
+            <span>EndPointSpec {{i+1}}</span>
+          </div>
+          <port-form></port-form>
+      </div>
+    </div>
+    <button type="submit" [disabled]="!serviceForm.valid">Submit</button>
+  </form>
+</div>
