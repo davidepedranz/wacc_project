@@ -1,22 +1,30 @@
-import javax.inject._
+import javax.inject.{Inject, Singleton}
 
+import akka.actor.ActorSystem
 import akka.stream.Materializer
 import models.UserWithPassword
 import org.apache.kafka.clients.producer.ProducerRecord
+import play.Logger
+import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
-import play.api.{Configuration, Logger}
 import repositories.UsersRepository
-import services.{Kafka, Swarm}
+import services.{Kafka, Retry, Swarm}
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.{FiniteDuration, _}
 import scala.language.postfixOps
 
+
 @Singleton
-final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: ApplicationLifecycle, materializer: Materializer,
-                                config: Configuration, usersRepository: UsersRepository, kafka: Kafka, swarm: Swarm) {
+final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: ApplicationLifecycle,
+                                materializer: Materializer, actorSystem: ActorSystem, config: Configuration,
+                                usersRepository: UsersRepository, kafka: Kafka, swarm: Swarm) {
 
   // if not user is present, create a default one
-  usersRepository.list.map { users =>
+  val callback: (FiniteDuration, Throwable) => Any = {
+    (delay, ex) => Logger.error(s"Cannot connect to MongoDB to create the first user... (${ex.getMessage}). Retry in $delay...")
+  }
+  Retry.periodically(usersRepository.list, 3.seconds, callback)(ec, actorSystem.scheduler).map { users =>
     if (users.isEmpty) {
       Logger.warn("The database of users is empty... creating the default user.")
       usersRepository.create(UserWithPassword.DEFAULT_USER)
