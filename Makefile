@@ -11,6 +11,7 @@ help:
 	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
 	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
 	@echo "  all-local        Build and push the containers to the registry, deploy to the local machine."
+	@echo "  load-test        Launch a load test against the deployment on Google Cloud"
 	@echo ""
 
 build-frontend:
@@ -119,3 +120,6 @@ deploy-gcp: undeploy-gcp
 all-gcp: build push deploy-gcp
 
 all-local: build push deploy-local
+
+load-test:
+	bzt jmeter/wacc.jmx
