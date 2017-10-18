@@ -1,37 +1,37 @@
-<md-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource">
 
   <!-- ID Column -->
-  <ng-container mdColumnDef="id">
-    <md-header-cell *mdHeaderCellDef> ID </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.id}} </md-cell>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+    <mat-cell *matCellDef="let row"> Nope </mat-cell>
   </ng-container>
 
   <!-- Timestamp Column -->
-  <ng-container mdColumnDef="timestamp">
-    <md-header-cell *mdHeaderCellDef> Timestamp </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.timestamp}} </md-cell>
+  <ng-container matColumnDef="timestamp">
+    <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.time}} </mat-cell>
   </ng-container>
 
-  <!-- Component Column -->
-  <ng-container mdColumnDef="component">
-    <md-header-cell *mdHeaderCellDef> Component </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.component}} </md-cell>
+  <!-- Service Column -->
+  <ng-container matColumnDef="service">
+    <mat-header-cell *matHeaderCellDef> Service </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.service}} </mat-cell>
   </ng-container>
 
   <!-- Action Column -->
-  <ng-container mdColumnDef="action">
-    <md-header-cell *mdHeaderCellDef> Action </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.action}} </md-cell>
+  <ng-container matColumnDef="action">
+    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.action}} </mat-cell>
   </ng-container>
 
   <!-- Description Column -->
-  <ng-container mdColumnDef="description">
-    <md-header-cell *mdHeaderCellDef> Description </md-header-cell>
-    <md-cell *mdCellDef="let row"> {{row.description}} </md-cell>
+  <ng-container matColumnDef="description">
+    <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+    <mat-cell *matCellDef="let row"> Lorem Ipsum </mat-cell>
   </ng-container>
 
   <!-- Header and Row Declarations -->
-  <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-  <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
-</md-table>
+</mat-table>

@@ -7,6 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.3"
 
+libraryDependencies += ws
+
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
@@ -25,7 +27,8 @@ libraryDependencies ++= Seq(
 // see http://www.scala-sbt.org/sbt-native-packager/formats/docker.html
 enablePlugins(DockerPlugin)
 version in Docker := "latest"
-
+// dockerUsername in Docker := Option("wacccourse")
+// dockerAlias in Docker := new com.typesafe.sbt.packager.docker.DockerAlias(Option("index.docker.io"),Option("wacccourse"), "backend", Option("latest"))
 
 // scalaz -> we use EitherT
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.15"
@@ -58,5 +61,16 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.outworkers"  %% "phantom-dsl" % "2.14.5"
 )
-// libraryDependencies += "com.datastax.spark" %% "spark-cassandra-connector" %
 
+// kakfa support
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "0.17"
+
+//json
+libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.6"
+
+val circeVersion = "0.8.0"
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)

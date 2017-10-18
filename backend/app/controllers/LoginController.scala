@@ -23,7 +23,7 @@ class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
     req.body.validate[Credentials] match {
       case error: JsError => Future(BadRequest(JsError.toJson(error)))
       case credentials: JsSuccess[Credentials] => usersRepository.authenticate(credentials.value).map {
-        case Some(user: User) => Ok(Json.toJson(Token(authentication.generateToken(user.username))))
+        case Some(user: User) => Ok(Json.toJson(Token(authentication.generateToken(user.username), user)))
         case None => Unauthorized
       }
     }

@@ -24,6 +24,6 @@ object Connector {
     * }}}
     *
     */
-  lazy val connector: CassandraConnection = ContactPoints(hosts).keySpace(keyspace)
+  lazy val connector: CassandraConnection = ContactPoints(hosts, 9042).keySpace(keyspace)
 
 }

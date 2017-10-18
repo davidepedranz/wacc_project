@@ -5,5 +5,12 @@
         "pathRewrite": {
             "^/api": ""
         }
+    },
+    "/api/v1/events": {
+        "target": "ws://localhost:9000",
+        "ws": true,
+        "pathRewrite": {
+            "^/api": ""
+        }
     }
 }

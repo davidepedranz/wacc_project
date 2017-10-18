@@ -21,6 +21,7 @@ export const selectAuthenticationStatusState = createSelector(
 );
 
 export const getToken = createSelector(selectAuthenticationStatusState, fromAuthentication.getToken);
+export const getCurrentUser = createSelector(selectAuthenticationStatusState, fromAuthentication.getCurrentUser);
 export const isLoggedIn = createSelector(selectAuthenticationStatusState, fromAuthentication.isLoggedIn);
 export const isLoginPending = createSelector(selectAuthenticationStatusState, fromAuthentication.isLoginPending);
 export const isLoginError = createSelector(selectAuthenticationStatusState, fromAuthentication.isLoginError);

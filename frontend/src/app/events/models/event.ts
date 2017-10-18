@@ -1,7 +1,5 @@
 export class Event {
-    id: string;
-    timestamp: Date;
+    timestamp: number;
     component: string;
     action: string;
-    description: string;
 }

@@ -1,35 +1,29 @@
 package models
-import java.util.UUID
-import com.outworkers.phantom.dsl._
 
-import scala.concurrent.Future
+import play.api.libs.json._
+import org.joda.time.DateTime
+import play.api.libs.json.JodaWrites
+import play.api.libs.json.JodaReads
+
 
 /**
-  * Create the Cassandra representation of the Songs table
+  *
+  * This is the Scala representation of Songs, following the Datastax example
   */
-abstract class SongsModel extends Table[SongsModel, Song] {
+case class ConsulEvent(
+                 id: String,
+                 events: ConsulEventItem,
+                 datetime: DateTime
+               )
 
-  override def tableName: String = "songs"
 
-  object id extends TimeUUIDColumn with PartitionKey {
-    override lazy val name = "song_id"
-  }
 
-  object artist extends StringColumn
-  object title extends StringColumn
-  object album extends StringColumn
+object ConsulEvent{
+  val dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-  def getBySongId(id: UUID): Future[Option[Song]] = {
-    select
-      .where(_.id eqs id)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .one()
-  }
-
-  def deleteById(id: UUID): Future[ResultSet] = {
-    delete
-      .where(_.id eqs id)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .future()
-  }
+  implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites(dateFormat)
+  implicit val dateTimeJsReader = JodaReads.jodaDateReads("yyyyMMddHHmmss")
+  implicit val consulEventReads  = Json.format[ConsulEvent]
 }
+
+

@@ -9,13 +9,17 @@ import com.typesafe.config.ConfigFactory
 import net.codingwell.scalaguice.ScalaModule
 import play.api.{Configuration, Environment}
 import repositories.{MongoUsersRepository, UsersRepository}
+import services.Kafka
 
-class Module(environment: Environment, configuration: Configuration) extends AbstractModule with ScalaModule {
+final class Module(environment: Environment, configuration: Configuration) extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
 
     // bootstrap
     bind(classOf[Bootstrap]).asEagerSingleton()
+
+    // kafka utilities
+    bind(classOf[Kafka])
 
     // authentication
     val secret: String = ConfigFactory.load().getString("play.http.secret.key")

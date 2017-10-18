@@ -29,7 +29,7 @@ export class EventsTableComponent implements OnInit {
   @Input()
   events$: Observable<Event[]>;
 
-  readonly displayedColumns = ['id', 'timestamp', 'component', 'action', 'description'];
+  readonly displayedColumns = ['id', 'timestamp', 'service', 'action', 'description'];
   dataSource: EventsDataSource | null;
 
   constructor() { }

@@ -9,6 +9,8 @@ services:
     labels: [app=consul]
     ports:
       - "8500:8500"
+    volumes:
+      - consul_data:/consul/data
     networks:
       - consul-net
       - internal
@@ -18,7 +20,7 @@ services:
       - CONSUL=consul
       - CONSUL_CHECK_LEADER=true
     deploy:
-      replicas: 3
+      mode: global
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -41,10 +43,9 @@ services:
 
   traefik:
     image: traefik:alpine
-    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=localhost --docker.exposedbydefault=false --logLevel=INFO
+    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=INFO
     ports:
       - "80:80"
-      - "443:443"
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -53,14 +54,14 @@ services:
       - public
       - internal
     deploy:
-      replicas: 3
+      mode: global
       placement:
         constraints: [node.role == manager]
       restart_policy:
         condition: on-failure
 
   frontend:
-    image: wacc-frontend:latest
+    image: wacccourse/frontend:latest
     networks:
       - internal
     deploy:
@@ -71,15 +72,17 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
         - "traefik.port=80"
-        - "traefik.frontend.rule=Host:localhost"
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost}"
 
   backend:
-    image: wacc-backend:latest
+    image: wacccourse/backend:latest
     networks:
       - internal
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
       MONGODB_URI: "mongodb://mongo:27017/wacc"
+      CASSANDRA_URI: "cassandradb://cassandra:9042"
+      DOCKER_HOST : "http://docker-socket-proxy:2375"
     deploy:
       replicas: 3
       restart_policy:
@@ -88,10 +91,10 @@ services:
         - "traefik.enable=true"
         - "traefik.backend=backend"
         - "traefik.port=9000"
-        - "traefik.frontend.rule=PathPrefixStrip:/api"
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost};PathPrefixStrip:/api"
 
   docker-socket-proxy:
-    image: wacc-docker-socket-proxy:latest
+    image: wacccourse/docker-socket-proxy:latest
     networks:
       - internal
     volumes:
@@ -143,5 +146,6 @@ networks:
     external: true
 
 volumes:
+  consul_data: {}
   mongo_data: {}
   cassandra_data: {}

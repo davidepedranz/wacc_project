@@ -1,0 +1,4 @@
+<div fxLayout fxLayoutAlign="center center">
+  <app-user-form [hidden]="(pending$ | async)" [pending]="(pending$ | async)" [error]="(error$ | async)" (submitted)="onSubmit($event)"></app-user-form>
+  <mat-progress-spinner *ngIf="pending$ | async" mode="indeterminate"></mat-progress-spinner>
+</div>
