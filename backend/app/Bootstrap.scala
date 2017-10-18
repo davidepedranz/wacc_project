@@ -3,8 +3,8 @@ import javax.inject._
 import akka.stream.Materializer
 import models.UserWithPassword
 import org.apache.kafka.clients.producer.ProducerRecord
-import play.api.{Configuration, Logger}
 import play.api.inject.ApplicationLifecycle
+import play.api.{Configuration, Logger}
 import repositories.UsersRepository
 import services.{Kafka, Swarm}
 
@@ -23,6 +23,8 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
     } else {
       Logger.info("The database of users is not empty... skip creating the default user.")
     }
+  }.recover {
+    case ex => Logger.error("Can not connect to MongoDB.", ex)
   }
 
   // connect to swarm and stream events to Kafka (automatic errors retry)

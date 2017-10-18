@@ -14,6 +14,8 @@ if [[ -z "${SERVICE_NAME}" ]]; then
 fi
 REPLICA_SET_NAME="rs0"
 
+nslookup ${SERVICE_NAME}
+
 # wait to have at least 3 instances of mongo
 READY=false
 while [ "$READY" = "false" ]; do
@@ -23,7 +25,7 @@ while [ "$READY" = "false" ]; do
     # get all instances of mongo
     INSTANCES=($(nslookup ${SERVICE_NAME} | tail -n +4 | grep 'Address' | cut -d' ' -f2 | sort))
     echo -e "Got the following instances of the service '${SERVICE_NAME}':"
-    printf '  --> %s\n' "${instances[@]}"
+    printf '  --> %s\n' "${INSTANCES[@]}"
 
     # make sure 3 replicas available
     if [ "${#INSTANCES[@]}" -ge "3" ]; then
@@ -36,7 +38,7 @@ while [ "$READY" = "false" ]; do
         if [ $? -ne 0 ]; then
             echo "Replica set not yet configured. Create it..."
             MEMBERS=$(echo ${INSTANCES[*]} | sed "s/ /\n/g" | awk '{print "{ _id: " ++ln ", host: \"" $0 "\" }," }'  | tr '\n' ' ' | sed 's/, $/\n/')
-            echo -e "${members}\n"
+            echo -e "${MEMBERS}\n"
             mongo --host "${TARGET}" --eval "rs.initiate({ _id: \"${REPLICA_SET_NAME}\", version: 1, members: [ ${MEMBERS} ] })";
         else
             echo "Replica set already created... SKIP"

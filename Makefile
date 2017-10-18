@@ -3,56 +3,109 @@
 help:
 	@echo "Usage: make <command>"
 	@echo ""
-	@echo "  build      build frontend and backend to Docker images"
-	@echo "  undeploy   undeploy the Docker stack"
-	@echo "  deploy     deploy the Docker stack"
-	@echo "  all        build + deploy"
+	@echo "  build            Build all the Docker containers."
+	@echo "  push             Push all the build Docker containers."
+	@echo "  deploy-gcp       Deploy the Docker stack on Google Cloud (require SSH configuration)."
+	@echo "  undeploy-gcp     Undeploy the Docker stack from Google Cloud (require SSH configuration)."
+	@echo "  deploy-local     Deploy the Docker stack on the local machine."
+	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
+	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
+	@echo "  all-local        Build and deploy the stack on the local machine."
 	@echo ""
 
-build:
+build-frontend:
 	@echo "---------------------------------------"
-	@echo "  Frontend --> Docker"
+	@echo "  [BUILD] Frontend"
 	@echo "---------------------------------------"
 	@docker build -t wacccourse/frontend:latest frontend
 	@echo ""
+
+build-backend:
 	@echo "---------------------------------------"
-	@echo "  Backend --> Docker"
+	@echo "  [BUILD] Backend"
 	@echo "---------------------------------------"
 	@(cd ./backend && sbt docker:publishLocal)
 	@docker tag wacc-backend wacccourse/backend
 	@echo ""
+
+build-docker-proxy:
 	@echo "---------------------------------------"
-	@echo "  Backend --> Docker"
+	@echo "  [BUILD] Docker Proxy"
 	@echo "---------------------------------------"
 	@docker build -t wacccourse/docker-socket-proxy:latest docker-socket-proxy
 	@echo ""
 
-push: build
+build-mongo-setup:
 	@echo "---------------------------------------"
-	@echo "  Pushing Imanges to Docker Hub"
+	@echo "  [BUILD] Mongo Setup"
 	@echo "---------------------------------------"
-	docker push wacccourse/frontend
-	docker push wacccourse/backend
-	docker push wacccourse/docker-socket-proxy
+	@docker build -t wacccourse/mongo-setup:latest mongo-setup
 	@echo ""
 
-undeploy:
+build: build-frontend build-backend build-docker-proxy build-mongo-setup
+
+push-frontend:
 	@echo "---------------------------------------"
-	@echo "  Docker: undeploy old stack"
+	@echo "  [PUSH] Frontend"
+	@echo "---------------------------------------"
+	@docker push wacccourse/frontend
+	@echo ""
+
+push-backend:
+	@echo "---------------------------------------"
+	@echo "  [PUSH] Backend"
+	@echo "---------------------------------------"
+	@docker push wacccourse/backend
+	@echo ""
+
+push-docker-proxy:
+	@echo "---------------------------------------"
+	@echo "  [PUSH] Docker Proxy"
+	@echo "---------------------------------------"
+	@docker push wacccourse/docker-socket-proxy
+	@echo ""
+
+push-mongo-setup:
+	@echo "---------------------------------------"
+	@echo "  [BUILD] Mongo Setup"
+	@echo "---------------------------------------"
+	@docker push wacccourse/mongo-setup
+	@echo ""
+
+push: push-frontend push-backend push-docker-proxy push-mongo-setup
+
+undeploy-local:
+	@echo "---------------------------------------"
+	@echo "  [UNDEPLOY] Local Machine"
 	@echo "---------------------------------------"
 	@docker stack rm wacc
 	@echo ""
 
-deploy: undeploy
+deploy-local: undeploy-local
 	@echo "---------------------------------------"
-	@echo "  Docker: deploy stack"
+	@echo "  [DEPLOY] Local Machine"
 	@echo "---------------------------------------"
 	@docker stack deploy wacc -c wacc-stack.yml
 	@echo ""
 
-gcp:
+undeploy-gcp:
 	@echo "---------------------------------------"
-	@echo "  Deploy to Google Cloud Platform"
+	@echo "  [UNDEPLOY] Google Cloud Platform"
+	@echo "---------------------------------------"
+	ssh wacc1 'rm -r ~/repository || exit 0'
+	ssh wacc1 'docker stack rm wacc'
+	sleep 3
+	ssh wacc1 'docker volume rm wacc_mongo_data || exit 0'
+	ssh wacc1 'docker volume rm wacc_cassandra_data || exit 0'
+	ssh wacc2 'docker volume rm wacc_mongo_data || exit 0'
+	ssh wacc2 'docker volume rm wacc_cassandra_data || exit 0'
+	ssh wacc3 'docker volume rm wacc_mongo_data || exit 0'
+	ssh wacc3 'docker volume rm wacc_cassandra_data || exit 0'
+	@echo ""
+
+deploy-gcp: undeploy-gcp
+	@echo "---------------------------------------"
+	@echo "  [DEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
 	ssh wacc1 'mkdir ~/repository -p'
 	scp wacc-stack.yml wacc1:~/repository/wacc-stack.yml
@@ -60,12 +113,6 @@ gcp:
 	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-stack.yml'
 	@echo ""
 
-gcp-clean:
-	@echo "---------------------------------------"
-	@echo "  Cleanup Google Cloud Platform"
-	@echo "---------------------------------------"
-	ssh wacc1 'rm -r ~/repository || exit 0'
-	ssh wacc1 'docker stack rm wacc'
-	@echo ""
+all-gcp: build push deploy-gcp
 
-all: build deploy
+all-local: build deploy-local

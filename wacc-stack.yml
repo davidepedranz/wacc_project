@@ -73,12 +73,24 @@ services:
     volumes:
       - mongo_data:/data/db
     deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+      endpoint_mode: dnsrr
+    command: 'mongod --replSet "rs0"'
+
+  mongo-setup:
+    image: wacccourse/mongo-setup:latest
+    networks:
+      - internal
+    environment:
+      SERVICE_NAME: mongo
+    deploy:
       replicas: 1
-      placement:
-        constraints: [node.role == manager]
       restart_policy:
         condition: on-failure
 
+  # TODO: cluster
   cassandra:
     image: cassandra:3.0
     networks:
@@ -92,12 +104,14 @@ services:
       restart_policy:
         condition: on-failure
 
+  # TODO: kakfa
+
 networks:
   public:
     driver: overlay
   internal:
     driver: overlay
-    internal: true
+    # internal: true
 
 volumes:
   mongo_data: {}
