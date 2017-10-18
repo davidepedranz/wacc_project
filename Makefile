@@ -78,7 +78,10 @@ undeploy-local:
 	@echo "---------------------------------------"
 	@echo "  [UNDEPLOY] Local Machine"
 	@echo "---------------------------------------"
-	@docker stack rm wacc
+	docker stack rm wacc
+	sleep 3
+	docker volume rm wacc_mongo_data || exit 0
+	docker volume rm wacc_cassandra_data || exit 0
 	@echo ""
 
 deploy-local: undeploy-local
