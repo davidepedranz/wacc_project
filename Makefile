@@ -42,19 +42,8 @@ undeploy:
 	@echo "---------------------------------------"
 	@docker stack rm wacc
 	@echo ""
-	@echo "---------------------------------------"
-	@echo "  Docker: remove consul network"
-	@echo "---------------------------------------"
-	@docker network rm consul-net || exit 0
-	@echo ""
 
 deploy: undeploy
-	@echo "---------------------------------------"
-	@echo "  Docker: create consul network"
-	@echo "---------------------------------------"
-	@docker network create consul-net -d overlay --subnet=172.20.0.0/24 || exit 0
-	@echo ""
-
 	@echo "---------------------------------------"
 	@echo "  Docker: deploy stack"
 	@echo "---------------------------------------"
@@ -68,7 +57,6 @@ gcp:
 	ssh wacc1 'mkdir ~/repository -p'
 	scp wacc-stack.yml wacc1:~/repository/wacc-stack.yml
 	scp gcp.env wacc1:~/repository/.env
-	ssh wacc1 'docker network create consul-net -d overlay --subnet=172.20.0.0/24 || exit 0'
 	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-stack.yml'
 	@echo ""
 
@@ -78,8 +66,6 @@ gcp-clean:
 	@echo "---------------------------------------"
 	ssh wacc1 'rm -r ~/repository || exit 0'
 	ssh wacc1 'docker stack rm wacc'
-	ssh wacc1 'docker network rm consul-net || exit 0'
 	@echo ""
 
-	
 all: build deploy
