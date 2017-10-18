@@ -10,7 +10,7 @@ help:
 	@echo "  deploy-local     Deploy the Docker stack on the local machine."
 	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
 	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
-	@echo "  all-local        Build and deploy the stack on the local machine."
+	@echo "  all-local        Build and push the containers to the registry, deploy to the local machine."
 	@echo ""
 
 build-frontend:
@@ -25,7 +25,7 @@ build-backend:
 	@echo "  [BUILD] Backend"
 	@echo "---------------------------------------"
 	@(cd ./backend && sbt docker:publishLocal)
-	@docker tag wacc-backend wacccourse/backend
+	@docker tag wacc-backend wacccourse/backend:latest
 	@echo ""
 
 build-docker-proxy:
@@ -118,4 +118,4 @@ deploy-gcp: undeploy-gcp
 
 all-gcp: build push deploy-gcp
 
-all-local: build deploy-local
+all-local: build push deploy-local
