@@ -2,6 +2,7 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import akka.stream.scaladsl.RestartSource
 import models.UserWithPassword
 import org.apache.kafka.clients.producer.ProducerRecord
 import play.Logger
@@ -14,7 +15,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.language.postfixOps
 
-
+// TODO: split in 2 classes!
 @Singleton
 final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: ApplicationLifecycle,
                                 materializer: Materializer, actorSystem: ActorSystem, config: Configuration,
@@ -35,21 +36,13 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
     case ex => Logger.error("Can not connect to MongoDB.", ex)
   }
 
-  // connect to swarm and stream events to Kafka (automatic errors retry)
+  // stream events from Docker Swarm to Kafka
+  //   --> connect to Docker Swarm API (wrap call in an Akka Stream)
+  //   --> retry the stream if if fails (automatic reconnection)
+  //   --> write events to Kafka
   private val topic: String = config.get[String]("kafka.topic")
-  swarm.streamEvents.map { source =>
-    source
-      .map {
-        elem => {
-          Logger.debug("[Docker Swarm] write to kafka -> " + elem)
-          new ProducerRecord[Array[Byte], String](topic, elem)
-        }
-      }
-      .to(kafka.sink)
-      .run()(materializer)
-  }.recover {
-    case ex =>
-      Logger.error(s"Error streaming events from Docker Swarm.", ex)
-  }
-    .onComplete(_ => Logger.error("HTTP chunked streaming from Docker Swarm interrupted."))
+  RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 5.seconds, randomFactor = 0.2) { () => swarm.streamEvents }
+    .map(new ProducerRecord[Array[Byte], String](topic, _))
+    .to(kafka.sink)
+    .run()(materializer)
 }
