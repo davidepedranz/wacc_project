@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/dom/webSocket';
 import 'rxjs/add/operator/retryWhen';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/delay';
 
 import { Event } from '../models/event';
 
@@ -13,7 +14,7 @@ export class EventsService {
 
     constructor( @Inject(DOCUMENT) private document) {
         this.events$ = Observable.webSocket(`ws://${document.location.host}/api/v1/events?token=test`)
-            .retryWhen(error => error.delay(5000))
+            .retryWhen(error => error.delay(2000))
             .map(msg => msg as Event);
     }
 }
