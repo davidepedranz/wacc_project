@@ -35,6 +35,10 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
     Retry.periodically(events.stream(), 5.seconds, callback).map { response =>
       Logger.info("Connected to Docker Swarm. Start to stream events to Kafka...")
       response.bodyAsSource.map(stream => stream.utf8String)
+    }.recoverWith {
+      case ex =>
+        Logger.error(s"Error streaming events from Docker Swarm.", ex)
+        Future.failed(new Exception("A prettier error message", ex))
     }
   }
 }

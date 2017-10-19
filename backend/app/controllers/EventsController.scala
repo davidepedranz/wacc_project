@@ -5,6 +5,7 @@ import javax.inject._
 import akka.stream.javadsl.Source
 import akka.stream.scaladsl.{Flow, Sink}
 import models.Event
+import play.Logger
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.WebSocket.MessageFlowTransformer
@@ -33,6 +34,10 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     // connect to Kafka to get live streaming
     val liveEvents = kafka.source(topic).map {
       x => Json.parse(x.value).as[Event]
+    }.recover {
+      case ex =>
+        Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
+        Event(0, "fake", "fake", "fake")
     }
 
     // client -> input [ignored] -> ... -> kafka -> events -> out -> client

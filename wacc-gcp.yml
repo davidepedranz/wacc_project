@@ -40,10 +40,12 @@ services:
     networks:
       - internal
     environment:
-      APPLICATION_SECRET: "some-fake-secret-to-change"
+      APPLICATION_SECRET: "90d1b84a-1f8f-44bb-9251-18316af45cf0"
       MONGODB_URI: "mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/wacc"
       CASSANDRA_URI: "cassandradb://cassandra-1:9042,cassandra-2:9042,cassandra-3:9042"
-      DOCKER_HOST : "http://docker-socket-proxy:2375"
+      DOCKER_HOST: "http://docker-socket-proxy:2375"
+      KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
+      KAFKA_TOPIC: "docker.swarm.events"
     deploy:
       replicas: 3
       restart_policy:
@@ -174,7 +176,122 @@ services:
       restart_policy:
         condition: on-failure
 
-  # TODO: kakfa
+  zoo1:
+    image: 31z4/zookeeper
+    # hostname: zoo1
+    networks:
+      - internal
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+
+  zoo2:
+    image: 31z4/zookeeper
+    # hostname: zoo2
+    networks:
+      - internal
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+
+  zoo3:
+    image: 31z4/zookeeper
+    # hostname: zoo3
+    networks:
+      - internal
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
+
+  kafka-1:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-1
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+
+  kafka-2:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-2
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+
+  kafka-3:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-3
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
 
 networks:
   public:
