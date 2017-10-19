@@ -123,3 +123,11 @@ all-local: build push deploy-local
 
 load-test:
 	bzt jmeter/wacc.jmx
+
+reboot-gcp:
+	@echo "---------------------------------------"
+	@echo "  [REBOOT] Google Cloud Platform"
+	@echo "---------------------------------------"
+	@ssh wacc1 'sudo reboot' || exit 0
+	@ssh wacc2 'sudo reboot' || exit 0
+	@ssh wacc3 'sudo reboot' || exit 0
