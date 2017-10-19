@@ -28,6 +28,7 @@ services:
       replicas: 3
       restart_policy:
         condition: on-failure
+      endpoint_mode: dnsrr
       labels:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
@@ -47,6 +48,7 @@ services:
       replicas: 3
       restart_policy:
         condition: on-failure
+      endpoint_mode: dnsrr
       labels:
         - "traefik.enable=true"
         - "traefik.backend=backend"

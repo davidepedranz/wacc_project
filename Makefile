@@ -99,12 +99,12 @@ undeploy-gcp:
 	ssh wacc1 'rm -r ~/repository || exit 0'
 	ssh wacc1 'docker stack rm wacc'
 	sleep 3
-	ssh wacc1 'docker volume rm wacc_mongo_data || exit 0'
-	ssh wacc1 'docker volume rm wacc_cassandra_data || exit 0'
-	ssh wacc2 'docker volume rm wacc_mongo_data || exit 0'
-	ssh wacc2 'docker volume rm wacc_cassandra_data || exit 0'
-	ssh wacc3 'docker volume rm wacc_mongo_data || exit 0'
-	ssh wacc3 'docker volume rm wacc_cassandra_data || exit 0'
+	ssh wacc1 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc2 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc3 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
+	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
+	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
 	@echo ""
 
 deploy-gcp: undeploy-gcp
