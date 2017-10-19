@@ -8,45 +8,42 @@
 trap "exit 0" SIGTERM
 
 # read the name of the service from the environment
-if [[ -z "${SERVICE_NAME}" ]]; then
-    echo -e "Please set the environment variable SERVICE_NAME with the name of the MongoDB service in Docker Swarm!\n"
+if [[ -z "${MONGO_NAMES}" ]]; then
+    echo -e "Please set the environment variable MONGO_NAMES with the names of the MongoDB services in Docker Swarm!\n"
     exit 1
 fi
 REPLICA_SET_NAME="rs0"
 
-nslookup ${SERVICE_NAME}
-
 # wait to have at least 3 instances of mongo
-READY=false
-while [ "$READY" = "false" ]; do
-    sleep 5
-    echo -e "\nNew attempt to setup the MongoDB cluster."
+echo -e "\nNew attempt to setup the MongoDB cluster."
 
-    # get all instances of mongo
-    INSTANCES=($(nslookup ${SERVICE_NAME} | tail -n +4 | grep 'Address' | cut -d' ' -f2 | sort))
-    echo -e "Got the following instances of the service '${SERVICE_NAME}':"
-    printf '  --> %s\n' "${INSTANCES[@]}"
+# get all instances of mongo
+INSTANCES=(${MONGO_NAMES})
+echo -e "Got the following instances for MongoDB:"
+printf '  --> %s\n' "${INSTANCES[@]}"
+echo ""
 
-    # make sure 3 replicas available
-    if [ "${#INSTANCES[@]}" -ge "3" ]; then
-        READY=true
-
-        # create replica set
-        TARGET=${INSTANCES[0]}
-        echo -e "\nTry to create the replica set using the instance with the smallest ip: ${TARGET}.\n"
-        status=$(mongo --host ${TARGET} --quiet --eval 'rs.status().members.length')
-        if [ $? -ne 0 ]; then
-            echo "Replica set not yet configured. Create it..."
-            MEMBERS=$(echo ${INSTANCES[*]} | sed "s/ /\n/g" | awk '{print "{ _id: " ++ln ", host: \"" $0 "\" }," }'  | tr '\n' ' ' | sed 's/, $/\n/')
-            echo -e "${MEMBERS}\n"
-            mongo --host "${TARGET}" --eval "rs.initiate({ _id: \"${REPLICA_SET_NAME}\", version: 1, members: [ ${MEMBERS} ] })";
-        else
-            echo "Replica set already created... SKIP"
-        fi
-    else
-        echo "MongoDB is not yet ready (we need at least 3 instances for a serious replica set)... retry again in 5 seconds."
-        sleep 5
+# make sure the replicas available
+for INSTANCE in ${INSTANCES[@]}; do
+    echo "Testing instance ${INSTANCE}..."
+    mongo --host $INSTANCE --eval 'db' > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Instance ${INSTANCE} is not available."
+        exit 1
     fi
 done
+
+# create replica set
+TARGET=${INSTANCES[0]}
+echo -e "\nTry to create the replica set using the first instance: ${TARGET}.\n"
+status=$(mongo --host ${TARGET} --quiet --eval 'rs.status().members.length')
+if [ $? -ne 0 ]; then
+    echo "Replica set not yet configured. Create it..."
+    MEMBERS=$(echo ${INSTANCES[*]} | sed "s/ /\n/g" | awk '{print "{ _id: " ++ln ", host: \"" $0 "\" }," }'  | tr '\n' ' ' | sed 's/, $/\n/')
+    echo -e "${MEMBERS}\n"
+    mongo --host "${TARGET}" --eval "rs.initiate({ _id: \"${REPLICA_SET_NAME}\", version: 1, members: [ ${MEMBERS} ] })";
+else
+    echo "Replica set already created... SKIP"
+fi
 
 echo -e "\nDONE! =D\n"

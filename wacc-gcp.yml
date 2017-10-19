@@ -41,7 +41,7 @@ services:
       - internal
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
-      MONGODB_URI: "mongodb://mongo:27017/wacc"
+      MONGODB_URI: "mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/wacc"
       CASSANDRA_URI: "cassandradb://cassandra-1:9042,cassandra-2:9042,cassandra-3:9042"
       DOCKER_HOST : "http://docker-socket-proxy:2375"
     deploy:
@@ -68,7 +68,7 @@ services:
       restart_policy:
         condition: on-failure
 
-  mongo:
+  mongo-1:
     image: mongo:3.4
     networks:
       - internal
@@ -76,9 +76,41 @@ services:
       - mongo_data:/data/db
     deploy:
       mode: global
+      placement:
+        constraints:
+          - node.labels.node == node1
       restart_policy:
         condition: on-failure
-      endpoint_mode: dnsrr
+    command: 'mongod --replSet "rs0"'
+
+  mongo-2:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+    command: 'mongod --replSet "rs0"'
+
+  mongo-3:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
     command: 'mongod --replSet "rs0"'
 
   mongo-setup:
@@ -86,7 +118,7 @@ services:
     networks:
       - internal
     environment:
-      SERVICE_NAME: mongo
+      MONGO_NAMES: "mongo-1 mongo-2 mongo-3"
     deploy:
       replicas: 1
       restart_policy:
