@@ -41,11 +41,15 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
     source
       .map {
         elem => {
-          Logger.debug("[Docker Swarm] -> " + elem)
+          Logger.debug("[Docker Swarm] write to kafka -> " + elem)
           new ProducerRecord[Array[Byte], String](topic, elem)
         }
       }
       .to(kafka.sink)
       .run()(materializer)
+  }.recover {
+    case ex =>
+      Logger.error(s"Error streaming events from Docker Swarm.", ex)
   }
+    .onComplete(_ => Logger.error("HTTP chunked streaming from Docker Swarm interrupted."))
 }

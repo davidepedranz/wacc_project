@@ -22,6 +22,7 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
   private val events: WSRequest = ws.url(swarmUrl + "/events")
     .addQueryStringParameters("filters" -> Json.obj("type" -> Seq("service")).toString())
     .addHttpHeaders("Accept" -> "application/json")
+    .withRequestTimeout(Duration.Inf)
 
   def streamEvents: Future[Source[String, _]] = {
 
@@ -34,11 +35,10 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
     // we also handle automatic retrials in case Docker Swarm is not available for some reasons
     Retry.periodically(events.stream(), 5.seconds, callback).map { response =>
       Logger.info("Connected to Docker Swarm. Start to stream events to Kafka...")
-      response.bodyAsSource.map(stream => stream.utf8String)
-    }.recoverWith {
-      case ex =>
-        Logger.error(s"Error streaming events from Docker Swarm.", ex)
-        Future.failed(new Exception("A prettier error message", ex))
+      response.bodyAsSource.map { stream =>
+        Logger.warn("[Docker Swarm] streaming: " + stream.utf8String)
+        stream.utf8String
+      }
     }
   }
 }
