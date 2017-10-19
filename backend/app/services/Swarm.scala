@@ -26,10 +26,13 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
     .withRequestTimeout(Duration.Inf)
 
   // http://loicdescotte.github.io/posts/play25-akka-streams/
-  def streamEvents: Source[String, NotUsed] = Source.fromFuture(events.stream)
-    .flatMapConcat(_.bodyAsSource.map(_.utf8String))
-    .map { s =>
-      logger.warn(s"Swarm Event: $s")
-      s
-    }
+  def streamEvents: Source[String, NotUsed] = {
+    logger.warn("Connecting to Docker Swarm...")
+    Source.fromFuture(events.stream)
+      .flatMapConcat(_.bodyAsSource.map(_.utf8String))
+      .map { s =>
+        logger.debug(s"Swarm Event: $s")
+        s
+      }
+  }
 }
