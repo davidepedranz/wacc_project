@@ -104,7 +104,7 @@ services:
       mode: global
       placement:
         constraints:
-          - node.labels.cassandra == node1
+          - node.labels.node == node1
       restart_policy:
         condition: on-failure
 
@@ -121,7 +121,7 @@ services:
       mode: global
       placement:
         constraints:
-          - node.labels.cassandra == node2
+          - node.labels.node == node2
       restart_policy:
         condition: on-failure
 
@@ -138,7 +138,7 @@ services:
       mode: global
       placement:
         constraints:
-          - node.labels.cassandra == node3
+          - node.labels.node == node3
       restart_policy:
         condition: on-failure
 

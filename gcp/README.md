@@ -23,9 +23,9 @@ docker swarm join --token xxx
 
 ### Labels (from node 1)
 ```
-docker node update --label-add cassandra=node1 node1
-docker node update --label-add cassandra=node2 node2
-docker node update --label-add cassandra=node3 node3
+docker node update --label-add node=node1 node1
+docker node update --label-add node=node2 node2
+docker node update --label-add node=node3 node3
 ```
 
 ## Docker Hub
