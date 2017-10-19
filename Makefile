@@ -112,9 +112,9 @@ deploy-gcp: undeploy-gcp
 	@echo "  [DEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
 	ssh wacc1 'mkdir ~/repository -p'
-	scp wacc-stack.yml wacc1:~/repository/wacc-stack.yml
+	scp wacc-gcp.yml wacc1:~/repository/wacc-gcp.yml
 	scp gcp.env wacc1:~/repository/.env
-	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-stack.yml'
+	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
 	@echo ""
 
 all-gcp: build push deploy-gcp

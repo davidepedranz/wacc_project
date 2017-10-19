@@ -21,5 +21,12 @@ docker swarm join-token manager
 docker swarm join --token xxx
 ```
 
+### Labels (from node 1)
+```
+docker node update --label-add cassandra=node1 node1
+docker node update --label-add cassandra=node2 node2
+docker node update --label-add cassandra=node3 node3
+```
+
 ## Docker Hub
 Please login to Docker Hub from your local machine.

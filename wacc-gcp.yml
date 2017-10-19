@@ -41,7 +41,7 @@ services:
     environment:
       APPLICATION_SECRET: "some-fake-secret-to-change"
       MONGODB_URI: "mongodb://mongo:27017/wacc"
-      CASSANDRA_URI: "cassandradb://cassandra:9042"
+      CASSANDRA_URI: "cassandradb://cassandra-1:9042,cassandra-2:9042,cassandra-3:9042"
       DOCKER_HOST : "http://docker-socket-proxy:2375"
     deploy:
       replicas: 3
@@ -77,6 +77,7 @@ services:
       restart_policy:
         condition: on-failure
       endpoint_mode: dnsrr
+    command: 'mongod --replSet "rs0"'
 
   mongo-setup:
     image: wacccourse/mongo-setup:latest
@@ -89,16 +90,53 @@ services:
       restart_policy:
         condition: on-failure
 
-  cassandra:
+  cassandra-1:
     image: cassandra:3.11
     networks:
       - internal
     volumes:
       - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-1
     deploy:
-      replicas: 1
+      mode: global
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.labels.cassandra == node1
+      restart_policy:
+        condition: on-failure
+
+  cassandra-2:
+    image: cassandra:3.11
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-2
+      CASSANDRA_SEEDS: cassandra-1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.cassandra == node2
+      restart_policy:
+        condition: on-failure
+
+  cassandra-3:
+    image: cassandra:3.11
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-3
+      CASSANDRA_SEEDS: cassandra-1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.cassandra == node3
       restart_policy:
         condition: on-failure
 
