@@ -1,5 +1,6 @@
 package services
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
 import akka.actor.ActorSystem
@@ -15,7 +16,6 @@ import play.api.Configuration
 final class Kafka @Inject()(configuration: Configuration) {
   private val actorSystem: ActorSystem = ActorSystem("kafka")
   private val kafkaUrl: String = configuration.get[String]("kafka.url")
-  private val kafkaGroup: String = configuration.get[String]("kafka.group")
 
   private def producerSettings: ProducerSettings[Array[Byte], String] = {
     ProducerSettings(actorSystem, new ByteArraySerializer, new StringSerializer)
@@ -25,7 +25,7 @@ final class Kafka @Inject()(configuration: Configuration) {
   private def consumerSettings: ConsumerSettings[Array[Byte], String] = {
     ConsumerSettings(actorSystem, new ByteArrayDeserializer, new StringDeserializer)
       .withBootstrapServers(kafkaUrl)
-      .withGroupId(kafkaGroup)
+      .withGroupId(UUID.randomUUID().toString)
   }
 
   def sink: Sink[ProducerRecord[Array[Byte], String], _] = {
