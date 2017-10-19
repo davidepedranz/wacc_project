@@ -29,7 +29,7 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     // TODO: parse token + authenticate... return Left if token / permission wrong
 
     // TODO: connect to Cassandra to get the last events
-    val oldEvents = Source.single(Event(System.currentTimeMillis(), "action", "service", "host"))
+    val oldEvents = Source.single(Event(System.currentTimeMillis() / 1000, "action", "service", "host"))
 
     // connect to Kafka to get live streaming
     val liveEvents = kafka.source(topic).map {
