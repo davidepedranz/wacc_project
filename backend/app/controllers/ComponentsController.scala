@@ -8,11 +8,12 @@ import play.api.libs.ws._
 import play.api._
 import play.api.mvc._
 
+import scala.concurrent._
+import scala.concurrent.duration._
+
 import scala.concurrent.ExecutionContext
 import play.api.libs.json._
-
-import play.api.libs.ws.JsonBodyReadables._
-import play.api.libs.ws.JsonBodyWritables._
+import play.api.libs.json
 
 @Singleton
 class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient,cc: ControllerComponents ) extends AbstractController(cc) {
@@ -21,7 +22,6 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient
   val getContainersUrl = "/containers/json"
   val getContainersAllUrl = "/containers/json?all=true"
   val getImagesUrl = "/images/json"
-
 
 
   def getContainers = Action.async {
@@ -82,8 +82,12 @@ def createService = Action.async {
 }
 
 
-def updateService(id : String, version : String) = Action.async {
-  request => 
+
+def updateService(id : String) = Action.async {
+  request =>
+  val versionURL = ws.url(host+"/services/"+id).get()
+  val versionBody = Await.result(versionURL,Duration(10,"seconds")).body
+  val version = ( Json.parse(versionBody) \ "Version" \ "Index").get
   if ( version == "" ) BadRequest("malformed version");
   val updateURL = ws.url(host + "/services/"+id+"/update?version="+version)
   val bodyString = request.body.asText.mkString
@@ -103,16 +107,16 @@ def deleteService (id : String) = Action.async {
   }
 }
 
-def getServiceInfo (id : String ) = Action.async {
+def getServicesInfo (id : String ) = Action.async {
   val request = ws.url(host+"/services/"+id)
   request.get().map {
     response => Ok(response.body)
   }
 }
 
-
-def cannotGet = Action.async {
-  BadRequest("cannot perform GET on this page")
-}
+//
+//def cannotGet = Action.async {
+ // BadRequest("cannot perform GET on this page")
+//}
 
 }

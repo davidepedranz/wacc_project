@@ -13,6 +13,6 @@ import {ServiceDetailComponent} from './service/service-create-form.component';
         ServiceDetailComponent,
     ]
   })
-  export class serviceModule {
+  export class ServiceModule {
 
   }

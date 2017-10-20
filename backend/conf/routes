@@ -16,16 +16,6 @@ DELETE        /v1/users/:username/permissions/:permission        controllers.Use
 # events streaming (using Websockets)
 GET           /v1/events                                         controllers.EventsController.socket
 
-# actions against the Docker APIs
-GET           /containers                                        controllers.ComponentsController.getContainers
-GET           /containersAll                                     controllers.ComponentsController.getContainersAll
-GET           /images                                            controllers.ComponentsController.getImages
-POST          /containers/:id/stop                               controllers.ComponentsController.postContainerStop(id: String)
-POST          /containers/:id/start                              controllers.ComponentsController.postContainerStart(id: String)
-GET           /containers/:id                                    controllers.ComponentsController.getContainersInfo(id: String)
-POST          /services/create                                   controllers.ComponentsController.createService
-POST          /services/:id/update/:version                      controllers.ComponentsController.updateService(id: String, version: String)
-DELETE        /services/:id                                      controllers.ComponentsController.deleteService(id: String)
 
 # TODO: what is this for?
 GET           /v1/db                                             controllers.CassandraController.test
@@ -39,7 +29,6 @@ POST      /containers/:id/stop                                   controllers.Com
 POST      /containers/:id/start                                  controllers.ComponentsController.postContainerStart(id:String)
 GET       /containers/:id                                        controllers.ComponentsController.getContainersInfo(id : String)
 POST      /services/create                                       controllers.ComponentsController.createService
-POST      /services/:id/update/:version                          controllers.ComponentsController.updateService( id : String , version : String  )
+POST      /services/:id/update                                   controllers.ComponentsController.updateService( id : String )
 DELETE    /services/:id                                          controllers.ComponentsController.deleteService(id : String)
 GET       /services/:id                                          controllers.ComponentsController.getServicesInfo(id : String)
-GET       /services/:id/*command                                 controllers.ComponentsController.cannotGet
