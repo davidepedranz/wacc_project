@@ -70,34 +70,27 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient
   }
 
 
-def createService = Action.async {
+def createService = Action.async(parse.json) {
   request =>
   val createServiceURL = ws.url(host + "/services/create")
-  val bodyString = request.body.asText.mkString
-  val bodyJson = Json.parse(bodyString)
-  createServiceURL.withHttpHeaders(  "Accept" -> "application/json").post(bodyJson).map { 
+  createServiceURL.withHttpHeaders(  "Accept" -> "application/json").post(request.body).map { 
     response =>
     Ok(response.body)
   }
 }
 
 
-
-def updateService(id : String) = Action.async {
+def updateService(id : String) = Action.async(parse.json) {
   request =>
-  val versionURL = ws.url(host+"/services/"+id).get()
-  val versionBody = Await.result(versionURL,Duration(10,"seconds")).body
-  val version = ( Json.parse(versionBody) \ "Version" \ "Index").get
-  if ( version == "" ) BadRequest("malformed version");
+  val versionGET = ws.url(host+"/services/"+id).get()
+  val versionBody = Await.result(versionGET,Duration.Inf).body
+  val version : String = Json.stringify( ( Json.parse(versionBody) \ "Version" \ "Index").get )
   val updateURL = ws.url(host + "/services/"+id+"/update?version="+version)
-  val bodyString = request.body.asText.mkString
-  val bodyJson = Json.parse(bodyString)
-  updateURL.withHttpHeaders(  "Accept" -> "application/json").post(bodyJson).map { 
+  updateURL.withHttpHeaders(  "Accept" -> "application/json").post(request.body).map { 
     response =>
     Ok(response.body)
   }
 }
-
 
 def deleteService (id : String) = Action.async {
   request => 
@@ -114,9 +107,6 @@ def getServicesInfo (id : String ) = Action.async {
   }
 }
 
-//
-//def cannotGet = Action.async {
- // BadRequest("cannot perform GET on this page")
-//}
+
 
 }
