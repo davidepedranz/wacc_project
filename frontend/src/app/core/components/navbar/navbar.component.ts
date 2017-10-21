@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
 import * as AuthenticationActions from '../../../authentication/store/authentication.actions';
 import * as fromAuthentication from '../../../authentication/store';
+import { User } from '../../../users/models/user.model';
 
 @Component({
   selector: 'app-navbar',
@@ -12,14 +12,13 @@ import * as fromAuthentication from '../../../authentication/store';
   styleUrls: ['./navbar.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit {
-  show: Observable<boolean>;
+export class NavbarComponent {
+  show$: Observable<boolean>;
+  username$: Observable<string | null>;
 
   constructor(private store: Store<fromAuthentication.State>) {
-    this.show = store.select(fromAuthentication.isLoggedIn);
-  }
-
-  ngOnInit() {
+    this.show$ = store.select(fromAuthentication.isLoggedIn);
+    this.username$ = store.select(fromAuthentication.getCurrentUser).map(user => user && user.username || null);
   }
 
   logout() {

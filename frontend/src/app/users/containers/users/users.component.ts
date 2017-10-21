@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
+import { PERMISSION_USER_WRITE } from '../../services/users.service';
 import { User } from '../../models/user.model';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
@@ -19,12 +20,14 @@ export class UsersComponent implements OnInit {
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
   users$: Observable<User[]>;
+  canAddNewUsers$: Observable<boolean>;
 
   constructor(private authenticationStore: Store<fromAuthentication.State>, private usersStore: Store<fromUsers.State>) {
     this.currentUser$ = authenticationStore.select(fromAuthentication.getCurrentUser);
     this.fetching$ = usersStore.select(fromUsers.isFetchingUsers);
     this.error$ = usersStore.select(fromUsers.isFetchingUsersError);
     this.users$ = usersStore.select(fromUsers.getUsers);
+    this.canAddNewUsers$ = this.currentUser$.map(user => user && user.permissions.indexOf(PERMISSION_USER_WRITE) !== -1);
   }
 
   ngOnInit() {
