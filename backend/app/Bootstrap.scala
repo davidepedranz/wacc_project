@@ -36,12 +36,17 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
       .map {
         elem => {
           Logger.debug("[Docker Swarm] -> " + elem)
-          val event = Json.parse(elem).as[Event]
-          eventDatabase.saveOrUpdate(event)
           new ProducerRecord[Array[Byte], String](topic, elem)
         }
       }
       .to(kafka.sink)
       .run()(materializer)
+  }
+
+  kafka.source(topic).map {
+    x => {
+      val event = Json.parse(x.value).as[Event]
+      eventDatabase.saveOrUpdate(event)
+    }
   }
 }
