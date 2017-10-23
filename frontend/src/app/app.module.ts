@@ -30,18 +30,10 @@ import { TokenInterceptor } from './authentication/services/token.interceptor';
     !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
 
     CoreModule,
-    AuthenticationModule.forRoot(),
-    // UsersModule
+    AuthenticationModule.forRoot()
   ],
   bootstrap: [
     AppComponent
-  ],
-  // providers: [
-  //   {
-  //     provide: HTTP_INTERCEPTORS,
-  //     useClass: TokenInterceptor,
-  //     multi: true
-  //   }
-  // ]
+  ]
 })
 export class AppModule { }

@@ -2,48 +2,37 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import akka.NotUsed
 import akka.actor.{ActorSystem, Scheduler}
-import akka.pattern.after
 import akka.stream.scaladsl.Source
-import play.Logger
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest}
+import play.api.{Configuration, Logger}
 
-import scala.concurrent.duration.{FiniteDuration, _}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 @Singleton
 final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration, actorSystem: ActorSystem, ws: WSClient) {
   implicit val s: Scheduler = actorSystem.scheduler
 
-  private def retryPeriodically[T](f: => Future[T], delay: FiniteDuration, callback: (FiniteDuration, Throwable) => Any)
-                                  (implicit ec: ExecutionContext, s: Scheduler): Future[T] = {
-    f recoverWith {
-      case ex =>
-        callback(delay, ex)
-        after(delay, s)(retryPeriodically(f, delay, callback))
-    }
-  }
-
+  private val logger: Logger = Logger(this.getClass)
   private val swarmUrl: String = config.get[String]("docker_host")
 
-  private val events: WSRequest = ws.url(swarmUrl + "/events")
+  val events: WSRequest = ws.url(swarmUrl + "/events")
     .addQueryStringParameters("filters" -> Json.obj("type" -> Seq("service")).toString())
     .addHttpHeaders("Accept" -> "application/json")
+    .withRequestTimeout(Duration.Inf)
 
-  def streamEvents: Future[Source[String, _]] = {
-
-    // log the failed attempt to connect to Docker Swarm
-    val callback: (FiniteDuration, Throwable) => Any = {
-      (delay, ex) => Logger.error(s"Cannot connect to Docker Swarm (${ex.getMessage}). Retry in $delay...")
-    }
-
-    // connect to Docker Swarm and parse the results
-    // we also handle automatic retrials in case Docker Swarm is not available for some reasons
-    retryPeriodically(events.stream(), 5.seconds, callback).map { response =>
-      response.bodyAsSource.map(stream => stream.utf8String)
-    }
+  // http://loicdescotte.github.io/posts/play25-akka-streams/
+  def streamEvents: Source[String, NotUsed] = {
+    logger.warn("Connecting to Docker Swarm...")
+    Source.fromFuture(events.stream)
+      .flatMapConcat(_.bodyAsSource.map(_.utf8String))
+      .map { s =>
+        logger.debug(s"Swarm Event: $s")
+        s
+      }
   }
 }

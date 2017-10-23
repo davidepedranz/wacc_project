@@ -6,7 +6,8 @@ import javax.inject._
 import akka.stream.scaladsl.Source
 import akka.stream.scaladsl.{Flow, Sink}
 import models.Event
-import play.api.{Configuration, Logger}
+import play.Logger
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc._
@@ -16,7 +17,6 @@ import repositories.eventDatabase
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Try
 
 @Singleton
 class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration, kafka: Kafka) extends AbstractController(cc) {
@@ -50,10 +50,11 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
   def socket: WebSocket = WebSocket.acceptOrResult[String, Event] { _ =>
     // connect to Kafka to get live streaming
     val liveEvents = kafka.source(topic).map {
-      x => {
-        val event = Json.parse(x.value).as[Event]
-        event
-      }
+      x => Json.parse(x.value).as[Event]
+    }.recover {
+      case ex =>
+        Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
+        Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
     }
     val out = Source(getList).concat(liveEvents)
 

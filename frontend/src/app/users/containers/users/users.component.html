@@ -6,7 +6,7 @@
                 (changePermission)=changePermission($event) (deleteUser)="deleteUser($event)">
             </app-users-table>
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions *ngIf="canAddNewUsers$ | async">
             <button [routerLink]="['/users', 'new']" mat-fab color="primary" class="add-button">
                 <mat-icon>add</mat-icon>
             </button>

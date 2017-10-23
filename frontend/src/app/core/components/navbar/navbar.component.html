@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" *ngIf="show | async">
+<mat-toolbar color="primary" *ngIf="show$ | async">
   <a mat-button routerLink="/">
     <mat-icon>home</mat-icon>
     <span fxShow fxHide.xs="true">Home</span>
@@ -16,12 +16,8 @@
     <span fxShow fxHide.xs="true">Users</span>
   </a>
   <span class="flex-spacer"></span>
-  <a mat-button routerLink="/profile">
-    <mat-icon>account_circle</mat-icon>
-    <span fxShow fxHide.xs="true" fxHide.sm="true">Profile</span>
-  </a>
   <button mat-button (click)="logout()">
     <mat-icon>exit_to_app</mat-icon>
-    <span fxShow fxHide.xs="true" fxHide.sm="true">Logout</span>
+    <span fxShow fxHide.xs="true" fxHide.sm="true">Logout ({{username$ | async}})</span>
   </button>
 </mat-toolbar>
