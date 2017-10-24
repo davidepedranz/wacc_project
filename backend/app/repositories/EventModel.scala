@@ -1,13 +1,12 @@
-package models
-
-import com.outworkers.phantom.dsl._
-import scala.concurrent.Future
+package repositories
 
 import java.util.Date
 
-/**
-  * Create the Cassandra representation of the Songs table
-  */
+import com.outworkers.phantom.dsl._
+import models.Event
+
+import scala.concurrent.Future
+
 abstract class EventModel extends Table[EventModel, Event] {
 
   override def tableName: String = "swarm_events"
@@ -17,8 +16,11 @@ abstract class EventModel extends Table[EventModel, Event] {
   }
 
   object time extends LongColumn with PrimaryKey
+
   object action extends StringColumn
+
   object service extends StringColumn
+
   object host extends StringColumn
 
 
@@ -36,15 +38,8 @@ abstract class EventModel extends Table[EventModel, Event] {
     select
       .where(_.date eqs date)
       .consistencyLevel_=(ConsistencyLevel.ONE)
-        .fetch()
+      .fetch()
   }
-
-//  def getEventsByDateAfter(date: Date): Future[List[Event]] = {
-//    select
-//      .where(_.date eqs date)
-//      .consistencyLevel_=(ConsistencyLevel.ONE)
-//      .fetch()
-//  }
 
   def getEventsByDateTime(date: Date, time: Long): Future[Option[Event]] = {
     select

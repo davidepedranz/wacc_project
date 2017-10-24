@@ -1,17 +1,15 @@
 import javax.inject.{Inject, Singleton}
 
-import models.{Event}
-import play.api.libs.json.Json
-import repositories.{eventDatabase}
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl.RestartSource
-import models.UserWithPassword
+import models.{Event, UserWithPassword}
 import org.apache.kafka.clients.producer.ProducerRecord
 import play.Logger
 import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
-import repositories.UsersRepository
+import play.api.libs.json.Json
+import repositories.{UsersRepository, eventDatabase}
 import services.{Kafka, Retry, Swarm}
 
 import scala.concurrent.ExecutionContext
@@ -39,20 +37,22 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
     case ex => Logger.error("Can not connect to MongoDB.", ex)
   }
 
+  // topic in Kafka where to read the events from
+  private val topic: String = config.get[String]("kafka.topic")
+
   // stream events from Docker Swarm to Kafka
   //   --> connect to Docker Swarm API (wrap call in an Akka Stream)
   //   --> retry the stream if if fails (automatic reconnection)
   //   --> write events to Kafka
-  private val topic: String = config.get[String]("kafka.topic")
-
   RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 5.seconds, randomFactor = 0.2) { () => swarm.streamEvents }
     .map(new ProducerRecord[Array[Byte], String](topic, _))
     .to(kafka.sink)
     .run()(materializer)
 
+  // stream events from Kafka to Cassandra for durable storage
   kafka.source(topic).map {
-    x => {
-      val event = Json.parse(x.value).as[Event]
+    rawEvent => {
+      val event = Json.parse(rawEvent.value).as[Event]
       eventDatabase.saveOrUpdate(event)
     }
   }

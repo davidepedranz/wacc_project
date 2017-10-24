@@ -1,7 +1,7 @@
 import javax.inject._
 
 import authentication.{Authentication, JwtAuthentication, Secret}
-import authorization.{Authorization, DefaultHandlerCache}
+import authorization.{Authorization, AuthorizationCache}
 import be.objectify.deadbolt.scala.DeadboltHandler
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import com.google.inject.AbstractModule
@@ -28,7 +28,7 @@ final class Module(environment: Environment, configuration: Configuration) exten
 
     // authorization (deadbolt)
     bind[DeadboltHandler].to[Authorization]
-    bind[HandlerCache].to[DefaultHandlerCache].in[Singleton]
+    bind[HandlerCache].to[AuthorizationCache].in[Singleton]
 
     // users
     bind[UsersRepository].to[MongoUsersRepository].in[Singleton]

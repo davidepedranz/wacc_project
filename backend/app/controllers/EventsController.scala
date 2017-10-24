@@ -45,6 +45,7 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     }
   }
 
+  // TODO: this can not be sync!!!
   def getList: List[Event] = Await.result(readOldEvents(), Duration.Inf)
 
   def socket: WebSocket = WebSocket.acceptOrResult[String, Event] { _ =>

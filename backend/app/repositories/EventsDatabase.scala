@@ -1,39 +1,35 @@
 package repositories
 
+import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
 
-import Connector.{connector, _}
-import models._
 import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.dsl._
+import models._
 import play.api.Logger
+import repositories.CassandraConnector.connector
 
-import scala.util.control.Breaks._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-import java.text.SimpleDateFormat
-
-/**
-  * This is our Database object that wraps our two existing tables,
-  * giving the ability to receive different connectors
-  * for example: One for production and other for testing
-  */
+import scala.util.control.Breaks._
 
 //@Singleton
-class EventsDatabase (override val connector: CassandraConnection) extends Database[EventsDatabase](connector) {
+class EventsDatabase(override val connector: CassandraConnection) extends Database[EventsDatabase](connector) {
+
   object EventModel extends EventModel with connector.Connector
 
-  def convertDateToDateOnly(date: Date): Date ={
+  def convertDateToDateOnly(date: Date): Date = {
     val sdf = new SimpleDateFormat("yyyy-MM-dd")
     sdf.setTimeZone(TimeZone.getTimeZone("ECT"))
-    Logger.debug((sdf.parse(sdf.format(date))).toString)
-    return sdf.parse(sdf.format(date))
+    //    Logger.debug(sdf.parse(sdf.format(date)).toString)
+    sdf.parse(sdf.format(date))
   }
+
   /**
-    * Save/update an event
+    * Save or update an event.
     *
-    * @param event
-    * @return
+    * @param event Event to update.
+    * @return Future that represents the request.
     */
   def saveOrUpdate(event: Event): Future[ResultSet] = {
     val event2 = event.copy(date = convertDateToDateOnly(event.date))
@@ -66,33 +62,32 @@ class EventsDatabase (override val connector: CassandraConnection) extends Datab
     } yield byEvents
   }
 
-  /**
-    * Delete a event
-    *
-    * @param event
-    * @return
-    */
-  def delete(event: Event): Future[ResultSet] = {
-    for {
-      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(event.date))
-    } yield byEvent
-  }
+  //  /**
+  //    * Delete a event
+  //    *
+  //    * @param event
+  //    * @return
+  //    */
+  //  def delete(event: Event): Future[ResultSet] = {
+  //    for {
+  //      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(event.date))
+  //    } yield byEvent
+  //  }
+  //
+  //  def deleteById(date: Date): Future[ResultSet] = {
+  //    for {
+  //      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(date))
+  //    } yield byEvent
+  //  }
+  //
+  //  def deleteByDatetime(date: Date, time: Long): Future[ResultSet] = {
+  //    for {
+  //      byEvents <- EventModel.deleteByDateAndTime(convertDateToDateOnly(date), time)
+  //    } yield byEvents
+  //  }
 
-  def deleteById(date: Date): Future[ResultSet] = {
-    for {
-      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(date))
-    } yield byEvent
-  }
-
-  def deleteByDatetime(date: Date, time: Long): Future[ResultSet] = {
-    for {
-      byEvents <- EventModel.deleteByDateAndTime(convertDateToDateOnly(date), time)
-    } yield byEvents
-  }
-
-  def start()={
+  def start() = {
     Logger.debug("Create table if not exist")
-    import com.datastax.driver.core.exceptions.NoHostAvailableException
     import java.util.concurrent.TimeUnit
     var lastException = new Exception
     var retryCount = 100
@@ -102,7 +97,7 @@ class EventsDatabase (override val connector: CassandraConnection) extends Datab
       }) try {
         Await.ready(EventModel.create.ifNotExists().future(), Duration.Inf)
         break
-      }catch {
+      } catch {
         case e: Exception =>
           lastException = e
           retryCount = retryCount - 1
