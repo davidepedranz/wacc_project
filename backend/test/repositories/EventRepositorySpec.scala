@@ -43,12 +43,22 @@ final class EventRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Be
 
   override protected def beforeEach(): Unit = {
     repository.start()
+    repository.cleanup()
     System.out.println("create table if not yet created")
   }
 
   override protected def afterEach(): Unit = {
     repository.cleanup()
     System.out.println("truncate all data")
+  }
+
+  "EventsDatabase" when {
+    "#saveOrUpdate" should {
+      "save the even in the repository" in {
+        saveEvent(TEST_EVENT_1)
+        assertExists(TEST_EVENT_1.date)
+      }
+    }
   }
 
   "#read" should {
@@ -63,16 +73,6 @@ final class EventRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Be
       result(0).action mustEqual TEST_EVENT_2.action
       result(0).service mustEqual TEST_EVENT_2.service
       result(0).host mustEqual TEST_EVENT_2.host
-    }
-  }
-
-
-  "EventsDatabase" when {
-    "#saveOrUpdate" should {
-      "save the even in the repository" in {
-        saveEvent(TEST_EVENT_1)
-        assertExists(TEST_EVENT_1.date)
-      }
     }
   }
 }
