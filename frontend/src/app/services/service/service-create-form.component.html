@@ -11,16 +11,16 @@
       </label>
     </div>
 
-    <task-template-form ></task-template-form>
+    <!-- <task-template-form ></task-template-form>
 
-    <mode-form></mode-form>
+    <mode-form></mode-form> -->
 
     <div formArrayName="Ports">
       <div *ngFor=" let i=index" >
           <div>
             <span>EndPointSpec {{i+1}}</span>
           </div>
-          <port-form> </port-form>
+          <!-- <port-form> </port-form> -->
       </div>
     </div>
     <button type="submit" [disabled]="!serviceForm.valid">Submit</button>
