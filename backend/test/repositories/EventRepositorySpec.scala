@@ -14,9 +14,9 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.{implicitConversions, postfixOps}
 
-final class EventDatabaseSpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
+final class EventRepositorySpec extends PlaySpec with GuiceOneAppPerTest with BeforeAndAfterEach {
   private val injector: Injector = new GuiceApplicationBuilder().build.injector
-  private val repository: EventsDatabase = injector.instanceOf[EventsDatabase]
+  private val repository: EventsRepository = injector.instanceOf[EventsRepository]
 
   private val MAX_DURATION: FiniteDuration = 2 seconds
 

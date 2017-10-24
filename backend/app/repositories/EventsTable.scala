@@ -7,8 +7,9 @@ import models.Event
 
 import scala.concurrent.Future
 
-abstract class EventModel extends Table[EventModel, Event] {
+abstract class EventsTable extends Table[EventsTable, Event] {
 
+  // TODO: read from the configuration?
   override def tableName: String = "swarm_events"
 
   object date extends DateColumn with PartitionKey {

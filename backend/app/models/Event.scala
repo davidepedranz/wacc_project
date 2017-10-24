@@ -12,8 +12,8 @@ case class Event(date: Date, time: Long, action: String, service: String, host: 
 
 object Event {
   implicit val reads: Reads[Event] = (
-    (JsPath \ "time").read[Long].map(x => new Date(x)) and
-    (JsPath \ "time").read[Long] and
+    (JsPath \ "time").read[Long].map(timeSeconds => new Date(timeSeconds * 1000)) and
+      (JsPath \ "time").read[Long] and
       (JsPath \ "Action").read[String] and
       (JsPath \ "Actor" \ "Attributes" \ "name").read[String] and
       (JsPath \ "Actor" \ "ID").read[String]

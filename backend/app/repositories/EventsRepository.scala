@@ -4,20 +4,18 @@ import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
 import javax.inject.{Inject, Singleton}
 
-import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.dsl._
 import models._
 import play.api.Logger
-import repositories.CassandraConnector.connector
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.control.Breaks._
 
 @Singleton
-class EventsDatabase () extends Database[EventsDatabase](connector) {
+class EventsRepository () extends Database[EventsRepository](CassandraConnector.connector) {
 
-  object EventModel extends EventModel with connector.Connector
+  object EventsTable$ extends EventsTable with connector.Connector
 
   def convertDateToDateOnly(date: Date): Date = {
     val sdf = new SimpleDateFormat("yyyy-MM-dd")
@@ -35,31 +33,25 @@ class EventsDatabase () extends Database[EventsDatabase](connector) {
   def saveOrUpdate(event: Event): Future[ResultSet] = {
     val event2 = event.copy(date = convertDateToDateOnly(event.date))
     for {
-      byEvent <- EventModel.store(event2).future
+      byEvent <- EventsTable$.store(event2).future
     } yield byEvent
   }
 
-  /**
-    * read an event
-    *
-    * @param date
-    * @return
-    */
   def read(date: Date): Future[List[Event]] = {
     for {
-      byEvents <- EventModel.getByEventDate(convertDateToDateOnly(date))
+      byEvents <- EventsTable$.getByEventDate(convertDateToDateOnly(date))
     } yield byEvents
   }
 
-//  def readAfter(date: Date): Future[List[Event]] = {
-//    for {
-//      byEvents <- EventModel.getEventsByDateAfter(convertDateToDateOnly(date))
-//    } yield byEvents
-//  }
+  //  def readAfter(date: Date): Future[List[Event]] = {
+  //    for {
+  //      byEvents <- EventModel.getEventsByDateAfter(convertDateToDateOnly(date))
+  //    } yield byEvents
+  //  }
 
   def readByDatetime(date: Date, time: Long): Future[Option[Event]] = {
     for {
-      byEvents <- EventModel.getEventsByDateTime(convertDateToDateOnly(date), time)
+      byEvents <- EventsTable$.getEventsByDateTime(convertDateToDateOnly(date), time)
     } yield byEvents
   }
 
@@ -87,8 +79,8 @@ class EventsDatabase () extends Database[EventsDatabase](connector) {
   //    } yield byEvents
   //  }
 
-  def start() = {
-    Logger.debug("Create table if not exist")
+  def start(): Unit = {
+    Logger.info("Initialize events table in Cassandra.")
     import java.util.concurrent.TimeUnit
     var lastException = new Exception
     var retryCount = 100
@@ -96,7 +88,7 @@ class EventsDatabase () extends Database[EventsDatabase](connector) {
       while ( {
         retryCount > 0
       }) try {
-        Await.ready(EventModel.create.ifNotExists().future(), Duration.Inf)
+        Await.ready(EventsTable$.create.ifNotExists().future(), Duration.Inf)
         break
       } catch {
         case e: Exception =>
@@ -109,12 +101,7 @@ class EventsDatabase () extends Database[EventsDatabase](connector) {
 
   def cleanup(): Future[ResultSet] = {
     for {
-      byEvent <- EventModel.truncate.future
+      byEvent <- EventsTable$.truncate.future
     } yield byEvent
   }
 }
-
-///**
-//  * This is the database, it connects to a cluster with multiple contact points
-//  */
-//object eventDatabase extends EventsDatabase(connector)

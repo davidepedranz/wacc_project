@@ -3,24 +3,23 @@ package controllers
 import java.util.{Calendar, Date, TimeZone}
 import javax.inject._
 
-import akka.stream.scaladsl.Source
-import akka.stream.scaladsl.{Flow, Sink}
+import akka.stream.scaladsl.{Flow, Sink, Source}
 import models.Event
 import play.Logger
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc._
+import repositories.EventsRepository
 import services.Kafka
-import repositories.{EventsDatabase}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
 
 @Singleton
-class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration, kafka: Kafka
-                                 , eventDatabase: EventsDatabase) extends AbstractController(cc) {
+class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                 kafka: Kafka, eventsRepository: EventsRepository) extends AbstractController(cc) {
 
   private implicit val messageFlowTransformer: MessageFlowTransformer[String, Event] = {
     MessageFlowTransformer.jsonMessageFlowTransformer[String, Event]
@@ -39,26 +38,30 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     val date1 = cal.getTime
 
     for {
-      olds <- eventDatabase.read(date)
-      olds1 <- eventDatabase.read(date1)
+      olds <- eventsRepository.read(date)
+      olds1 <- eventsRepository.read(date1)
     } yield {
-      olds:::olds1
+      olds ::: olds1
     }
   }
 
   // TODO: this can not be sync!!!
-  def getList: List[Event] = Await.result(readOldEvents(), Duration.Inf)
+  def oldEvents: List[Event] = Await.result(readOldEvents(), Duration.Inf)
 
   def socket: WebSocket = WebSocket.acceptOrResult[String, Event] { _ =>
+
+    // TODO: test for killing kafka
     // connect to Kafka to get live streaming
-    val liveEvents = kafka.source(topic).map {
-      x => Json.parse(x.value).as[Event]
-    }.recover {
-      case ex =>
-        Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
-        Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
-    }
-    val out = Source(getList).concat(liveEvents)
+    val liveEvents = kafka.source(topic)
+      .map(raw => Json.parse(raw.value).as[Event])
+      .recover {
+        case ex =>
+          Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
+          Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
+      }
+
+    // combine events from Cassandra to updates from Kafka
+    val out = Source(oldEvents).concat(liveEvents)
 
     // client -> input [ignored] -> ... -> kafka -> events -> out -> client
     val flow = Flow.fromSinkAndSource(Sink.ignore, out)

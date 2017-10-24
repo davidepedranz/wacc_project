@@ -9,7 +9,7 @@ import play.Logger
 import play.api.Configuration
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.Json
-import repositories.{UsersRepository, EventsDatabase}
+import repositories.{UsersRepository, EventsRepository}
 import services.{Kafka, Retry, Swarm}
 
 import scala.concurrent.ExecutionContext
@@ -20,7 +20,7 @@ import scala.language.postfixOps
 @Singleton
 final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: ApplicationLifecycle,
                                 materializer: Materializer, actorSystem: ActorSystem, config: Configuration,
-                                usersRepository: UsersRepository, kafka: Kafka, swarm: Swarm, eventDatabase: EventsDatabase) {
+                                usersRepository: UsersRepository, kafka: Kafka, swarm: Swarm, eventsRepository: EventsRepository) {
 
   // if not user is present, create a default one
   val callback: (FiniteDuration, Throwable) => Any = {
@@ -53,7 +53,7 @@ final class Bootstrap @Inject()(implicit ec: ExecutionContext, lifecycle: Applic
   kafka.source(topic).map {
     rawEvent => {
       val event = Json.parse(rawEvent.value).as[Event]
-      eventDatabase.saveOrUpdate(event)
+      eventsRepository.saveOrUpdate(event)
     }
   }
 }
