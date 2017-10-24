@@ -116,7 +116,7 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
     val counts: Future[Map[String, Int]] = ws.url(host + "/tasks")
       .get()
       .map(response => response.json.as[Seq[Task]])
-      .map(tasks => tasks.map(_.service).groupBy(identity).mapValues(_.size))
+      .map(tasks => tasks.filter(_.status == "running").map(_.service).groupBy(identity).mapValues(_.size))
 
     for {
       services <- services
