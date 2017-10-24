@@ -93,6 +93,7 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
         break
       } catch {
         case e: Exception =>
+          Logger.error("Error with starting connection to Cassandra", e)
           lastException = e
           retryCount = retryCount - 1
           Thread.sleep(TimeUnit.SECONDS.toMillis(5))

@@ -107,7 +107,7 @@ undeploy-gcp:
 	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
 	@echo ""
 
-deploy-gcp: undeploy-gcp
+deploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [DEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"

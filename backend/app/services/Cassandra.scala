@@ -9,7 +9,7 @@ import play.api.Configuration
 final class Cassandra @Inject()(configuration: Configuration) {
 
   // read the configuration for Cassandra
-  private val hosts: Seq[String] = configuration.get[Seq[String]]("cassandra.host")
+  private val hosts: Seq[String] = configuration.get[String]("cassandra.hosts").split(",")
   private val port: Int = configuration.get[Int]("cassandra.port")
   private val keyspace: String = configuration.get[String]("cassandra.keyspace")
 
