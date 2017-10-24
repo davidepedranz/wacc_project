@@ -62,17 +62,16 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
 
     // TODO: connect to Cassandra to get the last events
     val cal = Calendar.getInstance(TimeZone.getTimeZone("ECT"))
+    val dateToday = cal.getTime
     cal.add(Calendar.DATE, -1)
-    val date = cal.getTime
-    cal.add(Calendar.DATE, +1)
-    val date1 = cal.getTime
+    val dateYesterday = cal.getTime
 
     // TODO: please use better names
     for {
-      olds <- repository.readByDate(date)
-      olds1 <- repository.readByDate(date1)
+      oldEventsYesterday <- repository.readByDate(dateYesterday)
+      oldEventsToday <- repository.readByDate(dateToday)
     } yield {
-      olds ::: olds1
+      oldEventsYesterday ::: oldEventsToday
     }
   }
 }
