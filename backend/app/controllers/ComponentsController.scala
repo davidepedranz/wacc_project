@@ -6,13 +6,13 @@ import javax.inject._
 import be.objectify.deadbolt.scala.ActionBuilders
 import be.objectify.deadbolt.scala.models.PatternType
 import com.typesafe.config.ConfigFactory
-import models.{Permission, Service}
+import models.{Permission, Service, Task}
 import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
@@ -106,13 +106,27 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
       }
   }
 
+  // TODO: cleanup
   def list: Action[AnyContent] = servicesReadPermission.defaultHandler() {
-    ws.url(host + "/services")
+
+    val services: Future[Seq[Service]] = ws.url(host + "/services")
       .get()
       .map(response => response.json.as[Seq[Service]])
-      .map(services => {
-        Logger.debug(services.toString)
-        Ok(Json.toJson(services))
-      })
+
+    val counts: Future[Map[String, Int]] = ws.url(host + "/tasks")
+      .get()
+      .map(response => response.json.as[Seq[Task]])
+      .map(tasks => tasks.map(_.service).groupBy(identity).mapValues(_.size))
+
+    for {
+      services <- services
+      counts <- counts
+    } yield {
+      val ok = services.map {
+        service => service.copy(current = counts.getOrElse(service.id, 0))
+      }
+      Logger.debug(ok.toString)
+      Ok(Json.toJson(ok))
+    }
   }
 }

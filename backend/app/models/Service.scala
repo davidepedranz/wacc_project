@@ -11,7 +11,7 @@ object Service {
       (JsPath \ "Spec" \ "Name").read[String] and
       (JsPath \ "Spec" \ "Mode").read[JsObject].map(o => o.keys.headOption.getOrElse("")) and
       (JsPath \ "Version" \ "Index").readNullable[Int].map(_ => 0) and
-      (JsPath \\ "Replicas").readNullable[Int].map(x => x.getOrElse(-1)) and
+      (JsPath \ "Spec" \\ "Replicas").readNullable[Int].map(x => x.getOrElse(1)) and
       (JsPath \ "Spec" \ "TaskTemplate" \ "ContainerSpec" \ "Image").read[String].map(raw => raw.split("@").head)
     ) (Service.apply _)
 
