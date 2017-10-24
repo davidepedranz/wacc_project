@@ -17,7 +17,6 @@ import scala.language.postfixOps
 final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration, actorSystem: ActorSystem, ws: WSClient) {
   implicit val s: Scheduler = actorSystem.scheduler
 
-  private val logger: Logger = Logger(this.getClass)
   private val swarmUrl: String = config.get[String]("docker_host")
 
   val events: WSRequest = ws.url(swarmUrl + "/events")
@@ -27,11 +26,11 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
 
   // http://loicdescotte.github.io/posts/play25-akka-streams/
   def streamEvents: Source[String, NotUsed] = {
-    logger.warn("Connecting to Docker Swarm...")
+    Logger.info("Connecting to Docker Swarm...")
     Source.fromFuture(events.stream)
       .flatMapConcat(_.bodyAsSource.map(_.utf8String))
       .map { s =>
-        logger.debug(s"Swarm Event: $s")
+        Logger.debug(s"Swarm Event: $s")
         s
       }
   }

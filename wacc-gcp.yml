@@ -42,7 +42,8 @@ services:
     environment:
       APPLICATION_SECRET: "90d1b84a-1f8f-44bb-9251-18316af45cf0"
       MONGODB_URI: "mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/wacc"
-      CASSANDRA_URI: "cassandradb://cassandra-1:9042,cassandra-2:9042,cassandra-3:9042"
+      CASSANDRA_URI: "cassandradb://cassandra-1,cassandra-2,cassandra-3"
+      CASSANDRA_PORT: "9042"
       DOCKER_HOST: "http://docker-socket-proxy:2375"
       KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
       KAFKA_TOPIC: "docker.swarm.events"
