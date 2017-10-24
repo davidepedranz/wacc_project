@@ -74,13 +74,34 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
     }
   }
 
+//TODO: why always bad request? 
+/**
+  def createService = Action.async(parse.json) {
+    implicit request =>
+    val bodyAsJson = request.body
+    bodyAsJson.validate[ServiceScale] match {
+      case success : JsSuccess[ServiceScale] =>{
+      ws.url(host + "/services/create")
+      .withHttpHeaders("Accept" -> "application/json").post(bodyAsJson).map {
+        response =>
+          Ok( Json.toJson(response.body) ) 
+        }
+      }
+      case JsError(error) => Future(BadRequest) 
+    }
+  }
+*/
 
   def createService = Action.async(parse.json) {
     request =>
       val createServiceURL = ws.url(host + "/services/create")
       createServiceURL.withHttpHeaders("Accept" -> "application/json").post(request.body).map {
         response =>
-          Ok(response.body)
+        response.body contains "ID" match {
+          case true => Ok(response.body)
+          case false => BadRequest
+        }
+          
       }
   }
 
