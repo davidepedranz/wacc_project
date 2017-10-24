@@ -7,10 +7,12 @@ import models.Event
 
 import scala.concurrent.Future
 
+/**
+  * Define the structure of the tables for teh events in Cassandra.
+  */
 abstract class EventsTable extends Table[EventsTable, Event] {
 
-  // TODO: read from the configuration?
-  override def tableName: String = "swarm_events"
+  override def tableName: String = "events"
 
   object date extends DateColumn with PartitionKey {
     override lazy val name = "event_date"
@@ -23,7 +25,6 @@ abstract class EventsTable extends Table[EventsTable, Event] {
   object service extends StringColumn
 
   object host extends StringColumn
-
 
   override def fromRow(row: Row): Event = {
     Event(
@@ -47,19 +48,5 @@ abstract class EventsTable extends Table[EventsTable, Event] {
       .where(_.date eqs date).and(_.time eqs time)
       .consistencyLevel_=(ConsistencyLevel.ONE)
       .one()
-  }
-
-  def deleteByDate(date: Date): Future[ResultSet] = {
-    delete
-      .where(_.date eqs date)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .future()
-  }
-
-  def deleteByDateAndTime(date: Date, time: Long): Future[ResultSet] = {
-    delete
-      .where(_.date eqs date).and(_.time eqs time)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
-      .future()
   }
 }

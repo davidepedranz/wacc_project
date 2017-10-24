@@ -6,104 +6,50 @@ import javax.inject.{Inject, Singleton}
 
 import com.outworkers.phantom.dsl._
 import models._
-import play.api.Logger
 import services.Cassandra
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.util.control.Breaks._
+import scala.concurrent.Future
 
 @Singleton
-class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
+final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
 
   object EventsTable$ extends EventsTable with connector.Connector
 
-  def convertDateToDateOnly(date: Date): Date = {
-    val sdf = new SimpleDateFormat("yyyy-MM-dd")
-    sdf.setTimeZone(TimeZone.getTimeZone("ECT"))
-    //    Logger.debug(sdf.parse(sdf.format(date)).toString)
-    sdf.parse(sdf.format(date))
+  /**
+    * Create the table for the events if it does not exist already.
+    */
+  def initialize(): Future[Seq[ResultSet]] = {
+    EventsTable$.create.ifNotExists().future()
   }
 
   /**
-    * Save or update an event.
-    *
-    * @param event Event to update.
-    * @return Future that represents the request.
+    * Remove all events from the database. This should be used for TESTING ONLY.
+    */
+  def _removeAllEvents(): Future[ResultSet] = {
+    EventsTable$.truncate.future
+  }
+
+  /**
+    * Save or update an event. If the event does not exist in the database,
+    * it will be created. If the event is already present, it will be updated.
     */
   def saveOrUpdate(event: Event): Future[ResultSet] = {
     val event2 = event.copy(date = convertDateToDateOnly(event.date))
-    for {
-      byEvent <- EventsTable$.store(event2).future
-    } yield byEvent
+    EventsTable$.store(event2).future
   }
 
-  def read(date: Date): Future[List[Event]] = {
-    for {
-      byEvents <- EventsTable$.getByEventDate(convertDateToDateOnly(date))
-    } yield byEvents
+  /**
+    * Read all the events for a given day.
+    */
+  // TODO: replace parameter with date only class
+  def readByDate(date: Date): Future[List[Event]] = {
+    EventsTable$.getByEventDate(convertDateToDateOnly(date))
   }
 
-  //  def readAfter(date: Date): Future[List[Event]] = {
-  //    for {
-  //      byEvents <- EventModel.getEventsByDateAfter(convertDateToDateOnly(date))
-  //    } yield byEvents
-  //  }
-
-  def readByDatetime(date: Date, time: Long): Future[Option[Event]] = {
-    for {
-      byEvents <- EventsTable$.getEventsByDateTime(convertDateToDateOnly(date), time)
-    } yield byEvents
-  }
-
-  //  /**
-  //    * Delete a event
-  //    *
-  //    * @param event
-  //    * @return
-  //    */
-  //  def delete(event: Event): Future[ResultSet] = {
-  //    for {
-  //      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(event.date))
-  //    } yield byEvent
-  //  }
-  //
-  //  def deleteById(date: Date): Future[ResultSet] = {
-  //    for {
-  //      byEvent <- EventModel.deleteByDate(convertDateToDateOnly(date))
-  //    } yield byEvent
-  //  }
-  //
-  //  def deleteByDatetime(date: Date, time: Long): Future[ResultSet] = {
-  //    for {
-  //      byEvents <- EventModel.deleteByDateAndTime(convertDateToDateOnly(date), time)
-  //    } yield byEvents
-  //  }
-
-  def start(): Unit = {
-    Logger.info("Initialize events table in Cassandra.")
-    import java.util.concurrent.TimeUnit
-    var lastException = new Exception
-    var retryCount = 100
-    breakable {
-      while ( {
-        retryCount > 0
-      }) try {
-        Await.ready(EventsTable$.create.ifNotExists().future(), Duration.Inf)
-        break
-      } catch {
-        case e: Exception =>
-          Logger.error("Error with starting connection to Cassandra", e)
-          lastException = e
-          retryCount = retryCount - 1
-          Thread.sleep(TimeUnit.SECONDS.toMillis(5))
-      }
-    }
-  }
-
-  def cleanup(): Future[ResultSet] = {
-    for {
-      byEvent <- EventsTable$.truncate.future
-    } yield byEvent
+  // TODO: is there a better way to do it?
+  private def convertDateToDateOnly(date: Date): Date = {
+    val sdf = new SimpleDateFormat("yyyy-MM-dd")
+    sdf.setTimeZone(TimeZone.getTimeZone("ECT"))
+    sdf.parse(sdf.format(date))
   }
 }

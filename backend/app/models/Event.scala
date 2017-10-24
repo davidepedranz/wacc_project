@@ -8,6 +8,7 @@ import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
 import scala.language.postfixOps
 
+// TODO: replace parameter with date only class
 case class Event(date: Date, time: Long, action: String, service: String, host: String)
 
 object Event {
