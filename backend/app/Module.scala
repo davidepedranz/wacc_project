@@ -4,25 +4,28 @@ import authentication.{Authentication, JwtAuthentication, Secret}
 import authorization.{Authorization, AuthorizationCache}
 import be.objectify.deadbolt.scala.DeadboltHandler
 import be.objectify.deadbolt.scala.cache.HandlerCache
+import startup.{BootstrapEventsConsumer, BootstrapEventsProducer, BootstrapEventsRepository, BootstrapUsersRepository}
 import com.google.inject.AbstractModule
 import net.codingwell.scalaguice.ScalaModule
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
 import repositories.{EventsRepository, MongoUsersRepository, UsersRepository}
 import services.{Cassandra, Kafka}
 
 /**
-  * Main guice module for the Play application.
-  * Binds traits with the implementations and bootstrap the important components,
-  * like live connection to the Docker Swarm Events.
+  * Main Guice module for the Play application. Binds traits with the implementations and
+  * bootstrap the important components, like live connection to the Docker Swarm Events.
   */
-final class Module(environment: Environment, configuration: Configuration) extends AbstractModule with ScalaModule {
+final class Module(val environment: Environment, val configuration: Configuration) extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
 
     // bootstrap
-    bind(classOf[BootstrapRepositories]).asEagerSingleton()
     bind(classOf[BootstrapEventsProducer]).asEagerSingleton()
     bind(classOf[BootstrapEventsConsumer]).asEagerSingleton()
+    bind(classOf[BootstrapEventsRepository]).asEagerSingleton()
+    if (environment.mode != Mode.Test) {
+      bind(classOf[BootstrapUsersRepository]).asEagerSingleton()
+    }
 
     // Kafka utilities
     bind(classOf[Kafka])

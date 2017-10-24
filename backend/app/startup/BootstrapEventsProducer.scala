@@ -1,3 +1,5 @@
+package startup
+
 import javax.inject.{Inject, Singleton}
 
 import akka.actor.ActorSystem
