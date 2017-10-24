@@ -2,6 +2,7 @@ package repositories
 
 import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
+import javax.inject.{Inject, Singleton}
 
 import com.outworkers.phantom.connectors.CassandraConnection
 import com.outworkers.phantom.dsl._
@@ -9,12 +10,12 @@ import models._
 import play.api.Logger
 import repositories.CassandraConnector.connector
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.control.Breaks._
 
-//@Singleton
-class EventsDatabase(override val connector: CassandraConnection) extends Database[EventsDatabase](connector) {
+@Singleton
+class EventsDatabase () extends Database[EventsDatabase](connector) {
 
   object EventModel extends EventModel with connector.Connector
 
@@ -105,9 +106,15 @@ class EventsDatabase(override val connector: CassandraConnection) extends Databa
       }
     }
   }
+
+  def cleanup(): Future[ResultSet] = {
+    for {
+      byEvent <- EventModel.truncate.future
+    } yield byEvent
+  }
 }
 
-/**
-  * This is the database, it connects to a cluster with multiple contact points
-  */
-object eventDatabase extends EventsDatabase(connector)
+///**
+//  * This is the database, it connects to a cluster with multiple contact points
+//  */
+//object eventDatabase extends EventsDatabase(connector)

@@ -15,5 +15,5 @@ object CassandraConnector {
   /**
     * Create a connector with the ability to connects to multiple hosts in a cluster.
     */
-  lazy val connector: CassandraConnection = ContactPoints(hosts, 9042).keySpace(keyspace)
+  lazy val connector: CassandraConnection = ContactPoints(hosts).keySpace(keyspace)
 }

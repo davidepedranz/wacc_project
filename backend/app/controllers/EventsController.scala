@@ -12,14 +12,15 @@ import play.api.libs.json.Json
 import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc._
 import services.Kafka
-import repositories.eventDatabase
+import repositories.{EventsDatabase}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
 
 @Singleton
-class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration, kafka: Kafka) extends AbstractController(cc) {
+class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration, kafka: Kafka
+                                 , eventDatabase: EventsDatabase) extends AbstractController(cc) {
 
   private implicit val messageFlowTransformer: MessageFlowTransformer[String, Event] = {
     MessageFlowTransformer.jsonMessageFlowTransformer[String, Event]
