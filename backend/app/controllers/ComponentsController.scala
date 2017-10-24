@@ -6,11 +6,11 @@ import javax.inject._
 import be.objectify.deadbolt.scala.ActionBuilders
 import be.objectify.deadbolt.scala.models.PatternType
 import com.typesafe.config.ConfigFactory
-import models.Permission
-import play.api.Configuration
+import models.{Permission, Service}
 import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc._
+import play.api.{Configuration, Logger}
 
 import scala.concurrent.ExecutionContext
 
@@ -109,8 +109,10 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
   def list: Action[AnyContent] = servicesReadPermission.defaultHandler() {
     ws.url(host + "/services")
       .get()
-      .map {
-        response => Ok(response.body)
-      }
+      .map(response => response.json.as[Seq[Service]])
+      .map(services => {
+        Logger.debug(services.toString)
+        Ok(Json.toJson(services))
+      })
   }
 }

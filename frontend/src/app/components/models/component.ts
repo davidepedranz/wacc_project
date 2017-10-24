@@ -1,6 +1,8 @@
 export class Component {
   id: string;
   name: string;
-  status: string;
+  mode: string;
+  current: number;
+  wanted: number;
   image: string;
 }

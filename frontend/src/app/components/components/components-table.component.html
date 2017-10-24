@@ -17,10 +17,16 @@
     <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
   </ng-container>
 
+  <!-- Mode Column -->
+  <ng-container matColumnDef="mode">
+    <mat-header-cell *matHeaderCellDef> Mode </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.mode}} </mat-cell>
+  </ng-container>
+
   <!-- Status Column -->
   <ng-container matColumnDef="status">
     <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+    <mat-cell *matCellDef="let row"> {{row.current}} / {{row.wanted}} </mat-cell>
   </ng-container>
 
   <!-- Image Column -->
@@ -33,12 +39,12 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <!-- <Button></Button> -->
+      TODO
     </mat-cell>
   </ng-container>
 
   <!-- Header and Row Declarations -->
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  
+
 </mat-table>
