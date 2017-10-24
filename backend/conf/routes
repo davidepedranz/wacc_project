@@ -27,3 +27,4 @@ POST          /services/:id/update                               controllers.Com
 DELETE        /services/:id                                      controllers.ComponentsController.deleteService(id: String)
 #GET           /services/:id                                      controllers.ComponentsController.getServiceInfo(id: String)
 #GET           /services/:id/*command                             controllers.ComponentsController.cannotGet
+GET           /v1/services                                       controllers.ComponentsController.list

@@ -69,14 +69,14 @@ export class UsersTableComponent implements OnInit {
     return user.permissions.indexOf(permission) !== -1;
   }
 
-  canEditUser(user: User): boolean {
+  canEditPermission(user: User, permission: string): boolean {
     return this.hasPrivilege(this.currentUser, PERMISSION_USER_WRITE)
-      && user.username !== this.currentUser.username;
+      && (user.username !== this.currentUser.username || (permission !== PERMISSION_USER_READ && permission !== PERMISSION_USER_WRITE));
   }
 
-  canEditPermission(user: User, permission: string): boolean {
-    return user.username !== this.currentUser.username
-      || (permission !== PERMISSION_USER_READ && permission !== PERMISSION_USER_WRITE);
+  canDeleteUser(user: User): boolean {
+    return this.hasPrivilege(this.currentUser, PERMISSION_USER_WRITE)
+      && user.username !== this.currentUser.username;
   }
 
   onChangePermission(user: User, permission: string, $event: MatCheckboxChange) {

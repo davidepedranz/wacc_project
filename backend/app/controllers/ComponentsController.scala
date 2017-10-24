@@ -3,7 +3,11 @@ package controllers
 
 import javax.inject._
 
+import be.objectify.deadbolt.scala.ActionBuilders
+import be.objectify.deadbolt.scala.models.PatternType
 import com.typesafe.config.ConfigFactory
+import models.Permission
+import play.api.Configuration
 import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc._
@@ -11,12 +15,18 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient, cc: ControllerComponents) extends AbstractController(cc) {
+class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                     actionBuilders: ActionBuilders, bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
 
-  val host = ConfigFactory.load().getString("docker_host")
-  val getContainersUrl = "/containers/json"
-  val getContainersAllUrl = "/containers/json?all=true"
-  val getImagesUrl = "/images/json"
+  private val host = ConfigFactory.load().getString("docker_host")
+  private val getContainersUrl = "/containers/json"
+  private val getContainersAllUrl = "/containers/json?all=true"
+  private val getImagesUrl = "/images/json"
+
+  // authorize calls to the Docker Swarm APIs
+  private val servicesReadPermission: actionBuilders.PatternAction.PatternActionBuilder = {
+    actionBuilders.PatternAction(value = Permission.SERVICES, patternType = PatternType.EQUALITY)
+  }
 
 
   def getContainers = Action.async {
@@ -96,12 +106,11 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient
       }
   }
 
-  def getServicesInfo(id: String) = Action.async {
-    val request = ws.url(host + "/services/" + id)
-    request.get().map {
-      response => Ok(response.body)
-    }
+  def list: Action[AnyContent] = servicesReadPermission.defaultHandler() {
+    ws.url(host + "/services")
+      .get()
+      .map {
+        response => Ok(response.body)
+      }
   }
-
-
 }

@@ -3,15 +3,15 @@
     <mat-icon>home</mat-icon>
     <span fxShow fxHide.xs="true">Home</span>
   </a>
-  <a mat-button routerLink="/components">
+  <a mat-button routerLink="/components" *ngIf="showServicesButton$ | async">
     <mat-icon>apps</mat-icon>
     <span fxShow fxHide.xs="true">Components</span>
   </a>
-  <a mat-button routerLink="/events">
+  <a mat-button routerLink="/events" *ngIf="showEventsButton$ | async">
     <mat-icon>history</mat-icon>
     <span fxShow fxHide.xs="true">Events</span>
   </a>
-  <a mat-button routerLink="/users">
+  <a mat-button routerLink="/users" *ngIf="showUsersButton$ | async">
     <mat-icon>supervisor_account</mat-icon>
     <span fxShow fxHide.xs="true">Users</span>
   </a>

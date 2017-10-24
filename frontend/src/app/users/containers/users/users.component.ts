@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { PERMISSION_USER_WRITE } from '../../services/users.service';
 import { User } from '../../models/user.model';
+import { PERMISSION_USER_WRITE } from '../../services/users.service';
 import * as UsersActions from '../../store/users.actions';
 import * as fromUsers from '../../store';
 import * as fromAuthentication from '../../../authentication/store';
