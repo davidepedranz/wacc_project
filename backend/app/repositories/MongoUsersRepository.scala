@@ -42,6 +42,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
   }
 
   override def list: Future[Seq[User]] = {
+    // NB: -1 in collect means "infinite" users
     usersCollection.flatMap(_
       .find(BSONDocument())
       .sort(BSONDocument("_id" -> 1))

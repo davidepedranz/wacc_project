@@ -4,7 +4,7 @@ import java.util.{Calendar, Date, TimeZone}
 import javax.inject._
 
 import akka.NotUsed
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl.{Flow, RestartSource, Sink, Source}
 import models.Event
 import play.Logger
 import play.api.Configuration
@@ -14,6 +14,7 @@ import play.api.mvc._
 import repositories.EventsRepository
 import services.Kafka
 
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
@@ -35,22 +36,20 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
   def socket: WebSocket = WebSocket.acceptOrResult[String, Event] { _ =>
     // TODO: parse token + authenticate... return Left if token / permission wrong
 
-    // TODO: test for killing cassandra
-    // TODO: test for killing kafka
-
     // read old events from Cassandra
-    val oldEvents: Source[Event, NotUsed] = Source
-      .fromFuture(getOldEvents)
-      .mapConcat(identity[List[Event]])
+    val oldEvents: Source[Event, NotUsed] =
+      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => Source.fromFuture(getOldEvents) }
+        .mapConcat(identity[List[Event]])
 
     // connect to Kafka to get live streaming
-    val liveEvents: Source[Event, _] = kafka.source(topic)
-      .map(raw => Json.parse(raw.value).as[Event])
-      .recover {
-        case ex =>
-          Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
-          Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
-      }
+    val liveEvents: Source[Event, _] =
+      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic) }
+        .map(raw => Json.parse(raw.value).as[Event])
+        .recover {
+          case ex =>
+            Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
+            Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
+        }
 
     // combine events from Cassandra to updates from Kafka
     val out: Source[Event, NotUsed] = oldEvents.concat(liveEvents)

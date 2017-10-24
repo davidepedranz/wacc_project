@@ -24,7 +24,7 @@ final class BootstrapEventsProducer @Inject()(implicit ec: ExecutionContext, mat
   //   --> connect to Docker Swarm API (wrap call in an Akka Stream)
   //   --> retry the stream if if fails (automatic reconnection)
   //   --> write events to Kafka
-  RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 5.seconds, randomFactor = 0.2) { () => swarm.streamEvents }
+  RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => swarm.streamEvents }
     .map(new ProducerRecord[Array[Byte], String](topic, _))
     .to(kafka.sink)
     .run()(materializer)

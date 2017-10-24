@@ -4,19 +4,14 @@ package controllers
 import javax.inject._
 
 import com.typesafe.config.ConfigFactory
+import play.api.libs.json._
 import play.api.libs.ws._
-import play.api._
 import play.api.mvc._
 
-import scala.concurrent._
-import scala.concurrent.duration._
-
 import scala.concurrent.ExecutionContext
-import play.api.libs.json._
-import play.api.libs.json
 
 @Singleton
-class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient,cc: ControllerComponents ) extends AbstractController(cc) {
+class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient, cc: ControllerComponents) extends AbstractController(cc) {
 
   val host = ConfigFactory.load().getString("docker_host")
   val getContainersUrl = "/containers/json"
@@ -70,43 +65,43 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient
   }
 
 
-def createService = Action.async(parse.json) {
-  request =>
-  val createServiceURL = ws.url(host + "/services/create")
-  createServiceURL.withHttpHeaders(  "Accept" -> "application/json").post(request.body).map { 
-    response =>
-    Ok(response.body)
+  def createService = Action.async(parse.json) {
+    request =>
+      val createServiceURL = ws.url(host + "/services/create")
+      createServiceURL.withHttpHeaders("Accept" -> "application/json").post(request.body).map {
+        response =>
+          Ok(response.body)
+      }
   }
-}
 
 
-def updateService(id : String) = Action.async(parse.json) {
-  request =>
-  val versionGET = ws.url(host+"/services/"+id).get()
-  val versionBody = Await.result(versionGET,Duration.Inf).body
-  val version : String = Json.stringify( ( Json.parse(versionBody) \ "Version" \ "Index").get )
-  val updateURL = ws.url(host + "/services/"+id+"/update?version="+version)
-  updateURL.withHttpHeaders(  "Accept" -> "application/json").post(request.body).map { 
-    response =>
-    Ok(response.body)
+  def updateService(id: String) = Action.async(parse.json) { request =>
+    ws.url(host + "/services/" + id)
+      .get()
+      .flatMap { response =>
+        val version: String = Json.stringify((Json.parse(response.body) \ "Version" \ "Index").get)
+        val updateURL = ws.url(host + "/services/" + id + "/update?version=" + version)
+        updateURL.withHttpHeaders("Accept" -> "application/json").post(request.body).map {
+          response =>
+            Ok(response.body)
+        }
+      }
   }
-}
 
-def deleteService (id : String) = Action.async {
-  request => 
-  val deleteServiceURL = ws.url(host+"/services/"+id)
-  deleteServiceURL.execute("DELETE").map {
-    response => Ok(response.body)
+  def deleteService(id: String) = Action.async {
+    request =>
+      val deleteServiceURL = ws.url(host + "/services/" + id)
+      deleteServiceURL.execute("DELETE").map {
+        response => Ok(response.body)
+      }
   }
-}
 
-def getServicesInfo (id : String ) = Action.async {
-  val request = ws.url(host+"/services/"+id)
-  request.get().map {
-    response => Ok(response.body)
+  def getServicesInfo(id: String) = Action.async {
+    val request = ws.url(host + "/services/" + id)
+    request.get().map {
+      response => Ok(response.body)
+    }
   }
-}
-
 
 
 }

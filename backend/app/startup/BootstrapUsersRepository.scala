@@ -21,7 +21,7 @@ final class BootstrapUsersRepository @Inject()(implicit ec: ExecutionContext, sy
   }
 
   // if not user is present, create a default one
-  Retry.periodically(repository.list, 3.seconds, callback)(ec, system.scheduler).map { users =>
+  Retry.periodically(repository.list, 1.seconds, callback)(ec, system.scheduler).map { users =>
     if (users.isEmpty) {
       Logger.warn("The database of users is empty... creating the default user.")
       repository.create(UserWithPassword.DEFAULT_USER)
