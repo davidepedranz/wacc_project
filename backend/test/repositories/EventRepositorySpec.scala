@@ -69,10 +69,10 @@ final class EventRepositorySpec extends PlaySpec with GuiceOneAppPerTest with Be
     "return a list with an event after saving one event" in {
       saveEvent(TEST_EVENT_2)
       val result: List[Event] = Await.result(repository.read(key2), MAX_DURATION)
-      result(0).time mustEqual TEST_EVENT_2.time
-      result(0).action mustEqual TEST_EVENT_2.action
-      result(0).service mustEqual TEST_EVENT_2.service
-      result(0).host mustEqual TEST_EVENT_2.host
+      result.head.time mustEqual TEST_EVENT_2.time
+      result.head.action mustEqual TEST_EVENT_2.action
+      result.head.service mustEqual TEST_EVENT_2.service
+      result.head.host mustEqual TEST_EVENT_2.host
     }
   }
 }

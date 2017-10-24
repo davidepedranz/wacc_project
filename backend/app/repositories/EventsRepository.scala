@@ -7,13 +7,14 @@ import javax.inject.{Inject, Singleton}
 import com.outworkers.phantom.dsl._
 import models._
 import play.api.Logger
+import services.Cassandra
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.control.Breaks._
 
 @Singleton
-class EventsRepository () extends Database[EventsRepository](CassandraConnector.connector) {
+class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
 
   object EventsTable$ extends EventsTable with connector.Connector
 
