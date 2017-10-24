@@ -7,14 +7,13 @@ import javax.inject.{Inject, Singleton}
 import com.outworkers.phantom.dsl._
 import models._
 import play.api.Logger
-import services.Cassandra
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.control.Breaks._
 
 @Singleton
-final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
+class EventsRepository () extends Database[EventsRepository](CassandraConnector.connector) {
 
   object EventsTable$ extends EventsTable with connector.Connector
 
@@ -99,5 +98,11 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
           Thread.sleep(TimeUnit.SECONDS.toMillis(5))
       }
     }
+  }
+
+  def cleanup(): Future[ResultSet] = {
+    for {
+      byEvent <- EventsTable$.truncate.future
+    } yield byEvent
   }
 }
