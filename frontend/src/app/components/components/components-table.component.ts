@@ -35,7 +35,7 @@ export class ComponentsTableComponent implements OnInit {
   @Input()
   components$: Observable<MyComponent[]>;
 
-  readonly displayedColumns = ['id', 'name', 'status', 'image'];
+  readonly displayedColumns = ['id', 'name', 'status', 'image','actions'];
   dataSource: ComponentDataSource | null;
 
   ngOnInit() {

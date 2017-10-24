@@ -25,7 +25,7 @@
 
   <!-- Image Column -->
   <ng-container matColumnDef="image">
-    <mat-header-cell *matHeaderCellDef> Image </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef> Image</mat-header-cell>
     <mat-cell *matCellDef="let row"> {{row.image}}</mat-cell>
   </ng-container>
 
@@ -40,5 +40,5 @@
   <!-- Header and Row Declarations -->
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-
+  
 </mat-table>

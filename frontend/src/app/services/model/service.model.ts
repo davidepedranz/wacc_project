@@ -1,5 +1,5 @@
 export class Service {
-    Name = "";
+    name = "";
     taskTemplate : TaskTemplate;
     mode : Mode;
     endpointSpec : EndpointSpec;
@@ -10,7 +10,7 @@ export class TaskTemplate {
 }
 
 export class ContainerSpec {
-    Image = "";
+    image = "";
 }
 
 export class Mode {
@@ -18,7 +18,7 @@ export class Mode {
 }
 
 export class Replicated {
-    Replicas = 0;
+    replicas = 0;
 }
 
 export class EndpointSpec {
@@ -27,7 +27,7 @@ export class EndpointSpec {
 
 export class Ports {
     protcol = "";
-    PublishedPort = 0;
-    TargetPort = 0;
+    publishedPort = 0;
+    targetPort = 0;
     
 }
