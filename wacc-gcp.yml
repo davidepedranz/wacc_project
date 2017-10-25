@@ -178,14 +178,16 @@ services:
       restart_policy:
         condition: on-failure
 
-  zoo1:
-    image: 31z4/zookeeper
-    # hostname: zoo1
+  zookeeper-1:
+    image: 31z4/zookeeper:latest
     networks:
       - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -195,14 +197,16 @@ services:
       restart_policy:
         condition: on-failure
 
-  zoo2:
-    image: 31z4/zookeeper
-    # hostname: zoo2
+  zookeeper-2:
+    image: 31z4/zookeeper:latest
     networks:
       - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -212,14 +216,16 @@ services:
       restart_policy:
         condition: on-failure
 
-  zoo3:
-    image: 31z4/zookeeper
-    # hostname: zoo3
+  zookeeper-3:
+    image: 31z4/zookeeper:latest
     networks:
       - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
     deploy:
       mode: global
       endpoint_mode: dnsrr
@@ -234,15 +240,14 @@ services:
     networks:
       - internal
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka_data:/kafka
     environment:
       KAFKA_PORT: 9092
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ADVERTISED_HOST_NAME: kafka-1
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
       KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
-      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
     deploy:
       mode: global
       placement:
@@ -256,15 +261,14 @@ services:
     networks:
       - internal
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka_data:/kafka
     environment:
       KAFKA_PORT: 9092
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ADVERTISED_HOST_NAME: kafka-2
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
       KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
-      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
     deploy:
       mode: global
       placement:
@@ -278,15 +282,14 @@ services:
     networks:
       - internal
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka_data:/kafka
     environment:
       KAFKA_PORT: 9092
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_ADVERTISED_HOST_NAME: kafka-3
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
-      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181,zoo2:2181,zoo3:2181"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
       KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
-      # HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
     deploy:
       mode: global
       placement:
@@ -305,3 +308,6 @@ networks:
 volumes:
   mongo_data: {}
   cassandra_data: {}
+  zookeeper_data: {}
+  zookeeper_datalog: {}
+  kafka_data: {}
