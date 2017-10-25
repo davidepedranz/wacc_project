@@ -28,7 +28,7 @@ final class Kafka @Inject()(configuration: Configuration) {
       .withGroupId(UUID.randomUUID().toString)
   }
 
-  def sink: Sink[ProducerRecord[Array[Byte], String], _] = {
+  def sink(): Sink[ProducerRecord[Array[Byte], String], _] = {
     Producer.plainSink(producerSettings)
   }
 
