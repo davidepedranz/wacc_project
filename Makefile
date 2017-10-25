@@ -128,6 +128,7 @@ reboot-gcp:
 	@echo "---------------------------------------"
 	@echo "  [REBOOT] Google Cloud Platform"
 	@echo "---------------------------------------"
+	@ssh wacc0 'sudo reboot' || exit 0
 	@ssh wacc1 'sudo reboot' || exit 0
 	@ssh wacc2 'sudo reboot' || exit 0
 	@ssh wacc3 'sudo reboot' || exit 0
