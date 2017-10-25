@@ -11,6 +11,7 @@ import { MaterialModule } from '../material.module';
 import { routes } from './users.routing';
 import { reducers } from './store';
 
+import { NewUserGuard } from './guards/new-user.guard';
 import { UsersService } from './services/users.service';
 import { UsersEffects } from './store/users.effects';
 import { UsersComponent } from './containers/users/users.component';
@@ -41,6 +42,7 @@ import { UserDeleteDialogComponent } from './components/user-delete-dialog/user-
     UserDeleteDialogComponent
   ],
   providers: [
+    NewUserGuard,
     UsersService
   ]
 })

@@ -13,20 +13,18 @@ DELETE        /v1/users/:username                                controllers.Use
 POST          /v1/users/:username/permissions/:permission        controllers.UsersController.addPermission(username: String, permission: String)
 DELETE        /v1/users/:username/permissions/:permission        controllers.UsersController.removePermission(username: String, permission: String)
 
-# events streaming (using Websockets)
+# events streaming (Websocket)
 GET           /v1/events                                         controllers.EventsController.socket
 
-# actions against the Docker APIs
-GET           /containers                                        controllers.ComponentsController.getContainers
+# Docker Swarm APIs
 GET           /containersAll                                     controllers.ComponentsController.getContainersAll
 GET           /images                                            controllers.ComponentsController.getImages
-POST          /containers/:id/stop                               controllers.ComponentsController.postContainerStop(id: String)
-POST          /containers/:id/start                              controllers.ComponentsController.postContainerStart(id: String)
+POST          /containers/:id/stop                               controllers.ComponentsController.postContainerStop(id:String)
+POST          /containers/:id/start                              controllers.ComponentsController.postContainerStart(id:String)
 GET           /containers/:id                                    controllers.ComponentsController.getContainersInfo(id: String)
 POST          /services/create                                   controllers.ComponentsController.createService
-POST          /services/:id/update/:version                      controllers.ComponentsController.updateService(id: String, version: String)
+POST          /services/:id/update                               controllers.ComponentsController.updateService(id: String)
 DELETE        /services/:id                                      controllers.ComponentsController.deleteService(id: String)
-
-# TODO: what is this for?
-GET           /v1/db                                             controllers.CassandraController.test
-GET           /v1/db/:id                                         controllers.CassandraController.list(id: String)
+#GET           /services/:id                                      controllers.ComponentsController.getServiceInfo(id: String)
+#GET           /services/:id/*command                             controllers.ComponentsController.cannotGet
+GET           /v1/services                                       controllers.ComponentsController.list

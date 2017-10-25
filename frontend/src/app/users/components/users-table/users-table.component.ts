@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { User } from '../../models/user.model';
 import { UserDeleteDialogComponent } from '../user-delete-dialog/user-delete-dialog.component';
-import { PERMISSIONS } from '../../services/users.service';
+import { PERMISSIONS, PERMISSION_USER_READ, PERMISSION_USER_WRITE } from '../../services/users.service';
 
 export interface ChangePermission {
   username: string;
@@ -39,7 +39,7 @@ export class UsersTableComponent implements OnInit {
   readonly ALL_PERMISSIONS = PERMISSIONS;
 
   @Input()
-  currentUser: string | null;
+  currentUser: User | null;
 
   @Input()
   fetching: boolean;
@@ -69,8 +69,14 @@ export class UsersTableComponent implements OnInit {
     return user.permissions.indexOf(permission) !== -1;
   }
 
-  canEdit(user: User, permission: string): boolean {
-    return user.username !== this.currentUser || (permission !== 'users.read' && permission !== 'users.write');
+  canEditPermission(user: User, permission: string): boolean {
+    return this.hasPrivilege(this.currentUser, PERMISSION_USER_WRITE)
+      && (user.username !== this.currentUser.username || (permission !== PERMISSION_USER_READ && permission !== PERMISSION_USER_WRITE));
+  }
+
+  canDeleteUser(user: User): boolean {
+    return this.hasPrivilege(this.currentUser, PERMISSION_USER_WRITE)
+      && user.username !== this.currentUser.username;
   }
 
   onChangePermission(user: User, permission: string, $event: MatCheckboxChange) {

@@ -12,8 +12,6 @@ import reactivemongo.core.errors.DatabaseException
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz.{-\/, \/, \/-}
 
-// TODO: write and read concerns!
-
 @Singleton
 class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends UsersRepository with ReactiveMongoComponents {
@@ -31,7 +29,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
         FIELD_USERNAME -> credentials.username,
         FIELD_PASSWORD -> credentials.password
       ))
-      .one[User]
+      .one[User](ReadPreference.nearest)
     )
   }
 
@@ -44,10 +42,11 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
   }
 
   override def list: Future[Seq[User]] = {
+    // NB: -1 in collect means "infinite" users
     usersCollection.flatMap(_
       .find(BSONDocument())
       .sort(BSONDocument("_id" -> 1))
-      .cursor[User](ReadPreference.primary)
+      .cursor[User](ReadPreference.nearest)
       .collect[Seq](-1, Cursor.FailOnError[Seq[User]]())
     )
   }
@@ -55,7 +54,7 @@ class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactive
   override def read(username: String): Future[Option[User]] = {
     usersCollection.flatMap(_
       .find(BSONDocument(FIELD_USERNAME -> username))
-      .one[User]
+      .one[User](ReadPreference.nearest)
     )
   }
 

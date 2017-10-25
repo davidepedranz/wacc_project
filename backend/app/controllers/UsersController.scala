@@ -29,6 +29,7 @@ final class UsersController @Inject()(implicit ec: ExecutionContext, cc: Control
     Future(Ok(Json.toJson(Subject.toUser(req.subject.get))))
   }
 
+  // TODO: validate permissions
   def create: Action[JsValue] = usersWritePermission.apply(parse.json) { req =>
     req.body.validate[UserWithPassword] match {
       case error: JsError => Future(BadRequest(JsError.toJson(error)))
@@ -78,7 +79,7 @@ final class UsersController @Inject()(implicit ec: ExecutionContext, cc: Control
   def removePermission(username: String, permission: String): Action[AnyContent] = usersWritePermission.defaultHandler() { request =>
     (request.subject.get.identifier, permission) match {
       // make sure the user can not revoke its own write privilege
-      case (`username`, Permission.USERS_WRITE) => Future(Forbidden)
+      case (`username`, Permission.USERS_READ) | (`username`, Permission.USERS_WRITE) => Future(Forbidden)
       case _ => usersRepository.removePermission(username, permission).map {
         case \/-(_: Unit) => NoContent
         case -\/(_: UserNotFound) => NotFound

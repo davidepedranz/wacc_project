@@ -1,0 +1,328 @@
+version: "3.3"
+services:
+
+  traefik:
+    image: traefik:alpine
+    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=DEBUG
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    networks:
+      - public
+      - internal
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.node == node0
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: wacccourse/frontend:latest
+    networks:
+      - internal
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.labels.node != node0
+      restart_policy:
+        condition: on-failure
+      # endpoint_mode: dnsrr
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=frontend"
+        - "traefik.port=80"
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost}"
+        - "traefik.backend.loadbalancer.swarm=true"
+
+  backend:
+    image: wacccourse/backend:latest
+    networks:
+      - internal
+    environment:
+      APPLICATION_SECRET: "90d1b84a-1f8f-44bb-9251-18316af45cf0"
+      MONGODB_URI: "mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/wacc"
+      CASSANDRA_HOSTS: "cassandra-1,cassandra-2,cassandra-3"
+      CASSANDRA_PORT: "9042"
+      CASSANDRA_KEYSPACE: "wacc"
+      DOCKER_HOST: "http://docker-socket-proxy:2375"
+      KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
+      KAFKA_TOPIC: "docker.swarm.events"
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.labels.node != node0
+      restart_policy:
+        condition: on-failure
+      # endpoint_mode: dnsrr
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=backend"
+        - "traefik.port=9000"
+        - "traefik.frontend.rule=Host:${DOMAIN:-localhost};PathPrefixStrip:/api"
+        - "traefik.backend.loadbalancer.swarm=true"
+
+  docker-socket-proxy:
+    image: wacccourse/docker-socket-proxy:latest
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node != node0
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  mongo-1:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+    command: 'mongod --replSet "rs0"'
+
+  mongo-2:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+    command: 'mongod --replSet "rs0"'
+
+  mongo-3:
+    image: mongo:3.4
+    networks:
+      - internal
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
+    command: 'mongod --replSet "rs0"'
+
+  mongo-setup:
+    image: wacccourse/mongo-setup:latest
+    networks:
+      - internal
+    environment:
+      MONGO_NAMES: "mongo-1 mongo-2 mongo-3"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.node != node0
+      restart_policy:
+        condition: on-failure
+
+  cassandra-1:
+    image: cassandra:3.11
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+
+  cassandra-2:
+    image: cassandra:3.11
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-2
+      CASSANDRA_SEEDS: cassandra-1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+
+  cassandra-3:
+    image: cassandra:3.11
+    networks:
+      - internal
+    volumes:
+      - cassandra_data:/cassandra/data/db
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-3
+      CASSANDRA_SEEDS: cassandra-1
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
+
+  zookeeper-1:
+    image: 31z4/zookeeper:latest
+    networks:
+      - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+
+  zookeeper-2:
+    image: 31z4/zookeeper:latest
+    networks:
+      - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+
+  zookeeper-3:
+    image: 31z4/zookeeper:latest
+    networks:
+      - internal
+    volumes:
+      - zookeeper_data:/data
+      - zookeeper_datalog:/datalog
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zookeeper-1:2888:3888 server.2=zookeeper-2:2888:3888 server.3=zookeeper-3:2888:3888
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
+
+  kafka-1:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - kafka_data:/kafka
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-1
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node1
+      restart_policy:
+        condition: on-failure
+
+  kafka-2:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - kafka_data:/kafka
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-2
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node2
+      restart_policy:
+        condition: on-failure
+
+  kafka-3:
+    image: wurstmeister/kafka:0.11.0.1
+    networks:
+      - internal
+    volumes:
+      - kafka_data:/kafka
+    environment:
+      KAFKA_PORT: 9092
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: kafka-3
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181"
+      KAFKA_CREATE_TOPICS: "docker.swarm.events:1:3"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.node == node3
+      restart_policy:
+        condition: on-failure
+
+networks:
+  public:
+    driver: overlay
+  internal:
+    driver: overlay
+    internal: true
+
+volumes:
+  mongo_data: {}
+  cassandra_data: {}
+  zookeeper_data: {}
+  zookeeper_datalog: {}
+  kafka_data: {}

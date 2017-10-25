@@ -3,25 +3,30 @@ package controllers
 
 import javax.inject._
 
+import be.objectify.deadbolt.scala.ActionBuilders
+import be.objectify.deadbolt.scala.models.PatternType
 import com.typesafe.config.ConfigFactory
-import play.api.libs.ws._
-import play.api._
-import play.api.mvc._
-
-import scala.concurrent.ExecutionContext
+import models.{Permission, Service, Task}
 import play.api.libs.json._
+import play.api.libs.ws._
+import play.api.mvc._
+import play.api.{Configuration, Logger}
 
-import play.api.libs.ws.JsonBodyReadables._
-import play.api.libs.ws.JsonBodyWritables._
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient,cc: ControllerComponents ) extends AbstractController(cc) {
+class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                     actionBuilders: ActionBuilders, bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
 
-  val host = ConfigFactory.load().getString("docker_host")
-  val getContainersUrl = "/containers/json"
-  val getContainersAllUrl = "/containers/json?all=true"
-  val getImagesUrl = "/images/json"
+  private val host = ConfigFactory.load().getString("docker_host")
+  private val getContainersUrl = "/containers/json"
+  private val getContainersAllUrl = "/containers/json?all=true"
+  private val getImagesUrl = "/images/json"
 
+  // authorize calls to the Docker Swarm APIs
+  private val servicesReadPermission: actionBuilders.PatternAction.PatternActionBuilder = {
+    actionBuilders.PatternAction(value = Permission.SERVICES, patternType = PatternType.EQUALITY)
+  }
 
 
   def getContainers = Action.async {
@@ -70,37 +75,58 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, ws: WSClient
   }
 
 
-def createService = Action.async {
-  request =>
-  val createServiceURL = ws.url(host + "/services/create")
-  val bodyString = request.body.asText.mkString
-  val bodyJson = Json.parse(bodyString)
-  createServiceURL.withHttpHeaders(  "Accept" -> "application/json").post(bodyJson).map { 
-    response =>
-    Ok(response.body)
+  def createService = Action.async(parse.json) {
+    request =>
+      val createServiceURL = ws.url(host + "/services/create")
+      createServiceURL.withHttpHeaders("Accept" -> "application/json").post(request.body).map {
+        response =>
+          Ok(response.body)
+      }
   }
-}
 
 
-def updateService(id : String, version : String) = Action.async {
-  request => 
-  if ( version == "" ) BadRequest("malformed version");
-  val updateURL = ws.url(host + "/services/"+id+"/update?version="+version)
-  val bodyString = request.body.asText.mkString
-  val bodyJson = Json.parse(bodyString)
-  updateURL.withHttpHeaders(  "Accept" -> "application/json").post(bodyJson).map { 
-    response =>
-    Ok(response.body)
+  def updateService(id: String) = Action.async(parse.json) { request =>
+    ws.url(host + "/services/" + id)
+      .get()
+      .flatMap { response =>
+        val version: String = Json.stringify((Json.parse(response.body) \ "Version" \ "Index").get)
+        val updateURL = ws.url(host + "/services/" + id + "/update?version=" + version)
+        updateURL.withHttpHeaders("Accept" -> "application/json").post(request.body).map {
+          response =>
+            Ok(response.body)
+        }
+      }
   }
-}
 
-
-def deleteService (id : String) = Action.async {
-  request => 
-  val deleteServiceURL = ws.url(host+"/services/"+id)
-  deleteServiceURL.execute("DELETE").map {
-    response => Ok(response.body)
+  def deleteService(id: String) = Action.async {
+    request =>
+      val deleteServiceURL = ws.url(host + "/services/" + id)
+      deleteServiceURL.execute("DELETE").map {
+        response => Ok(response.body)
+      }
   }
-}
 
+  // TODO: cleanup
+  def list: Action[AnyContent] = servicesReadPermission.defaultHandler() {
+
+    val services: Future[Seq[Service]] = ws.url(host + "/services")
+      .get()
+      .map(response => response.json.as[Seq[Service]])
+
+    val counts: Future[Map[String, Int]] = ws.url(host + "/tasks")
+      .get()
+      .map(response => response.json.as[Seq[Task]])
+      .map(tasks => tasks.filter(_.status == "running").map(_.service).groupBy(identity).mapValues(_.size))
+
+    for {
+      services <- services
+      counts <- counts
+    } yield {
+      val ok = services.map {
+        service => service.copy(current = counts.getOrElse(service.id, 0))
+      }
+      Logger.debug(ok.toString)
+      Ok(Json.toJson(ok))
+    }
+  }
 }

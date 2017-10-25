@@ -36,7 +36,6 @@ final class Authorization @Inject()(authentication: Authentication, usersReposit
     }
   }
 
-  // TODO: find better way to convert from Future[Option[User]] to Future[Option[Subject]]
   override def getSubject[A](request: AuthenticatedRequest[A]): Future[Option[Subject]] = {
     val token: String = request.headers.get("Authorization").flatMap(parseAuthorizationHeader).getOrElse[String]("")
     authentication.parseToken(token) match {

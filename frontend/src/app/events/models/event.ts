@@ -1,5 +1,6 @@
 export class Event {
-    timestamp: number;
+    time: number;
     component: string;
     action: string;
+    host: string;
 }

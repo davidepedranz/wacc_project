@@ -17,4 +17,4 @@ export const reducers: ActionReducerMap<any> = {
 export const selectEventsState = createFeatureSelector<EventsState>('events');
 export const selectEventsStatusState = createSelector(selectEventsState, (state: EventsState) => state.status);
 
-export const getEvents = createSelector(selectEventsStatusState, fromEvents.getEvents);
+export const { selectAll: getEvents } = fromEvents.adapter.getSelectors(selectEventsStatusState);

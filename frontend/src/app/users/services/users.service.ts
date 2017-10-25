@@ -11,7 +11,11 @@ import { User } from '../models/user.model';
 import { UserWithPassword } from '../models/user-with-password.model';
 
 // list of permissions available for the users
-export const PERMISSIONS = ['users.read', 'users.write'];
+export const PERMISSION_SERVICES = 'services';
+export const PERMISSION_EVENTS = 'events';
+export const PERMISSION_USER_READ = 'users.read';
+export const PERMISSION_USER_WRITE = 'users.write';
+export const PERMISSIONS = [PERMISSION_SERVICES, PERMISSION_EVENTS, PERMISSION_USER_READ, PERMISSION_USER_WRITE];
 
 @Injectable()
 export class UsersService {

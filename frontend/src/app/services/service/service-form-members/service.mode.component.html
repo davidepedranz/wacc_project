@@ -1,0 +1,7 @@
+<div>  
+    <label class="center-block">Replicas</label>
+        <input type="number"  class="form-control" formControlName="replicas">
+        <small [hidden]="modeForm.controls.replicas.valid" class="text-danger">
+                replicas must be at least 1
+            </small>
+    </div>

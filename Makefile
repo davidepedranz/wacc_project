@@ -3,83 +3,132 @@
 help:
 	@echo "Usage: make <command>"
 	@echo ""
-	@echo "  build      build frontend and backend to Docker images"
-	@echo "  undeploy   undeploy the Docker stack"
-	@echo "  deploy     deploy the Docker stack"
-	@echo "  all        build + deploy"
+	@echo "  build            Build all the Docker containers."
+	@echo "  push             Push all the build Docker containers."
+	@echo "  deploy-gcp       Deploy the Docker stack on Google Cloud (require SSH configuration)."
+	@echo "  undeploy-gcp     Undeploy the Docker stack from Google Cloud (require SSH configuration)."
+	@echo "  deploy-local     Deploy the Docker stack on the local machine."
+	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
+	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
+	@echo "  all-local        Build and push the containers to the registry, deploy to the local machine."
+	@echo "  load-test        Launch a load test against the deployment on Google Cloud"
 	@echo ""
 
-build:
+build-frontend:
 	@echo "---------------------------------------"
-	@echo "  Frontend --> Docker"
+	@echo "  [BUILD] Frontend"
 	@echo "---------------------------------------"
 	@docker build -t wacccourse/frontend:latest frontend
 	@echo ""
+
+build-backend:
 	@echo "---------------------------------------"
-	@echo "  Backend --> Docker"
+	@echo "  [BUILD] Backend"
 	@echo "---------------------------------------"
 	@(cd ./backend && sbt docker:publishLocal)
-	@docker tag wacc-backend wacccourse/backend
+	@docker tag wacc-backend wacccourse/backend:latest
 	@echo ""
+
+build-docker-proxy:
 	@echo "---------------------------------------"
-	@echo "  Backend --> Docker"
+	@echo "  [BUILD] Docker Proxy"
 	@echo "---------------------------------------"
 	@docker build -t wacccourse/docker-socket-proxy:latest docker-socket-proxy
 	@echo ""
 
-push: build
+build-mongo-setup:
 	@echo "---------------------------------------"
-	@echo "  Pushing Imanges to Docker Hub"
+	@echo "  [BUILD] Mongo Setup"
 	@echo "---------------------------------------"
-	docker push wacccourse/frontend
-	docker push wacccourse/backend
-	docker push wacccourse/docker-socket-proxy
+	@docker build -t wacccourse/mongo-setup:latest mongo-setup
 	@echo ""
 
-undeploy:
+build: build-frontend build-backend build-docker-proxy build-mongo-setup
+
+push-frontend:
 	@echo "---------------------------------------"
-	@echo "  Docker: undeploy old stack"
+	@echo "  [PUSH] Frontend"
 	@echo "---------------------------------------"
-	@docker stack rm wacc
-	@echo ""
-	@echo "---------------------------------------"
-	@echo "  Docker: remove consul network"
-	@echo "---------------------------------------"
-	@docker network rm consul-net || exit 0
+	@docker push wacccourse/frontend
 	@echo ""
 
-deploy: undeploy
+push-backend:
 	@echo "---------------------------------------"
-	@echo "  Docker: create consul network"
+	@echo "  [PUSH] Backend"
 	@echo "---------------------------------------"
-	@docker network create consul-net -d overlay --subnet=172.20.0.0/24 || exit 0
+	@docker push wacccourse/backend
 	@echo ""
 
+push-docker-proxy:
 	@echo "---------------------------------------"
-	@echo "  Docker: deploy stack"
+	@echo "  [PUSH] Docker Proxy"
+	@echo "---------------------------------------"
+	@docker push wacccourse/docker-socket-proxy
+	@echo ""
+
+push-mongo-setup:
+	@echo "---------------------------------------"
+	@echo "  [BUILD] Mongo Setup"
+	@echo "---------------------------------------"
+	@docker push wacccourse/mongo-setup
+	@echo ""
+
+push: push-frontend push-backend push-docker-proxy push-mongo-setup
+
+undeploy-local:
+	@echo "---------------------------------------"
+	@echo "  [UNDEPLOY] Local Machine"
+	@echo "---------------------------------------"
+	docker stack rm wacc
+	sleep 3
+	docker volume rm wacc_mongo_data || exit 0
+	docker volume rm wacc_cassandra_data || exit 0
+	@echo ""
+
+deploy-local: undeploy-local
+	@echo "---------------------------------------"
+	@echo "  [DEPLOY] Local Machine"
 	@echo "---------------------------------------"
 	@docker stack deploy wacc -c wacc-stack.yml
 	@echo ""
 
-gcp:
+undeploy-gcp:
 	@echo "---------------------------------------"
-	@echo "  Deploy to Google Cloud Platform"
-	@echo "---------------------------------------"
-	ssh wacc1 'mkdir ~/repository -p'
-	scp wacc-stack.yml wacc1:~/repository/wacc-stack.yml
-	scp gcp.env wacc1:~/repository/.env
-	ssh wacc1 'docker network create consul-net -d overlay --subnet=172.20.0.0/24 || exit 0'
-	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-stack.yml'
-	@echo ""
-
-gcp-clean:
-	@echo "---------------------------------------"
-	@echo "  Cleanup Google Cloud Platform"
+	@echo "  [UNDEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
 	ssh wacc1 'rm -r ~/repository || exit 0'
 	ssh wacc1 'docker stack rm wacc'
-	ssh wacc1 'docker network rm consul-net || exit 0'
+	sleep 3
+	ssh wacc1 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc2 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc3 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
+	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
 	@echo ""
 
-	
-all: build deploy
+deploy-gcp:
+	@echo "---------------------------------------"
+	@echo "  [DEPLOY] Google Cloud Platform"
+	@echo "---------------------------------------"
+	ssh wacc1 'mkdir ~/repository -p'
+	scp wacc-gcp.yml wacc1:~/repository/wacc-gcp.yml
+	scp gcp.env wacc1:~/repository/.env
+	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
+	@echo ""
+
+all-gcp: build push deploy-gcp
+
+all-local: build push deploy-local
+
+load-test:
+	bzt jmeter/wacc.jmx
+
+reboot-gcp:
+	@echo "---------------------------------------"
+	@echo "  [REBOOT] Google Cloud Platform"
+	@echo "---------------------------------------"
+	@ssh wacc0 'sudo reboot' || exit 0
+	@ssh wacc1 'sudo reboot' || exit 0
+	@ssh wacc2 'sudo reboot' || exit 0
+	@ssh wacc3 'sudo reboot' || exit 0

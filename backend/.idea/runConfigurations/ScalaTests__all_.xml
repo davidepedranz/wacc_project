@@ -21,6 +21,10 @@
         <option name="PATTERN" value="repositories.*" />
         <option name="ENABLED" value="true" />
       </pattern>
+      <pattern>
+        <option name="PATTERN" value="services.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
     </extension>
     <module name="root" />
     <setting name="path" value="" />

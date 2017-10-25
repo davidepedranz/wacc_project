@@ -6,8 +6,8 @@ import scala.concurrent.Future
 import scalaz.\/
 
 /**
-  * Base trait for errors caused by operations on the UsersRepository.
-  */
+* Base trait for errors caused by operations on the UsersRepository.
+*/
 sealed trait UserError
 
 final case class DuplicateUser() extends UserError
