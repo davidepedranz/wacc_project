@@ -3,7 +3,9 @@ package services
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
+import akka.Done
 import akka.actor.ActorSystem
+import akka.kafka.scaladsl.Consumer.Control
 import akka.kafka.scaladsl.{Consumer, Producer}
 import akka.kafka.{ConsumerSettings, ProducerSettings, Subscriptions}
 import akka.stream.scaladsl.{Sink, Source}
@@ -11,6 +13,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, ByteArraySerializer, StringDeserializer, StringSerializer}
 import play.api.Configuration
+
+import scala.concurrent.Future
 
 @Singleton
 final class Kafka @Inject()(configuration: Configuration) {
@@ -28,11 +32,11 @@ final class Kafka @Inject()(configuration: Configuration) {
       .withGroupId(UUID.randomUUID().toString)
   }
 
-  def sink(): Sink[ProducerRecord[Array[Byte], String], _] = {
+  def sink(): Sink[ProducerRecord[Array[Byte], String], Future[Done]] = {
     Producer.plainSink(producerSettings)
   }
 
-  def source(topic: String): Source[ConsumerRecord[Array[Byte], String], _] = {
+  def source(topic: String): Source[ConsumerRecord[Array[Byte], String], Control] = {
     Consumer.plainSource(consumerSettings, Subscriptions.topics(topic))
   }
 }
