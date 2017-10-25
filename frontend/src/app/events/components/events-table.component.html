@@ -1,15 +1,9 @@
 <mat-table #table [dataSource]="dataSource">
 
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-    <mat-cell *matCellDef="let row"> Nope </mat-cell>
-  </ng-container>
-
   <!-- Timestamp Column -->
   <ng-container matColumnDef="timestamp">
     <mat-header-cell *matHeaderCellDef> Timestamp </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.time}} </mat-cell>
+    <mat-cell *matCellDef="let row"> {{row.time * 1000 | date:'medium'}} </mat-cell>
   </ng-container>
 
   <!-- Service Column -->
@@ -24,10 +18,10 @@
     <mat-cell *matCellDef="let row"> {{row.action}} </mat-cell>
   </ng-container>
 
-  <!-- Description Column -->
-  <ng-container matColumnDef="description">
-    <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
-    <mat-cell *matCellDef="let row"> Lorem Ipsum </mat-cell>
+  <!-- Host Column -->
+  <ng-container matColumnDef="host">
+    <mat-header-cell *matHeaderCellDef> Host </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.host}} </mat-cell>
   </ng-container>
 
   <!-- Header and Row Declarations -->
