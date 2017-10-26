@@ -102,9 +102,9 @@ undeploy-gcp:
 	ssh wacc1 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
 	ssh wacc2 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
 	ssh wacc3 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
-	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
-	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data || exit 0'
+	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
 	@echo ""
 
 deploy-gcp:
@@ -128,6 +128,7 @@ reboot-gcp:
 	@echo "---------------------------------------"
 	@echo "  [REBOOT] Google Cloud Platform"
 	@echo "---------------------------------------"
+	@ssh wacc0 'sudo reboot' || exit 0
 	@ssh wacc1 'sudo reboot' || exit 0
 	@ssh wacc2 'sudo reboot' || exit 0
 	@ssh wacc3 'sudo reboot' || exit 0
