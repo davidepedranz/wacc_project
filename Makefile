@@ -96,25 +96,25 @@ undeploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [UNDEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
-	ssh wacc1 'rm -r ~/repository || exit 0'
-	ssh wacc1 'docker stack rm wacc'
+	ssh wacc0 'rm -r ~/repository || exit 0'
+	ssh wacc0 'docker stack rm wacc'
 	sleep 3
-	ssh wacc1 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc2 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc3 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc1 'docker container prune -f'
+	ssh wacc2 'docker container prune -f'
+	ssh wacc3 'docker container prune -f'
+	ssh wacc1 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc2 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc3 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
 	@echo ""
 
 deploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [DEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
-	ssh wacc1 'mkdir ~/repository -p'
-	scp wacc-gcp.yml wacc1:~/repository/wacc-gcp.yml
-	scp gcp.env wacc1:~/repository/.env
-	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
+	ssh wacc0 'mkdir ~/repository -p'
+	scp wacc-gcp.yml wacc0:~/repository/wacc-gcp.yml
+	scp gcp.env wacc0:~/repository/.env
+	ssh wacc0 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
 	@echo ""
 
 all-gcp: build push deploy-gcp

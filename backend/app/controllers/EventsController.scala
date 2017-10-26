@@ -38,7 +38,7 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
 
     // read old events from Cassandra
     val oldEvents: Source[Event, NotUsed] =
-      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => Source.fromFuture(getOldEvents) }
+      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 10.seconds, randomFactor = 0.2) { () => Source.fromFuture(getOldEvents) }
         .mapConcat(identity[List[Event]])
 
     // connect to Kafka to get live streaming
@@ -51,8 +51,9 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
             Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
         }
 
-    // combine events from Cassandra to updates from Kafka
-    val out: Source[Event, NotUsed] = oldEvents.concat(liveEvents)
+    // take both events from Cassandra to updates from Kafka
+    // NB: we use merge here, NOT combine!
+    val out: Source[Event, NotUsed] = oldEvents.merge(liveEvents)
 
     // client -> input [ignored] -> ... -> kafka -> events -> out -> client
     Future(Right(Flow.fromSinkAndSource(Sink.ignore, out)))

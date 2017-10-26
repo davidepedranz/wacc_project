@@ -3,7 +3,6 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import akka.NotUsed
-import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.scaladsl.Source
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
@@ -15,12 +14,13 @@ import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 @Singleton
-final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration, actorSystem: ActorSystem, ws: WSClient) {
-  implicit val s: Scheduler = actorSystem.scheduler
+final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration, ws: WSClient) {
+  //  implicit val s: Scheduler = actorSystem.scheduler
 
   private val swarmUrl: String = config.get[String]("docker_host")
 
-  val events: WSRequest = ws.url(swarmUrl + "/events")
+  val events: WSRequest = ws
+    .url(swarmUrl + "/events")
     .addQueryStringParameters("filters" -> Json.obj("type" -> Seq("service")).toString())
     .addHttpHeaders("Accept" -> "application/json")
     .withRequestTimeout(Duration.Inf)

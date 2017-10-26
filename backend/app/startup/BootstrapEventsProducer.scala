@@ -2,16 +2,16 @@ package startup
 
 import javax.inject.{Inject, Singleton}
 
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RestartSink, RestartSource, RunnableGraph, Sink, Source}
 import akka.stream.{ActorMaterializer, ClosedShape}
-import akka.{Done, NotUsed}
 import org.apache.kafka.clients.producer.ProducerRecord
 import play.api.{Configuration, Logger}
 import services.{Kafka, Swarm}
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 @Singleton
@@ -56,7 +56,9 @@ final class BootstrapEventsProducer @Inject()(implicit ec: ExecutionContext, con
   val kafkaSink: Sink[ProducerRecord[Array[Byte], String], NotUsed] = RestartSink.withBackoff(1.seconds, 2.seconds, 0.5) { () => kafka.sink() }
 
   // log to the console
-  val consoleSink: Sink[String, Future[Done]] = Sink.foreach(event => Logger.info(s"[Console] Docker Swarm event: $event"))
+  val consoleSink: Sink[String, NotUsed] = RestartSink.withBackoff(1.seconds, 2.seconds, 0.5) {
+    () => Sink.foreach(event => Logger.info(s"[Console] Docker Swarm event: $event"))
+  }
 
   // flow: transform events into messages for Kafka
   val flow: Flow[String, ProducerRecord[Array[Byte], String], NotUsed] = Flow[String]

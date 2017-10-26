@@ -6,10 +6,9 @@ import be.objectify.deadbolt.scala.DeadboltHandler
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import com.google.inject.AbstractModule
 import net.codingwell.scalaguice.ScalaModule
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Environment}
 import repositories.{EventsRepository, MongoUsersRepository, UsersRepository}
 import services.{Cassandra, Kafka}
-import startup.{BootstrapEventsConsumer, BootstrapEventsProducer, BootstrapEventsRepository, BootstrapUsersRepository}
 
 /**
   * Main Guice module for the Play application. Binds traits with the implementations and
@@ -20,12 +19,12 @@ final class Module(val environment: Environment, val configuration: Configuratio
   override def configure(): Unit = {
 
     // bootstrap
-    bind(classOf[BootstrapEventsRepository]).asEagerSingleton()
-    if (environment.mode != Mode.Test) {
-      bind(classOf[BootstrapUsersRepository]).asEagerSingleton()
-      bind(classOf[BootstrapEventsProducer]).asEagerSingleton()
-      bind(classOf[BootstrapEventsConsumer]).asEagerSingleton()
-    }
+    //    bind(classOf[BootstrapEventsRepository]).asEagerSingleton()
+    //    if (environment.mode != Mode.Test) {
+    //      bind(classOf[BootstrapUsersRepository]).asEagerSingleton()
+    //      //      bind(classOf[BootstrapEventsProducer]).asEagerSingleton()
+    //      //      bind(classOf[BootstrapEventsConsumer]).asEagerSingleton()
+    //    }
 
     // Kafka utilities
     bind(classOf[Kafka])
