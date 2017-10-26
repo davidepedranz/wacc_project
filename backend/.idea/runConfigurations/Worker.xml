@@ -2,7 +2,7 @@
   <configuration default="false" name="Worker" type="Application" factoryName="Application" singleton="true">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="workers.OldWorker" />
+        <option name="PATTERN" value="workers.Worker" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

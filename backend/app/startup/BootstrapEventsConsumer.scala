@@ -14,6 +14,7 @@ import services.{Kafka, Swarm}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 @Singleton
 final class BootstrapEventsConsumer @Inject()(implicit ec: ExecutionContext, system: ActorSystem, config: Configuration,
@@ -29,9 +30,16 @@ final class BootstrapEventsConsumer @Inject()(implicit ec: ExecutionContext, sys
   // stream events from Kafka to Cassandra for durable storage
   RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic) }
     .runForeach { rawEvent =>
-      val event = Json.parse(rawEvent.value).as[Event]
-      eventsRepository.saveOrUpdate(event)
-      Logger.debug(s"Saved event in Cassandra -> $event")
+      try {
+        val event = Json.parse(rawEvent.value).as[Event]
+        eventsRepository.saveOrUpdate(event)
+          .onComplete {
+            case Success(_) => Logger.debug(s"Saved event in Cassandra -> $event")
+            case Failure(ex) => Logger.error(s"Cannot save event in Cassandra -> $event", ex)
+          }
+      } catch {
+        case t: Throwable => Logger.error("Cannot parse message from Kafka... skip (do not save in Cassandra)", t)
+      }
     }
     .recover {
       case ex => Logger.error("Cannot save some event in Cassandra.", ex)

@@ -35,7 +35,6 @@ final class Swarm @Inject()(implicit ec: ExecutionContext, config: Configuration
     }
     Source.fromFuture(future)
       .flatMapConcat(_.bodyAsSource.map(_.utf8String))
-      .map(raw => raw.trim)
       .map { s =>
         Logger.debug(s"Swarm Event: $s")
         s
