@@ -22,7 +22,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {taskTemplateComponent} from './services/service/service-form-members/service.tasktemplate.component';
 import {modeComponent} from './services/service/service-form-members/service.mode.component';
 import {portsComponent} from './services/service/service-form-members/service.ports.component';
-/**/ 
+
 
 @NgModule({
   imports: [
@@ -32,6 +32,7 @@ import {portsComponent} from './services/service/service-form-members/service.po
     ReactiveFormsModule,
     /**/
     HttpClientModule,
+    FormsModule,
 
     RouterModule.forRoot(routes),
     StoreModule.forRoot({}),
@@ -40,6 +41,9 @@ import {portsComponent} from './services/service/service-form-members/service.po
 
     CoreModule,
     AuthenticationModule.forRoot()
+  ],
+  providers:[  
+    
   ],
   declarations : [
     taskTemplateComponent,

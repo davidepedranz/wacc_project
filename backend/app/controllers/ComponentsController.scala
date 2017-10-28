@@ -19,6 +19,7 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
                                      actionBuilders: ActionBuilders, bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
 
   private val host = ConfigFactory.load().getString("docker_host")
+  private val frontend_host = ConfigFactory.load().getString("frontend_host")
   private val getContainersUrl = "/containers/json"
   private val getContainersAllUrl = "/containers/json?all=true"
   private val getImagesUrl = "/images/json"
@@ -89,7 +90,7 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
           }
         }
       }
-      case JsError(error) => Future(BadRequest(JsError.toJson(error))) 
+      case JsError(error) => Future(BadRequest(JsError.toJson(error)))
     }
   }
 
@@ -117,6 +118,12 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
       val deleteServiceURL = ws.url(host + "/services/" + id)
       deleteServiceURL.execute("DELETE").map {
         response => Ok(response.body)
+        .withHeaders(
+    "Access-Control-Allow-Origin" -> frontend_host
+    , "Access-Control-Allow-Methods" -> "OPTIONS, GET, POST, PUT, DELETE, HEAD"   // OPTIONS for pre-flight
+    , "Access-Control-Allow-Headers" -> "Accept, Content-Type, Origin, X-Json, X-Prototype-Version, X-Requested-With,application/x-www-form-urlencoded" //, "X-My-NonStd-Option"
+    , "Access-Control-Allow-Credentials" -> "true"
+  )
       }
   }
 

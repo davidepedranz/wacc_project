@@ -9,9 +9,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppComponent } from './containers/app/app.component';
 import { DashboardComponent } from './containers/dashboard/dashboard.component';
 
-// TODO!
-import { ButtonComponent } from './components/button/button.component';
-
 @NgModule({
   imports: [
     CommonModule,
@@ -23,8 +20,6 @@ import { ButtonComponent } from './components/button/button.component';
     NavbarComponent,
     AppComponent,
     DashboardComponent,
-
-    ButtonComponent
   ],
   exports: [
     AppComponent,

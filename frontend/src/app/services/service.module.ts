@@ -11,7 +11,7 @@ import { ServiceDetailComponent } from './service/service-create-form.component'
     ReactiveFormsModule,
   ],
   declarations: [
-    ServiceDetailComponent
+    ServiceDetailComponent,
   ]
 })
 export class ServiceModule { }
