@@ -6,7 +6,6 @@ import { Http , Headers, RequestOptions} from '@angular/http';
 @Component({
   selector: 'app-delete-docker-service',
   templateUrl: './delete-docker-service.component.html',
-  styleUrls: ['./delete-docker-service.component.css']
 })
 export class DeleteDockerServiceComponent implements OnInit {
 

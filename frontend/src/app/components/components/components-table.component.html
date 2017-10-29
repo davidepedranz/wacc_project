@@ -39,7 +39,8 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
     <mat-cell *matCellDef="let row">
-     <app-delete-docker-service [service]="row.name" ></app-delete-docker-service>
+        <app-delete-docker-service [service]="row.name" style="float:left"></app-delete-docker-service>
+        <app-update-docker-service style="float:right"></app-update-docker-service>
     </mat-cell>
   </ng-container>
 

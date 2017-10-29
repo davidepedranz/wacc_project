@@ -19,6 +19,8 @@ import { HttpModule } from '@angular/http';
 import { DockerServiceFormComponent } from './docker-service-form/docker-service-form.component'
 import { DeleteDockerServiceComponent } from './delete-docker-service/delete-docker-service.component';
 import { AddServiceComponent } from './add-service/add-service.component';
+import { UpdateDockerServiceComponent } from './update-docker-service/update-docker-service.component';
+import { UpdateDockerFormComponent } from './update-docker-form/update-docker-form.component';
 
 @NgModule({
   imports: [
@@ -37,6 +39,8 @@ import { AddServiceComponent } from './add-service/add-service.component';
     DockerServiceFormComponent,
     DeleteDockerServiceComponent,
     AddServiceComponent,
+    UpdateDockerServiceComponent,
+    UpdateDockerFormComponent,
 
   ],
   providers: [
