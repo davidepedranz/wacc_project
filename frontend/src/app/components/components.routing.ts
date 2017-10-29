@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { ComponentsComponent } from './containers/components.component';
-import {DockerServiceFormComponent} from './docker-service-form/docker-service-form.component';
+import {AddServiceComponent} from './add-service/add-service.component';
 
 
 export const routes: Routes = [
@@ -11,12 +11,13 @@ export const routes: Routes = [
         component: ComponentsComponent
     },
     {
+        path: 'new',
+        pathMatch: 'full',
+        component : AddServiceComponent
+    },
+    {
         path: '**',
         redirectTo: '/'
     }
-    ,{
-        path: 'new',
-        pathMatch: 'full',
-        component : DockerServiceFormComponent
-    }
+
 ];

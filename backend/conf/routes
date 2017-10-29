@@ -28,4 +28,4 @@ DELETE        /services/:id                                      controllers.Com
 #GET           /services/:id                                      controllers.ComponentsController.getServiceInfo(id: String)
 #GET           /services/:id/*command                             controllers.ComponentsController.cannotGet
 GET           /v1/services                                       controllers.ComponentsController.list
-OPTIONS       /services/:id                                     controllers.ComponentsController.deleteService(id: String)
+#OPTIONS       /services/:id                                     controllers.ComponentsController.deleteService(id: String)

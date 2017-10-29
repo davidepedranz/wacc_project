@@ -17,9 +17,8 @@ export class DeleteDockerServiceComponent implements OnInit {
 
   @Input() service:string;
 
-//TODO how to import the url of the backend?
   onDeleteService(service : string)  {
-    var backendHost = "http://localhost:9000";
+    var backendHost = "/api";
     this.http.delete(backendHost + "/services/" + service ).map(res =>
       console.log(res)
     ).subscribe();

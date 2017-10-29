@@ -118,12 +118,6 @@ class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Controll
       val deleteServiceURL = ws.url(host + "/services/" + id)
       deleteServiceURL.execute("DELETE").map {
         response => Ok(response.body)
-        .withHeaders(
-    "Access-Control-Allow-Origin" -> frontend_host
-    , "Access-Control-Allow-Methods" -> "OPTIONS, GET, POST, PUT, DELETE, HEAD"   // OPTIONS for pre-flight
-    , "Access-Control-Allow-Headers" -> "Accept, Content-Type, Origin, X-Json, X-Prototype-Version, X-Requested-With,application/x-www-form-urlencoded" //, "X-My-NonStd-Option"
-    , "Access-Control-Allow-Credentials" -> "true"
-  )
       }
   }
 

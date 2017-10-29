@@ -18,6 +18,7 @@ import { ComponentsTableComponent } from './components/components-table.componen
 import { HttpModule } from '@angular/http';
 import { DockerServiceFormComponent } from './docker-service-form/docker-service-form.component'
 import { DeleteDockerServiceComponent } from './delete-docker-service/delete-docker-service.component';
+import { AddServiceComponent } from './add-service/add-service.component';
 
 @NgModule({
   imports: [
@@ -33,8 +34,9 @@ import { DeleteDockerServiceComponent } from './delete-docker-service/delete-doc
   declarations: [
     ComponentsComponent,
     ComponentsTableComponent,
-    DockerServiceFormComponent, 
+    DockerServiceFormComponent,
     DeleteDockerServiceComponent,
+    AddServiceComponent,
 
   ],
   providers: [
