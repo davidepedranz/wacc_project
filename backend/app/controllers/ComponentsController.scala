@@ -2,8 +2,8 @@ package controllers
 
 import javax.inject._
 
-import be.objectify.deadbolt.scala.ActionBuilders
 import be.objectify.deadbolt.scala.models.PatternType
+import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions, DeadboltHandler}
 import models.{Permission, Service, ServiceScale, Task}
 import play.api.libs.json._
 import play.api.libs.ws._
@@ -13,8 +13,8 @@ import play.api.{Configuration, Logger}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents,
-                                     config: Configuration, actionBuilders: ActionBuilders,
+class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                     handler: DeadboltHandler, deadbolt: DeadboltActions, actionBuilders: ActionBuilders,
                                      bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
 
   // configuration
