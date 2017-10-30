@@ -4,7 +4,7 @@ import javax.inject._
 
 import be.objectify.deadbolt.scala.models.PatternType
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions, DeadboltHandler}
-import models.{Permission, Service, ServiceScale, Task}
+import models.{Permission, Service, ScaleService, Task}
 import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.mvc._
@@ -74,8 +74,8 @@ final class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Co
 
   def createService: Action[JsValue] = servicesPermission.apply(parse.json) { request =>
     val bodyAsJson = request.body
-    bodyAsJson.validate[ServiceScale] match {
-      case _: JsSuccess[ServiceScale] => ws.url(host + "/services/create")
+    bodyAsJson.validate[ScaleService] match {
+      case _: JsSuccess[ScaleService] => ws.url(host + "/services/create")
         .withHttpHeaders("Accept" -> "application/json").post(bodyAsJson).map {
         response =>
           //noinspection SimplifyBooleanMatch
@@ -93,8 +93,8 @@ final class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: Co
       .get()
       .flatMap { response =>
         val version: String = Json.stringify((Json.parse(response.body) \ "Version" \ "Index").get)
-        request.body.validate[ServiceScale] match {
-          case _: JsSuccess[ServiceScale] => ws.url(host + "/services/" + id + "/update?version=" + version)
+        request.body.validate[ScaleService] match {
+          case _: JsSuccess[ScaleService] => ws.url(host + "/services/" + id + "/update?version=" + version)
             .withHttpHeaders("Accept" -> "application/json").post(request.body).map {
             response =>
               Ok(response.body)

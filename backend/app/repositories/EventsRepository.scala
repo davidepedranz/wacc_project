@@ -48,6 +48,7 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
 
   // TODO: is there a better way to do it?
   private def convertDateToDateOnly(date: Date): Date = {
+    //noinspection SpellCheckingInspection
     val sdf = new SimpleDateFormat("yyyy-MM-dd")
     sdf.setTimeZone(TimeZone.getTimeZone("ECT"))
     sdf.parse(sdf.format(date))
