@@ -22,12 +22,14 @@ import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 @Singleton
-class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
-                                 authentication: Authentication, users: UsersRepository,
-                                 kafka: Kafka, events: EventsRepository) extends AbstractController(cc) {
+final class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                       authentication: Authentication, users: UsersRepository,
+                                       kafka: Kafka, events: EventsRepository) extends AbstractController(cc) {
 
+  // load the topic to subscribe to to get live updates of the events
   private val topic: String = config.get[String]("kafka.topic")
 
+  // serialize events objects to JSON
   private implicit val messageFlowTransformer: MessageFlowTransformer[String, Event] = {
     MessageFlowTransformer.jsonMessageFlowTransformer[String, Event]
   }
@@ -58,12 +60,18 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     }
   }
 
+  /**
+    * Create an Akka Streams Flow to wrap the logic of the Websocket: the inputs from the client
+    * are ignored; instead, we connect to both Cassandra and Kafka to stream events to the client.
+    * In case of errors, we retry to connect to the sources automatically.
+    *
+    * @return Flow that ignores the source and emits events from both Cassandra and Kafka in the sink.
+    */
   private def eventsFlow: Flow[Any, Event, NotUsed] = {
 
     // read old events from Cassandra
-    val oldEvents: Source[Event, NotUsed] =
-      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 10.seconds, randomFactor = 0.2) { () => Source.fromFuture(getOldEvents) }
-        .mapConcat(identity[List[Event]])
+    val oldEvents: Source[Event, NotUsed] = RestartSource.withBackoff(1.seconds, 10.seconds, 0.2) { () => Source.fromFuture(getOldEvents) }
+      .mapConcat(identity[List[Event]])
 
     // parse the raw string to events... recover from errors by skipping the unparsable elements
     val parseEvents: Flow[String, Event, NotUsed] = Flow[String]
@@ -74,10 +82,9 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
       }))
 
     // connect to Kafka to get live streaming
-    val liveEvents: Source[Event, _] =
-      RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic) }
-        .map(_.value)
-        .via(parseEvents)
+    val liveEvents: Source[Event, _] = RestartSource.withBackoff(1.seconds, 2.seconds, 0.2) { () => kafka.source(topic) }
+      .map(_.value)
+      .via(parseEvents)
 
     // take both events from Cassandra to updates from Kafka
     // NB: we use merge here, NOT combine!
@@ -86,7 +93,6 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     // client -> input [ignored] -> ... -> kafka -> events -> out -> client
     Flow.fromSinkAndSource(Sink.ignore, out)
   }
-
 
   /**
     * Read the old events from Cassandra.
