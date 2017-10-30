@@ -26,7 +26,7 @@ final class Kafka @Inject()(configuration: Configuration) {
       .withBootstrapServers(kafkaUrl)
   }
 
-  private def consumerSettings(group: String): ConsumerSettings[Array[Byte], String] = {
+  def consumerSettings(group: String): ConsumerSettings[Array[Byte], String] = {
     ConsumerSettings(actorSystem, new ByteArrayDeserializer, new StringDeserializer)
       .withBootstrapServers(kafkaUrl)
       .withGroupId(group)

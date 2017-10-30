@@ -1,12 +1,12 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Worker" type="Application" factoryName="Application" singleton="true">
+  <configuration default="false" name="EventsConsumerWorker" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
-        <option name="PATTERN" value="workers.Worker" />
+        <option name="PATTERN" value="workers.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="MAIN_CLASS_NAME" value="workers.Worker" />
+    <option name="MAIN_CLASS_NAME" value="workers.EventsConsumerWorker" />
     <option name="VM_PARAMETERS" value="" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

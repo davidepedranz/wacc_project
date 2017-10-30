@@ -20,7 +20,7 @@ services:
           - node.role == manager
           - node.labels.node == node0
       restart_policy:
-        condition: on-failure
+        condition: always
 
   frontend:
     image: wacccourse/frontend:latest
@@ -32,8 +32,7 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
-        condition: on-failure
-      # endpoint_mode: dnsrr
+        condition: always
       labels:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
@@ -60,8 +59,7 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
-        condition: on-failure
-      # endpoint_mode: dnsrr
+        condition: always
       labels:
         - "traefik.enable=true"
         - "traefik.backend=backend"
@@ -69,16 +67,11 @@ services:
         - "traefik.frontend.rule=Host:${DOMAIN:-localhost};PathPrefixStrip:/api"
         - "traefik.backend.loadbalancer.swarm=true"
 
-  worker:
+  events-producer-worker:
     image: wacccourse/backend:latest
     networks:
       - internal
     environment:
-      # APPLICATION_SECRET: "90d1b84a-1f8f-44bb-9251-18316af45cf0"
-      # MONGODB_URI: "mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/wacc"
-      # CASSANDRA_HOSTS: "cassandra-1,cassandra-2,cassandra-3"
-      # CASSANDRA_PORT: "9042"
-      # CASSANDRA_KEYSPACE: "wacc"
       DOCKER_HOST: "http://docker-socket-proxy:2375"
       KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
       KAFKA_TOPIC: "docker.swarm.events"
@@ -88,8 +81,28 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
+        condition: always
+    command: ["-main", "workers.EventsProducerWorker"]
+
+  events-consumer-worker:
+    image: wacccourse/backend:latest
+    networks:
+      - internal
+    environment:
+      CASSANDRA_HOSTS: "cassandra-1,cassandra-2,cassandra-3"
+      CASSANDRA_PORT: "9042"
+      CASSANDRA_KEYSPACE: "wacc"
+      KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
+      KAFKA_TOPIC: "docker.swarm.events"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.node != node0
+      restart_policy:
         condition: on-failure
-    command: ["-main", "workers.Worker"]
+        delay: 2s
+    command: ["-main", "workers.EventsConsumerWorker"]
 
   docker-socket-proxy:
     image: wacccourse/docker-socket-proxy:latest
@@ -105,7 +118,7 @@ services:
           - node.labels.node != node0
           - node.role == manager
       restart_policy:
-        condition: on-failure
+        condition: always
 
   mongo-1:
     image: mongo:3.4
@@ -119,7 +132,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: on-failure
+        condition: always
     command: 'mongod --replSet "rs0"'
 
   mongo-2:
@@ -134,7 +147,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: on-failure
+        condition: always
     command: 'mongod --replSet "rs0"'
 
   mongo-3:
@@ -149,7 +162,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: on-failure
+        condition: always
     command: 'mongod --replSet "rs0"'
 
   mongo-setup:
@@ -165,6 +178,7 @@ services:
           - node.labels.node != node0
       restart_policy:
         condition: on-failure
+        delay: 2s
 
   cassandra-1:
     image: cassandra:3.11
@@ -180,7 +194,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: on-failure
+        condition: always
 
   cassandra-2:
     image: cassandra:3.11
@@ -197,7 +211,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: on-failure
+        condition: always
 
   cassandra-3:
     image: cassandra:3.11
@@ -214,7 +228,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: on-failure
+        condition: always
 
   zookeeper-1:
     image: 31z4/zookeeper:latest
@@ -233,7 +247,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: on-failure
+        condition: always
 
   zookeeper-2:
     image: 31z4/zookeeper:latest
@@ -252,7 +266,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: on-failure
+        condition: always
 
   zookeeper-3:
     image: 31z4/zookeeper:latest
@@ -271,7 +285,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: on-failure
+        condition: always
 
   kafka-1:
     image: wurstmeister/kafka:0.11.0.1
@@ -293,7 +307,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: on-failure
+        condition: always
 
   kafka-2:
     image: wurstmeister/kafka:0.11.0.1
@@ -315,7 +329,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: on-failure
+        condition: always
 
   kafka-3:
     image: wurstmeister/kafka:0.11.0.1
@@ -337,7 +351,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: on-failure
+        condition: always
 
 networks:
   public:

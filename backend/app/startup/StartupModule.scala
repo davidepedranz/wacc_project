@@ -15,8 +15,5 @@ final class StartupModule(val environment: Environment, val configuration: Confi
     if (environment.mode != Mode.Test) {
       bind(classOf[BootstrapUsersRepository]).asEagerSingleton()
     }
-
-    // TODO: make a runner
-    bind(classOf[BootstrapEventsConsumer]).asEagerSingleton()
   }
 }

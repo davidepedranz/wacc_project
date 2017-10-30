@@ -15,7 +15,7 @@ import scala.concurrent.duration._
   * Worker process to listen to the events of Docker Swarm and publish them in Kafka.
   * This object is run as a separate container, so it can be scaled independently from the backend.
   */
-object Worker extends App {
+object EventsProducerWorker extends App {
 
   // bootstrap a new application
   private val config = Configuration.load(Environment.simple())
