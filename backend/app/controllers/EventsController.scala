@@ -1,10 +1,11 @@
 package controllers
 
-import java.util.{Calendar, Date, TimeZone}
+import java.util.{Calendar, TimeZone}
 import javax.inject._
 
 import akka.NotUsed
 import akka.stream.scaladsl.{Flow, RestartSource, Sink, Source}
+import akka.stream.{ActorAttributes, Supervision}
 import authentication.Authentication
 import models.{Event, Permission}
 import play.Logger
@@ -64,15 +65,19 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
       RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 10.seconds, randomFactor = 0.2) { () => Source.fromFuture(getOldEvents) }
         .mapConcat(identity[List[Event]])
 
+    // parse the raw string to events... recover from errors by skipping the unparsable elements
+    val parseEvents: Flow[String, Event, NotUsed] = Flow[String]
+      .map(Json.parse(_).as[Event])
+      .withAttributes(ActorAttributes.supervisionStrategy({ ex =>
+        Logger.error(s"Cannot parse string from Kafka to an Event object... skip (do not sent it to the client)", ex)
+        Supervision.Resume
+      }))
+
     // connect to Kafka to get live streaming
     val liveEvents: Source[Event, _] =
       RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic) }
-        .map(raw => Json.parse(raw.value).as[Event])
-        .recover {
-          case ex =>
-            Logger.warn(s"Cannot parse string from Kafka to an Event object", ex)
-            Event(new Date(System.currentTimeMillis()), 2L, "fake", "fake", "fake")
-        }
+        .map(_.value)
+        .via(parseEvents)
 
     // take both events from Cassandra to updates from Kafka
     // NB: we use merge here, NOT combine!

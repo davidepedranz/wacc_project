@@ -18,16 +18,10 @@ export class EventsService {
     events$: Observable<Event[]>;
 
     constructor(private store: Store<fromAuthentication.State>, @Inject(DOCUMENT) private document) {
-        // store.select(fromAuthentication.getToken).subscribe(token => this.token = token);
-
         this.events$ = store.select(fromAuthentication.getToken)
             .mergeMap(token => Observable.webSocket(`ws://${document.location.host}/api/v1/events?token=${token}`))
             .map(msg => msg as Event)
-            .bufferTime(200)
+            .bufferTime(250)
             .retryWhen(error => error.delay(2000));
-
-        // this.events$ = Observable.webSocket(`ws://${document.location.host}/api/v1/events?token=test`)
-        //     .retryWhen(error => error.delay(2000))
-        //     .map(msg => msg as Event);
     }
 }
