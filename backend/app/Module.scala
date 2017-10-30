@@ -1,10 +1,11 @@
 import javax.inject._
 
-import authentication.{Authentication, JwtAuthentication, Secret}
+import authentication.{Authentication, JwtAuthentication}
 import authorization.{Authorization, AuthorizationCache}
 import be.objectify.deadbolt.scala.DeadboltHandler
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import com.google.inject.AbstractModule
+import com.google.inject.name.Names
 import net.codingwell.scalaguice.ScalaModule
 import play.api.{Configuration, Environment}
 import repositories.{EventsRepository, MongoUsersRepository, UsersRepository}
@@ -20,7 +21,7 @@ final class Module(val environment: Environment, val configuration: Configuratio
 
     // authentication
     val secret: String = configuration.get[String]("play.http.secret.key")
-    bind(classOf[String]).annotatedWith(classOf[Secret]).toInstance(secret)
+    bind(classOf[String]).annotatedWith(Names.named("secret")).toInstance(secret)
     bind[Authentication].to[JwtAuthentication]
 
     // authorization (deadbolt)

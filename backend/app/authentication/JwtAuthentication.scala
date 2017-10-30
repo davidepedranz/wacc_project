@@ -1,7 +1,7 @@
 package authentication
 
 import java.util.UUID
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import io.igl.jwt._
 
@@ -14,7 +14,7 @@ import scala.util.Try
   *
   * @param secret Secret key used to sign the JWT.
   */
-final class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication {
+final class JwtAuthentication @Inject()(@Named("secret") secret: String) extends Authentication {
 
   // JWT header
   private val JWT_TYPE: String = "JWT"
@@ -54,5 +54,12 @@ final class JwtAuthentication @Inject()(@Secret secret: String) extends Authenti
       iss = Some(Iss(APPLICATION_NAME)),
       aud = Some(Aud(APPLICATION_NAME))
     ).map(jwt => jwt.getClaim[Sub].get.value)
+  }
+
+  override def parseAuthorizationHeader(header: String): Option[String] = {
+    header.split("""\s""") match {
+      case Array("Bearer", token) => Option(token)
+      case _ ⇒ None
+    }
   }
 }

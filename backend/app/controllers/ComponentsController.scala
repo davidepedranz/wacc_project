@@ -13,9 +13,9 @@ import play.api.{Configuration, Logger}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
-                                     handler: DeadboltHandler, deadbolt: DeadboltActions, actionBuilders: ActionBuilders,
-                                     bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
+final class ComponentsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
+                                           handler: DeadboltHandler, deadbolt: DeadboltActions, actionBuilders: ActionBuilders,
+                                           bodyParsers: PlayBodyParsers, ws: WSClient) extends AbstractController(cc) {
 
   // configuration
   private val host = config.get[String]("docker_host")

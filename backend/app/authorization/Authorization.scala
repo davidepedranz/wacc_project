@@ -21,23 +21,23 @@ import scala.util.{Failure, Success}
   */
 final class Authorization @Inject()(authentication: Authentication, usersRepository: UsersRepository) extends DeadboltHandler with Results {
 
-  private def parseAuthorizationHeader(header: String): Option[String] = {
-    header.split("""\s""") match {
-      case Array("Bearer", token) => Option(token)
-      case _ ⇒ None
-    }
-  }
-
-  // make sure the token in present (NB: we must return None as a result to apply this step)
   override def beforeAuthCheck[A](request: Request[A]): Future[Option[Result]] = {
-    request.headers.get("Authorization") match {
+    // make sure the token in present (NB: we must return None as a result to apply this step)
+    request.headers.get(authentication.AUTHENTICATION_HEADER) match {
       case Some(_: String) => Future(None)
       case None => Future(Option(Unauthorized))
     }
   }
 
   override def getSubject[A](request: AuthenticatedRequest[A]): Future[Option[Subject]] = {
-    val token: String = request.headers.get("Authorization").flatMap(parseAuthorizationHeader).getOrElse[String]("")
+
+    // extract the token
+    val token: String = request.headers
+      .get(authentication.AUTHENTICATION_HEADER)
+      .flatMap(authentication.parseAuthorizationHeader)
+      .getOrElse[String]("")
+
+    // verify that the token is valid + match the permissions in the database
     authentication.parseToken(token) match {
       case Failure(_) => Future(Option.empty)
       case Success(username: String) => usersRepository.read(username).map {
@@ -47,9 +47,14 @@ final class Authorization @Inject()(authentication: Authentication, usersReposit
     }
   }
 
-  // if the authorization fails, simply return HTTP 403 Forbidden
-  override def onAuthFailure[A](request: AuthenticatedRequest[A]): Future[Result] = Future(Forbidden)
+  override def onAuthFailure[A](request: AuthenticatedRequest[A]): Future[Result] = {
+    // if the authorization fails, simply return HTTP 403 Forbidden
+    Future(Forbidden)
+  }
 
-  // not required since we do not use "dynamic constraint types"
-  override def getDynamicResourceHandler[A](request: Request[A]): Future[None.type] = Future(None)
+  override def getDynamicResourceHandler[A](request: Request[A]): Future[None.type] = {
+    // not required since we do not use "dynamic constraint types"
+    // reference: https://deadbolt-scala.readme.io/docs/deadbolt-handlers
+    Future(None)
+  }
 }
