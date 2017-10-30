@@ -38,6 +38,10 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     */
   def socket: WebSocket = WebSocket.acceptOrResult[String, Event] { request =>
 
+    // NB: we do not care about CrossSiteWebSocketHijacking, since we do NOT use cookies anywhere
+    // https://www.playframework.com/documentation/2.6.x/ScalaWebSockets#Rejecting-a-WebSocket
+    // http://www.christian-schneider.net/CrossSiteWebSocketHijacking.html
+
     // unfortunately, Deadbolt does NOT support websockets...
     // let's make sure the user in authenticated and authorized to see the events
     // (we know, this is ugly, but we need all these checks for security)
@@ -53,8 +57,7 @@ class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerCo
     }
   }
 
-  private def eventsFlow = {
-    // TODO: parse token + authenticate... return Left if token / permission wrong
+  private def eventsFlow: Flow[Any, Event, NotUsed] = {
 
     // read old events from Cassandra
     val oldEvents: Source[Event, NotUsed] =
