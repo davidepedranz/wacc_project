@@ -26,10 +26,10 @@ final class Kafka @Inject()(configuration: Configuration) {
       .withBootstrapServers(kafkaUrl)
   }
 
-  private def consumerSettings: ConsumerSettings[Array[Byte], String] = {
+  private def consumerSettings(group: String): ConsumerSettings[Array[Byte], String] = {
     ConsumerSettings(actorSystem, new ByteArrayDeserializer, new StringDeserializer)
       .withBootstrapServers(kafkaUrl)
-      .withGroupId(UUID.randomUUID().toString)
+      .withGroupId(group)
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   }
 
@@ -43,8 +43,8 @@ final class Kafka @Inject()(configuration: Configuration) {
     Producer.plainSink(producerSettings)
   }
 
-  def source(topic: String): Source[ConsumerRecord[Array[Byte], String], Control] = {
-    Logger.info(s"Kafka -> requested new source for topic: $topic")
-    Consumer.plainSource(consumerSettings, Subscriptions.topics(topic))
+  def source(topic: String, group: String = UUID.randomUUID().toString): Source[ConsumerRecord[Array[Byte], String], Control] = {
+    Logger.info(s"Kafka -> requested new source: topic=$topic, group=$group")
+    Consumer.plainSource(consumerSettings(group), Subscriptions.topics(topic))
   }
 }

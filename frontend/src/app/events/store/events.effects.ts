@@ -11,7 +11,7 @@ export class EventsEffects {
 
     @Effect()
     newEvent$ = this.eventsService.events$
-        .map(event => new EventsActions.NewEvent(event));
+        .map(event => new EventsActions.NewEvents(event));
 
     constructor(
         private eventsService: EventsService

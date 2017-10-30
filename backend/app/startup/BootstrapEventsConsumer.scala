@@ -28,7 +28,7 @@ final class BootstrapEventsConsumer @Inject()(implicit ec: ExecutionContext, sys
 
   // TODO: test for killing kafka
   // stream events from Kafka to Cassandra for durable storage
-  RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic) }
+  RestartSource.withBackoff(minBackoff = 1.seconds, maxBackoff = 2.seconds, randomFactor = 0.2) { () => kafka.source(topic, group = "events-worker") }
     .runForeach { rawEvent =>
       try {
         val event = Json.parse(rawEvent.value).as[Event]

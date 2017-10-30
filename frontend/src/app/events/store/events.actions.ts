@@ -2,13 +2,13 @@ import { Action } from '@ngrx/store';
 
 import { Event } from '../models/event';
 
-export const NEW_EVENT = '[Events] New';
+export const NEW_EVENTS = '[Events] New';
 
-export class NewEvent implements Action {
-    readonly type = NEW_EVENT;
+export class NewEvents implements Action {
+    readonly type = NEW_EVENTS;
 
-    constructor(public payload: Event) { }
+    constructor(public payload: Event[]) { }
 }
 
 export type All =
-    | NewEvent;
+    | NewEvents;

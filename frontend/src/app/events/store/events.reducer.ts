@@ -15,8 +15,8 @@ export const initialState: State = adapter.getInitialState();
 export function reducer(state = initialState, action: EventsActions.All): EntityState<Event> {
     switch (action.type) {
 
-        case EventsActions.NEW_EVENT: {
-            return adapter.addOne(action.payload, state);
+        case EventsActions.NEW_EVENTS: {
+            return adapter.addMany(action.payload, state);
         }
 
         default: {
