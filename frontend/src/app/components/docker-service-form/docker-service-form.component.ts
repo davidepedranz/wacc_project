@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Service } from '../models/service.model';
 
@@ -9,7 +9,7 @@ import { Service } from '../models/service.model';
 })
 export class DockerServiceFormComponent {
 
-  constructor(private http: Http, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   onServiceSubmit(data): void {
     const service = new Service();

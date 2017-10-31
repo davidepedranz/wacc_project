@@ -31,6 +31,8 @@ final class ServicesController @Inject()(implicit ec: ExecutionContext, cc: Cont
   def getServices: Action[AnyContent] = servicesPermission.defaultHandler() {
     swarm.getServices.map {
       services => Ok(Json.toJson(services))
+    }.recover {
+      case _ => ServiceUnavailable
     }
   }
 
