@@ -40,9 +40,9 @@ final class ServicesController @Inject()(implicit ec: ExecutionContext, cc: Cont
   def createService: Action[JsValue] = servicesPermission.apply(parse.json) { request =>
     request.body.validate[ScaleService] match {
       case JsError(error) => Future(BadRequest(JsError.toJson(error)))
-      case json: JsSuccess[ScaleService] => swarm.createService(json.value).map {
-        case true => Created()
-        case false => Conflict()
+      case _: JsSuccess[ScaleService] => swarm.createService(request.body).map {
+        case true => Created
+        case false => Conflict
       }
     }
   }
@@ -53,7 +53,7 @@ final class ServicesController @Inject()(implicit ec: ExecutionContext, cc: Cont
   def updateService(id: String): Action[JsValue] = servicesPermission.apply(parse.json) { request =>
     request.body.validate[ScaleService] match {
       case JsError(error) => Future(BadRequest(JsError.toJson(error)))
-      case scale: JsSuccess[ScaleService] => swarm.updateService(id, scale.value).map(_ => NoContent)
+      case _: JsSuccess[ScaleService] => swarm.updateService(id, request.body).map(_ => NoContent)
     }
   }
 

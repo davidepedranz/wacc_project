@@ -10,6 +10,9 @@ import services.Cassandra
 
 import scala.concurrent.Future
 
+/**
+  * Repository for the events, stored in Cassandra.
+  */
 @Singleton
 final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
 
@@ -41,12 +44,10 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
   /**
     * Read all the events for a given day.
     */
-  // TODO: replace parameter with date only class
   def readByDate(date: Date): Future[List[Event]] = {
     EventsTable$.getByEventDate(convertDateToDateOnly(date))
   }
 
-  // TODO: is there a better way to do it?
   private def convertDateToDateOnly(date: Date): Date = {
     //noinspection SpellCheckingInspection
     val sdf = new SimpleDateFormat("yyyy-MM-dd")

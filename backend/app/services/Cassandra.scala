@@ -6,6 +6,9 @@ import com.datastax.driver.core.policies._
 import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints}
 import play.api.Configuration
 
+/**
+  * Helper to connect to Cassandra.
+  */
 @Singleton
 final class Cassandra @Inject()(configuration: Configuration) {
 
@@ -17,9 +20,8 @@ final class Cassandra @Inject()(configuration: Configuration) {
   // connector for Cassandra
   lazy val connector: CassandraConnection = ContactPoints(hosts, port)
     .withClusterBuilder(_
-      .withLoadBalancingPolicy(new RoundRobinPolicy())
       .withReconnectionPolicy(new ConstantReconnectionPolicy(1000)) // retry to reconnect after 1s
-      .withRetryPolicy(new LoggingRetryPolicy(DefaultRetryPolicy.INSTANCE))
+      .withRetryPolicy(new LoggingRetryPolicy(DefaultRetryPolicy.INSTANCE)) // make sure to log the failed attempts (for debug purposes)
       .withSpeculativeExecutionPolicy(new ConstantSpeculativeExecutionPolicy(1000, 20)) // retry after 1s, max 20 times
     )
     .keySpace(keyspace)

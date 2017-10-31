@@ -11,7 +11,10 @@ import play.api.{Configuration, Environment}
 import repositories.{EventsRepository, MongoUsersRepository, UsersRepository}
 import services.{Cassandra, Kafka}
 
-// see startup.StartupModule for db initializations
+/**
+  * Main Guice module. Defines all the bindings for the dependency injection.
+  * See startup.StartupModule for the databases initializations.
+  */
 final class Module(val environment: Environment, val configuration: Configuration) extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
