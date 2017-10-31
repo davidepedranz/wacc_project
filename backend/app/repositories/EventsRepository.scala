@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 
 import com.outworkers.phantom.dsl._
 import models._
+import play.api.Logger
 import services.Cassandra
 
 import scala.concurrent.Future
@@ -22,7 +23,16 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
     * Create the table for the events if it does not exist already.
     */
   def initialize(): Future[Seq[ResultSet]] = {
-    EventsTable$.create.ifNotExists().future
+    // this ugly try is actually needed to handle errors correctly
+    try {
+      EventsTable$.create.ifNotExists().future.map { f =>
+        Logger.info("Initialized events table in Cassandra.")
+        f
+      }
+    } catch {
+      case t: Throwable =>
+        Future.failed(t)
+    }
   }
 
   /**
