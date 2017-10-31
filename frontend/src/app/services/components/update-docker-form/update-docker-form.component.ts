@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { Service } from '../models/service.model';
+import { Service } from '../../models/service.model';
 
 @Component({
   selector: 'app-update-docker-form',

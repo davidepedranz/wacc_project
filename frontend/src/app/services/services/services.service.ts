@@ -6,9 +6,7 @@ import 'rxjs/add/operator/map';
 import { Component } from '../models/component';
 
 @Injectable()
-export class ComponentsService {
-
-  // TODO: inject from env
+export class ServicesService {
   private readonly BASE = '/api';
 
   constructor(private http: HttpClient) { }

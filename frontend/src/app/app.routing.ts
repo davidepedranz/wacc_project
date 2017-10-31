@@ -12,7 +12,7 @@ export const routes: Routes = [
     },
     {
         path: 'services',
-        loadChildren: './components/components.module#ComponentsModule',
+        loadChildren: './services/services.module#ServicesModule',
         canActivate: [AuthenticationGuard]
     },
     {

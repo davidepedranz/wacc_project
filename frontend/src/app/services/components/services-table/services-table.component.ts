@@ -3,7 +3,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { Component as MyComponent } from '../models/component';
+import { Component as MyComponent } from '../../models/component';
 
 // see: https://medium.com/@LewisGJ/ngrx-and-md-table-cea1bc9673ee
 export class ComponentDataSource extends DataSource<MyComponent> {
@@ -20,8 +20,8 @@ export class ComponentDataSource extends DataSource<MyComponent> {
 }
 
 @Component({
-  selector: 'app-components-table',
-  templateUrl: './components-table.component.html',
+  selector: 'app-services-table',
+  templateUrl: './services-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComponentsTableComponent implements OnInit {
@@ -38,7 +38,7 @@ export class ComponentsTableComponent implements OnInit {
   @Output()
   deleteService = new EventEmitter<string>();
 
-  readonly displayedColumns = ['id', 'name', 'mode', 'status', 'image', 'actions'];
+  readonly displayedColumns = ['id', 'name', 'mode', 'instances', 'image', 'actions'];
   dataSource: ComponentDataSource | null;
 
   ngOnInit() {

@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-title>
+    Update Service
+  </mat-card-title>
+  <mat-card-content>
+    <form #updateServiceForm="ngForm" (ngSubmit)="onServiceUpdateSubmit(updateServiceForm.value)">
+      <p>
+        <mat-form-field class="full-width">
+          <label for="name" class="">Name</label>
+          <input matInput required type="text" class="form-control" placeholder="Name:" name="name" ngModel required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <label for="image" class="">Image</label>
+          <input matInput required type="text" class="form-control" placeholder="Image:" name="image" ngModel required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <label for="replicas" class="">Replicas</label>
+          <input matInput required type="number" class="form-control" placeholder="Replicas (integer):" name="replicas" ngModel required>
+
+        </mat-form-field>
+      </p>
+      <p>
+        <button mat-raised-button color="primary" type="submit">Update this Service</button>
+      </p>
+    </form>
+  </mat-card-content>
+</mat-card>

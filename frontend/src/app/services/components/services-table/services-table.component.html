@@ -1,10 +1,5 @@
 <mat-table #table [dataSource]="dataSource">
 
-  <!--
-      Note that these columns can be defined in any order.
-      The actual rendered columns are set as a property on the row definition"
-    -->
-
   <!-- ID Column -->
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
@@ -23,11 +18,12 @@
     <mat-cell *matCellDef="let row"> {{row.mode}} </mat-cell>
   </ng-container>
 
-  <!-- Status Column -->
-  <ng-container matColumnDef="status">
-    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.current}}
-      <span *ngIf="row.mode == 'Replicated'">/ {{row.wanted}}</span>
+  <!-- Instances Column -->
+  <ng-container matColumnDef="instances">
+    <mat-header-cell *matHeaderCellDef> Instances </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <span *ngIf="row.mode == 'Replicated'">{{row.current}} / </span>
+      {{row.wanted}}
     </mat-cell>
   </ng-container>
 

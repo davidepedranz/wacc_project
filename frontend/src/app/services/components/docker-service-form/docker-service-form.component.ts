@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Service } from '../models/service.model';
+
+import { Service } from '../../models/service.model';
 
 @Component({
   selector: 'app-docker-service-form',
@@ -17,7 +18,7 @@ export class DockerServiceFormComponent {
     service.TaskTemplate.ContainerSpec.Image = data.image;
     service.Mode.Replicated.Replicas = data.replicas;
     console.log(service);
-    this.http.post('/api/v1/services', service)
-      .subscribe(res => this.router.navigate(['/components']));
+    this.http.post('/api/v1/services', service, { responseType: 'text' })
+      .subscribe(res => this.router.navigate(['/services']));
   }
 }

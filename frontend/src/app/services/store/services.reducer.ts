@@ -1,4 +1,4 @@
-import * as ComponentsActions from './components.actions';
+import * as ServicesActions from './services.actions';
 import { Component } from '../models/component';
 
 export interface State {
@@ -13,10 +13,10 @@ const initialState: State = {
     components: []
 };
 
-export function reducer(state = initialState, action: ComponentsActions.All): State {
+export function reducer(state = initialState, action: ServicesActions.All): State {
     switch (action.type) {
 
-        case ComponentsActions.FETCH_COMPONENTS: {
+        case ServicesActions.FETCH_COMPONENTS: {
             return {
                 ...state,
                 fetching: true,
@@ -24,7 +24,7 @@ export function reducer(state = initialState, action: ComponentsActions.All): St
             };
         }
 
-        case ComponentsActions.FETCH_COMPONENTS_SUCCESS: {
+        case ServicesActions.FETCH_COMPONENTS_SUCCESS: {
             return {
                 ...state,
                 fetching: false,
@@ -33,7 +33,7 @@ export function reducer(state = initialState, action: ComponentsActions.All): St
             };
         }
 
-        case ComponentsActions.FETCH_COMPONENTS_FAILURE: {
+        case ServicesActions.FETCH_COMPONENTS_FAILURE: {
             return {
                 ...state,
                 fetching: false,
