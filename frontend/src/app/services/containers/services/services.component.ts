@@ -31,8 +31,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const timer = TimerObservable.create(0, 10 * 1000);
-    this.subscription = timer.subscribe(t => this.reloadServices());
+    const timer = TimerObservable.create(0, 60 * 1000);
+    this.subscription = timer.subscribe(t => this.loadServices());
   }
 
   ngOnDestroy() {
@@ -41,11 +41,11 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   onDeleteService(id: string) {
     this.service.deleteService(id)
-      .map(_ => this.reloadServices())
+      .map(_ => this.loadServices())
       .subscribe();
   }
 
-  private reloadServices() {
+  private loadServices() {
     this.store.dispatch(new ServicesActions.FetchComponents());
   }
 }
