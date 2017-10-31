@@ -22,7 +22,7 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
     * Create the table for the events if it does not exist already.
     */
   def initialize(): Future[Seq[ResultSet]] = {
-    EventsTable$.create.ifNotExists().future()
+    EventsTable$.create.ifNotExists().future
   }
 
   /**

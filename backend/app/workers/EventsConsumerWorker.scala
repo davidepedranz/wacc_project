@@ -14,7 +14,7 @@ import play.api.libs.json.Json
 import play.api.{Configuration, Environment}
 import repositories.EventsRepository
 import services.{Kafka, Retry}
-import startup.StartupModule
+import startup.{BootstrapEventsRepository, StartupModule}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -42,9 +42,11 @@ object EventsConsumerWorker extends App {
   private val kafka: Kafka = app.injector.instanceOf[Kafka]
   private val events: EventsRepository = app.injector.instanceOf[EventsRepository]
 
+  // make sure Cassandra is ready
+  app.injector.instanceOf[BootstrapEventsRepository]
+
   // topic in Kafka where to read the events from
   private val topic: String = config.get[String]("kafka.topic")
-
 
   // connect to Kafka and stream the Docker Events (auto-reconnect)
   private val eventsSource = RestartSource.withBackoff(1.seconds, 2.seconds, 0.2) { () =>
