@@ -6,21 +6,17 @@
     <form #updateServiceForm="ngForm" (ngSubmit)="onServiceUpdateSubmit(updateServiceForm.value)">
       <p>
         <mat-form-field class="full-width">
-          <label for="name" class="">Name</label>
-          <input matInput required type="text" class="form-control" placeholder="Name:" name="name" ngModel required>
+          <input matInput type="text" placeholder="Name:" name="name" disabled [value]="id">
         </mat-form-field>
       </p>
       <p>
         <mat-form-field class="full-width">
-          <label for="image" class="">Image</label>
-          <input matInput required type="text" class="form-control" placeholder="Image:" name="image" ngModel required>
+          <input matInput type="text" placeholder="Image:" name="image" ngModel required>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field class="full-width">
-          <label for="replicas" class="">Replicas</label>
-          <input matInput required type="number" class="form-control" placeholder="Replicas (integer):" name="replicas" ngModel required>
-
+          <input matInput type="number" placeholder="Replicas (integer):" name="replicas" ngModel required>
         </mat-form-field>
       </p>
       <p>

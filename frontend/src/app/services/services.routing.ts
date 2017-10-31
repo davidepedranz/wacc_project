@@ -16,7 +16,7 @@ export const routes: Routes = [
         component: AddServiceComponent
     },
     {
-        path: 'update',
+        path: 'update/:id',
         pathMatch: 'full',
         component: UpdateServiceComponent,
     },

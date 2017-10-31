@@ -1,5 +1,7 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
+import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -15,7 +17,9 @@ import { ServicesService } from '../../services/services.service';
   styleUrls: ['./services.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ServicesComponent implements OnInit {
+export class ServicesComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
   components$: Observable<MyComponent[]>;
@@ -27,7 +31,12 @@ export class ServicesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.reloadServices();
+    const timer = TimerObservable.create(0, 10 * 1000);
+    this.subscription = timer.subscribe(t => this.reloadServices());
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   onDeleteService(id: string) {
