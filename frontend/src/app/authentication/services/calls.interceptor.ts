@@ -8,7 +8,6 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/concat';
-import 'rxjs/add/operator/timeout';
 
 @Injectable()
 export class CallsInterceptor implements HttpInterceptor {
@@ -19,7 +18,6 @@ export class CallsInterceptor implements HttpInterceptor {
         // tslint:disable-next-line:no-console
         console.info(`HTTP call: ${request.method}, ${request.url}`);
         return next.handle(request)
-            .timeout(2000)
             .retryWhen((errors) => {
                 return errors
                     .mergeMap((error: HttpErrorResponse) => (error.status >= 500) ? Observable.of(error) : Observable.throw(error))
