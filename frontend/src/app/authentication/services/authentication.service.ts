@@ -9,8 +9,6 @@ import { User } from '../../users/models/user.model';
 
 @Injectable()
 export class AuthenticationService {
-
-  // TODO: inject from env
   private readonly BASE = '/api';
 
   constructor(private http: HttpClient) { }

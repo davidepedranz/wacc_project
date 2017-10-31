@@ -19,8 +19,6 @@ export const PERMISSIONS = [PERMISSION_SERVICES, PERMISSION_EVENTS, PERMISSION_U
 
 @Injectable()
 export class UsersService {
-
-  // TODO: inject from env
   private readonly BASE = '/api';
 
   constructor(private http: HttpClient) { }
