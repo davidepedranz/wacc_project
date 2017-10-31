@@ -18,8 +18,9 @@ export class EventsService {
     events$: Observable<Event[]>;
 
     constructor(private store: Store<fromAuthentication.State>, @Inject(DOCUMENT) private document) {
+        const protocol = document.location.protocol.replace('http', 'ws');
         this.events$ = store.select(fromAuthentication.getToken)
-            .mergeMap(token => Observable.webSocket(`ws://${document.location.host}/api/v1/events?token=${token}`))
+            .mergeMap(token => Observable.webSocket(`${protocol}//${document.location.host}/api/v1/events?token=${token}`))
             .map(msg => msg as Event)
             .bufferTime(250)
             .retryWhen(error => error.delay(2000));

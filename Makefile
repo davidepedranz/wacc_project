@@ -43,7 +43,14 @@ build-mongo-setup:
 	@docker build -t wacccourse/mongo-setup:latest mongo-setup
 	@echo ""
 
-build: build-frontend build-backend build-docker-proxy build-mongo-setup
+build-traefik:
+	@echo "---------------------------------------"
+	@echo "  [BUILD] Traefik"
+	@echo "---------------------------------------"
+	@docker build -t wacccourse/traefik:latest traefik
+	@echo ""
+
+build: build-frontend build-backend build-docker-proxy build-mongo-setup build-traefik
 
 push-frontend:
 	@echo "---------------------------------------"
@@ -66,6 +73,13 @@ push-docker-proxy:
 	@docker push wacccourse/docker-socket-proxy
 	@echo ""
 
+push-traefik:
+	@echo "---------------------------------------"
+	@echo "  [PUSH] Traefik"
+	@echo "---------------------------------------"
+	@docker push wacccourse/traefik
+	@echo ""
+
 push-mongo-setup:
 	@echo "---------------------------------------"
 	@echo "  [BUILD] Mongo Setup"
@@ -73,7 +87,7 @@ push-mongo-setup:
 	@docker push wacccourse/mongo-setup
 	@echo ""
 
-push: push-frontend push-backend push-docker-proxy push-mongo-setup
+push: push-frontend push-backend push-docker-proxy push-mongo-setup push-traefik
 
 undeploy-local:
 	@echo "---------------------------------------"
@@ -99,12 +113,13 @@ undeploy-gcp:
 	ssh wacc0 'rm -r ~/repository || exit 0'
 	ssh wacc0 'docker stack rm wacc'
 	sleep 3
+	ssh wacc0 'docker container prune -f'
 	ssh wacc1 'docker container prune -f'
 	ssh wacc2 'docker container prune -f'
 	ssh wacc3 'docker container prune -f'
-	ssh wacc1 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc2 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc3 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc1 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
+	ssh wacc2 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
+	ssh wacc3 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
 	@echo ""
 
 deploy-gcp:

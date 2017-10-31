@@ -2,14 +2,15 @@ version: "3.3"
 services:
 
   traefik:
-    image: traefik:alpine
+    image: wacccourse/traefik:latest
     command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=DEBUG
     ports:
       - "80:80"
+      - "443:443"
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /dev/null:/traefik.toml
+      - /opt/traefik/acme.json:/acme.json
     networks:
       - public
       - internal
@@ -20,7 +21,7 @@ services:
           - node.role == manager
           - node.labels.node == node0
       restart_policy:
-        condition: always
+        condition: any
 
   frontend:
     image: wacccourse/frontend:latest
@@ -32,7 +33,7 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
-        condition: always
+        condition: any
       labels:
         - "traefik.enable=true"
         - "traefik.backend=frontend"
@@ -59,7 +60,7 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
-        condition: always
+        condition: any
       labels:
         - "traefik.enable=true"
         - "traefik.backend=backend"
@@ -81,7 +82,7 @@ services:
         constraints:
           - node.labels.node != node0
       restart_policy:
-        condition: always
+        condition: any
     command: ["-main", "workers.EventsProducerWorker"]
 
   events-consumer-worker:
@@ -118,7 +119,7 @@ services:
           - node.labels.node != node0
           - node.role == manager
       restart_policy:
-        condition: always
+        condition: any
 
   mongo-1:
     image: mongo:3.4
@@ -132,7 +133,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: always
+        condition: any
     command: 'mongod --replSet "rs0"'
 
   mongo-2:
@@ -147,7 +148,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: always
+        condition: any
     command: 'mongod --replSet "rs0"'
 
   mongo-3:
@@ -162,7 +163,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: always
+        condition: any
     command: 'mongod --replSet "rs0"'
 
   mongo-setup:
@@ -194,7 +195,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: always
+        condition: any
 
   cassandra-2:
     image: cassandra:3.11
@@ -211,7 +212,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: always
+        condition: any
 
   cassandra-3:
     image: cassandra:3.11
@@ -228,7 +229,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: always
+        condition: any
 
   zookeeper-1:
     image: 31z4/zookeeper:latest
@@ -247,7 +248,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: always
+        condition: any
 
   zookeeper-2:
     image: 31z4/zookeeper:latest
@@ -266,7 +267,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: always
+        condition: any
 
   zookeeper-3:
     image: 31z4/zookeeper:latest
@@ -285,7 +286,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: always
+        condition: any
 
   kafka-1:
     image: wurstmeister/kafka:0.11.0.1
@@ -307,7 +308,7 @@ services:
         constraints:
           - node.labels.node == node1
       restart_policy:
-        condition: always
+        condition: any
 
   kafka-2:
     image: wurstmeister/kafka:0.11.0.1
@@ -329,7 +330,7 @@ services:
         constraints:
           - node.labels.node == node2
       restart_policy:
-        condition: always
+        condition: any
 
   kafka-3:
     image: wurstmeister/kafka:0.11.0.1
@@ -351,7 +352,7 @@ services:
         constraints:
           - node.labels.node == node3
       restart_policy:
-        condition: always
+        condition: any
 
 networks:
   public:
