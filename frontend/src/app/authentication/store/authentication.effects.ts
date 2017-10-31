@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { Effect, Actions } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/retry';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/exhaustMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/withLatestFrom';
-import { Observable } from 'rxjs/Observable';
-import { Effect, Actions } from '@ngrx/effects';
-import { Action, Store } from '@ngrx/store';
 
 import * as fromAuthentication from './index';
 import * as AuthenticationActions from './authentication.actions';
@@ -43,7 +41,6 @@ export class AuthenticationEffects {
         .exhaustMap(token =>
             this.authenticationService
                 .me()
-                .retry(3)
                 .map(user => new AuthenticationActions.Me(user))
                 .catch(_ => Observable.of(new AuthenticationActions.Logout()))
         );
@@ -60,7 +57,6 @@ export class AuthenticationEffects {
         .exhaustMap(credentials =>
             this.authenticationService
                 .login(credentials)
-                .retry(1)
                 .map(token => new AuthenticationActions.LoginSuccess(token))
                 .catch(error => Observable.of(new AuthenticationActions.LoginFailure()))
         );
