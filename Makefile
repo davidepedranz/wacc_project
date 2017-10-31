@@ -147,3 +147,16 @@ reboot-gcp:
 	@ssh wacc1 'sudo reboot' || exit 0
 	@ssh wacc2 'sudo reboot' || exit 0
 	@ssh wacc3 'sudo reboot' || exit 0
+
+cleanup-gcp:
+	@echo "---------------------------------------"
+	@echo "  [CLEANUP] Google Cloud Platform"
+	@echo "---------------------------------------"
+	@ssh wacc0 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc1 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc2 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc3 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc0 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc1 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc2 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc3 'docker volume ls -q | xargs docker volume rm || exit 0'
