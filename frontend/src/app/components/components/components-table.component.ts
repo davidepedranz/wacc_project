@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -35,10 +35,17 @@ export class ComponentsTableComponent implements OnInit {
   @Input()
   components$: Observable<MyComponent[]>;
 
+  @Output()
+  deleteService = new EventEmitter<string>();
+
   readonly displayedColumns = ['id', 'name', 'mode', 'status', 'image', 'actions'];
   dataSource: ComponentDataSource | null;
 
   ngOnInit() {
     this.dataSource = new ComponentDataSource(this.components$);
+  }
+
+  onDeleteService(id: string) {
+    this.deleteService.emit(id);
   }
 }

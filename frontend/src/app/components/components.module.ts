@@ -16,9 +16,7 @@ import { ComponentsService } from './services/components.service';
 import { ComponentsComponent } from './containers/components.component';
 import { ComponentsTableComponent } from './components/components-table.component';
 import { DockerServiceFormComponent } from './docker-service-form/docker-service-form.component'
-import { DeleteDockerServiceComponent } from './delete-docker-service/delete-docker-service.component';
 import { AddServiceComponent } from './add-service/add-service.component';
-import { UpdateDockerServiceComponent } from './update-docker-service/update-docker-service.component';
 import { UpdateDockerFormComponent } from './update-docker-form/update-docker-form.component';
 
 @NgModule({
@@ -35,11 +33,8 @@ import { UpdateDockerFormComponent } from './update-docker-form/update-docker-fo
     ComponentsComponent,
     ComponentsTableComponent,
     DockerServiceFormComponent,
-    DeleteDockerServiceComponent,
     AddServiceComponent,
-    UpdateDockerServiceComponent,
-    UpdateDockerFormComponent,
-
+    UpdateDockerFormComponent
   ],
   providers: [
     ComponentsService

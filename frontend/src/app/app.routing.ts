@@ -11,7 +11,7 @@ export const routes: Routes = [
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'components',
+        path: 'services',
         loadChildren: './components/components.module#ComponentsModule',
         canActivate: [AuthenticationGuard]
     },

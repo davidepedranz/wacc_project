@@ -18,4 +18,9 @@ export class ComponentsService {
       .get(this.BASE + '/v1/services')
       .map(response => response as Component[]);
   }
+
+  deleteService(id: string): Observable<any> {
+    return this.http
+      .delete(this.BASE + '/v1/services/' + id);
+  }
 }

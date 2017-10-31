@@ -26,7 +26,9 @@
   <!-- Status Column -->
   <ng-container matColumnDef="status">
     <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.current}} <span *ngIf="row.mode == 'Replicated'">/ {{row.wanted}}</span> </mat-cell>
+    <mat-cell *matCellDef="let row"> {{row.current}}
+      <span *ngIf="row.mode == 'Replicated'">/ {{row.wanted}}</span>
+    </mat-cell>
   </ng-container>
 
   <!-- Image Column -->
@@ -39,8 +41,14 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
     <mat-cell *matCellDef="let row">
-        <app-delete-docker-service [service]="row.name" style="float:left"></app-delete-docker-service>
-        <app-update-docker-service style="float:right"></app-update-docker-service>
+      <button mat-raised-button color="primary" [routerLink]="['/services', 'update']">
+        <mat-icon>edit</mat-icon>
+        <span fxShow fxHide.xs="true">Update</span>
+      </button>
+      <button mat-raised-button color="warn" (click)="onDeleteService(row.name)">
+        <mat-icon>delete</mat-icon>
+        <span fxShow fxHide.xs="true">Delete</span>
+      </button>
     </mat-cell>
   </ng-container>
 
