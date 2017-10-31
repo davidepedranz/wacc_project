@@ -1,19 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router'
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-update-docker-service',
   templateUrl: './update-docker-service.component.html',
 })
-export class UpdateDockerServiceComponent implements OnInit {
+export class UpdateDockerServiceComponent {
 
-  constructor(private router : Router) { }
+  constructor(private router: Router) { }
 
-  ngOnInit() {
+  onUpdateService() {
+    this.router.navigate(['/components/update']);
   }
-
-  onUpdateService(){
-    this.router.navigate(["/components/update"])
-  }
-
 }

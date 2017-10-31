@@ -10,6 +10,9 @@ import repositories.UsersRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * Controller that defines the logic needed to authenticate users to the system.
+  */
 @Singleton
 final class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, users: UsersRepository,
                                       authentication: Authentication) extends AbstractController(cc) {

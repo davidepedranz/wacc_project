@@ -50,7 +50,7 @@ services:
       CASSANDRA_HOSTS: "cassandra-1,cassandra-2,cassandra-3"
       CASSANDRA_PORT: "9042"
       CASSANDRA_KEYSPACE: "wacc"
-      DOCKER_HOST: "http://docker-socket-proxy:2375"
+      SWARM_URL: "http://docker-socket-proxy:2375"
       KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
       KAFKA_TOPIC: "docker.swarm.events"
     deploy:
@@ -72,7 +72,7 @@ services:
     networks:
       - internal
     environment:
-      DOCKER_HOST: "http://docker-socket-proxy:2375"
+      SWARM_URL: "http://docker-socket-proxy:2375"
       KAFKA_URL: "kafka://kafka-1:9092,kafka-2:9092,kafka-3:9092"
       KAFKA_TOPIC: "docker.swarm.events"
     deploy:

@@ -15,7 +15,6 @@ import { ComponentsEffects } from './store/components.effects';
 import { ComponentsService } from './services/components.service';
 import { ComponentsComponent } from './containers/components.component';
 import { ComponentsTableComponent } from './components/components-table.component';
-import { HttpModule } from '@angular/http';
 import { DockerServiceFormComponent } from './docker-service-form/docker-service-form.component'
 import { DeleteDockerServiceComponent } from './delete-docker-service/delete-docker-service.component';
 import { AddServiceComponent } from './add-service/add-service.component';
@@ -24,7 +23,6 @@ import { UpdateDockerFormComponent } from './update-docker-form/update-docker-fo
 
 @NgModule({
   imports: [
-    HttpModule,
     CommonModule,
     RouterModule.forChild(routes),
     StoreModule.forFeature('components', reducers),

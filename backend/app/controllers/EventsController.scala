@@ -21,6 +21,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
+/**
+  * Controller responsible to streaming events to the frontend using a websocket.
+  */
 @Singleton
 final class EventsController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, config: Configuration,
                                        authentication: Authentication, users: UsersRepository,

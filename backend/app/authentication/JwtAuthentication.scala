@@ -25,6 +25,13 @@ final class JwtAuthentication @Inject()(@Named("secret") secret: String) extends
   private val NOT_BEFORE_LEEWAY_SECONDS: Long = (2 minutes).toSeconds
   private val DURATION_SECONDS: Long = (7 days).toSeconds
 
+  override def parseAuthorizationHeader(header: String): Option[String] = {
+    header.split("""\s""") match {
+      case Array("Bearer", token) => Option(token)
+      case _ ⇒ None
+    }
+  }
+
   override def generateToken(username: String): String = {
     val now: Long = System.currentTimeMillis() / 1000
     new DecodedJwt(
@@ -54,12 +61,5 @@ final class JwtAuthentication @Inject()(@Named("secret") secret: String) extends
       iss = Some(Iss(APPLICATION_NAME)),
       aud = Some(Aud(APPLICATION_NAME))
     ).map(jwt => jwt.getClaim[Sub].get.value)
-  }
-
-  override def parseAuthorizationHeader(header: String): Option[String] = {
-    header.split("""\s""") match {
-      case Array("Bearer", token) => Option(token)
-      case _ ⇒ None
-    }
   }
 }

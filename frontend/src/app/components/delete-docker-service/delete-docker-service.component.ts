@@ -1,27 +1,20 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Http , Headers, RequestOptions} from '@angular/http';
-
-
+import { Component, Input } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-delete-docker-service',
   templateUrl: './delete-docker-service.component.html',
 })
-export class DeleteDockerServiceComponent implements OnInit {
+export class DeleteDockerServiceComponent {
 
-  constructor(private http:Http) { }
+  constructor(private http: HttpClient) { }
 
-  ngOnInit() {
+  @Input() service: string;
+
+  onDeleteService(service: string) {
+    this.http.delete('/api/v1/services/' + service)
+      .map(res => console.log(res))
+      .subscribe();
+    location.reload();
   }
-
-  @Input() service:string;
-
-  onDeleteService(service : string)  {
-    var backendHost = "/api";
-    this.http.delete(backendHost + "/services/" + service ).map(res =>
-      console.log(res)
-    ).subscribe();
-    location.reload()
-  }
-
 }

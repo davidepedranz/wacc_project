@@ -26,7 +26,7 @@
   <!-- Status Column -->
   <ng-container matColumnDef="status">
     <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.current}} / {{row.wanted}} </mat-cell>
+    <mat-cell *matCellDef="let row"> {{row.current}} <span *ngIf="row.mode == 'Replicated'">/ {{row.wanted}}</span> </mat-cell>
   </ng-container>
 
   <!-- Image Column -->
