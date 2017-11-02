@@ -3,11 +3,10 @@ services:
 
   traefik:
     image: wacccourse/traefik:latest
-    command: --web --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=DEBUG
+    command: --docker --docker.swarmmode --docker.watch --docker.domain=${DOMAIN:-localhost} --docker.exposedbydefault=false --logLevel=DEBUG
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/traefik/acme.json:/acme.json

@@ -7,10 +7,6 @@ help:
 	@echo "  push             Push all the build Docker containers."
 	@echo "  deploy-gcp       Deploy the Docker stack on Google Cloud (require SSH configuration)."
 	@echo "  undeploy-gcp     Undeploy the Docker stack from Google Cloud (require SSH configuration)."
-	@echo "  deploy-local     Deploy the Docker stack on the local machine."
-	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
-	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
-	@echo "  all-local        Build and push the containers to the registry, deploy to the local machine."
 	@echo "  load-test        Launch a load test against the deployment on Google Cloud"
 	@echo ""
 
@@ -89,23 +85,6 @@ push-mongo-setup:
 
 push: push-frontend push-backend push-docker-proxy push-mongo-setup push-traefik
 
-undeploy-local:
-	@echo "---------------------------------------"
-	@echo "  [UNDEPLOY] Local Machine"
-	@echo "---------------------------------------"
-	docker stack rm wacc
-	sleep 3
-	docker volume rm wacc_mongo_data || exit 0
-	docker volume rm wacc_cassandra_data || exit 0
-	@echo ""
-
-deploy-local: undeploy-local
-	@echo "---------------------------------------"
-	@echo "  [DEPLOY] Local Machine"
-	@echo "---------------------------------------"
-	@docker stack deploy wacc -c wacc-stack.yml
-	@echo ""
-
 undeploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [UNDEPLOY] Google Cloud Platform"
@@ -132,13 +111,6 @@ deploy-gcp:
 	ssh wacc0 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
 	@echo ""
 
-all-gcp: build push deploy-gcp
-
-all-local: build push deploy-local
-
-load-test:
-	bzt jmeter/wacc.jmx
-
 reboot-gcp:
 	@echo "---------------------------------------"
 	@echo "  [REBOOT] Google Cloud Platform"
@@ -160,3 +132,6 @@ cleanup-gcp:
 	@ssh wacc1 'docker volume ls -q | xargs docker volume rm || exit 0'
 	@ssh wacc2 'docker volume ls -q | xargs docker volume rm || exit 0'
 	@ssh wacc3 'docker volume ls -q | xargs docker volume rm || exit 0'
+
+load-test:
+	bzt jmeter/wacc.jmx
