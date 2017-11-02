@@ -1,0 +1,30 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+In this project, we have designed, implemented, deploy and tested a scalable and fault-tolerant web application to monitor a Docker Swarm cluster.
+We used NoSQL high performant databases to store the data, Kafka as a message queue to support the data streaming and the Play Framework to write totally asynchronous code for the backend.
+External load balancing and replication of data and services allows to both scale to high traffic loads and to resist to failures.
+
+\paragraph{Docker Swarm issues and implementation design}
+At first we faced some problems when interacting with Docker, since it exposes its APIs as a UNIX socket and Play WS does not support it.
+Hence, we decided to expose that socket as a TCP port internally to the cluster with the $socat$ tool, using the following command: "socat -d  -d TCP-L:2375 fork UNIX:/var/run/docker.sock".
+
+Another problem was the first interaction with the Docker APIs.
+The Docker daemon exposes both plain Docker and Docker Swarm specific APIs together.
+For example, getting the list of running containers of available images is a plain Docker functionality and works at the node level (not at the cluster level).
+Thus, we decided to use only Docker Swarm concepts, in particular we concentrated on the services.
+Our final implementation allows to list, create, update and delete services in the Docker Swarm cluster.
+
+\paragraph{Future Works}
+The application works nicely, but it is not a complete Docker Swarm dashboard.
+Future works may add additional functionalities such as visualizing all running containers for each server, opening a shell to a given container to perform some manual operation, visualizing the logs of a service, etc.
+
+From the point of view of existing functionalities, there are some possible improvements.
+Password in MongoDB are stored in clear text, and this is obviously not optimal since the developers should never be able to view user's password.
+An easy fix for this is to use \texttt{bcrypt}\footnote{\url{https://en.wikipedia.org/wiki/Bcrypt}} to hash the password and store the hash instead.
+
+Though the most important functionalities of the backend are covered with unit tests, we do not have a suite of tests that covers all the code.
+Future developments shall also focus on writing more test cases. Additionally, it would be nice to write some end-2-end test to verify the correct interactions between frontend and backend.
+
+The last point is to drop the Docker Swarm Proxy, since it adds an extra point of failure.
+This would require the use of a different library with support for UNIX sockets, which make HTTP calls to the Docker Swarm APIs.

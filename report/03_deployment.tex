@@ -1,0 +1,77 @@
+\section{Deployment}
+\label{sec:deployment}
+
+\subsection{Google Cloud Platform}
+We decided to deploy the software on Google Cloud Platform.
+We created $4$ virtual machines: the first machine is used only for load balancing and SSL termination using Traefik, the other $3$ machines run all other components of the application.
+
+The $4$ virtual machines run Ubuntu 16.04 as the operating system and form a Docker Swarm cluster.
+All virtual machines are in the same region for latency reasons and are connected in a private network. All communication inside the cluster is routed internally to this network using a Docker overlay network.
+All components of the application are packaged as Docker containers and run as Docker Swarm services to take advantages of the orchestrator.
+
+We registered the domain \texttt{wacc4.tk} and set up the DNS records (using Google Cloud DNS) to point it to the IP address of the virtual machine running the load balancer.
+This is the only time we need to specify an IP address to reach the application.
+The application is reachable at \url{https://wacc4.tk}.
+
+
+\subsection{Docker Swarm}
+Docker Swarm mode is a feature-rich tool for cluster orchestration and management.
+Our purpose was to give the user a clear overview of the services running in the cluster and offer the possibility to manage them.
+
+As our application runs as several Docker containers, we decided to use Docker Swarm to deploy and orchestrate them.
+Docker Swarm is used for the service discovery and deployment, handling failures and indicating which network should be used.
+In fact, fault handling is an easy task using Swarm because there is a flag that tells the orchestrator how many instances of such specified container should be running and in case of failure which is the policy to use.
+All services use the policy restart \texttt{on-failure} or \texttt{any}, so Docker Swarm will restart them in case of failures.
+
+Same easy-to-use functionalities are offered for other tasks as the specification of the entry-point command, the network properties, etc.
+Different from this was setting up a reliable and stateful service in Swarm, we are talking about the connection with the databases. Due to the attitude of Docker to discard crashed containers and restart them from scratch, keeping a coherent state even in case of failure is not a naive task.
+We addressed this issue mapping an external volume, in the machine, to an internal volume in the container.
+So we outsourced the data layer from the container, and this allow us to link the database to the container at every restart in a safe way.
+
+The entire application is defined in a single Docker Compose file and is deployed to Docker Swarm using the \texttt{docker stack deploy} command.
+The stack declares all needed volumes, networks, environment variables, exposed ports, labels, and services.
+Setups of clusters for the Kafka, Cassandra and MongoDB are automatic, as explained in the next sections.
+All components rely on the Docker Swarm internal DNS system for service discovery: no single IP is hard coded in the application.
+
+
+\subsection{Kafka}
+Both Kafka and ZooKeeper are deployed in cluster mode with $3$ replicas, one in each virtual machine (except the external load balancer).
+The topic used to stream the Docker events has replication factor of $3$ for high performances and fault tolerance.
+Kafka relies on ZooKeeper to discover the other available instances.
+Each replica in ZooKeeper and Kafka is run as a separate Docker Swarm service, so it has a unique name.
+In the stack file, we bootstrap ZooKeeper to form a cluster with all the other instances and we give Kafka the addresses of all ZooKeeper instances (in order to tolerate failures).
+
+\subsection{Databases}
+Both MongoDB and Cassandra are deployed in High Availability mode with data replication.
+In the current deployment, we run $3$ instances of them, one in each virtual machine (except the external load balancer).
+The keyspace in Cassandra has replication factor $3$ for high performances and fault tolerance.
+
+Similarly to Kafka and ZooKeeper, we run each instance of Cassandra and MongoDB as separate services.
+The Cassandra cluster is initiated using the first instance $1$ as a seed: both instance $2$ and $3$ will connect to the first node to obtain a list of available instances.
+This step is needed only during the bootstrap of the cluster or after reboots / crashes.
+
+MongoDB requires some manual actions to set up the replica set at the beginning.
+To automate this step, we have written a Bash script that connects to MongoDB and configures the replica set.
+The script is packaged in a Docker container that is deployed together with the MongoDB services.
+Docker Swarm will restart the script until the exit with status code $0$, meaning that the replica set is configured correctly.
+Since Docker Swarm assigns different IPs upon the restart of a container, we store the DNS names in the replica set configuration (e.g. \texttt{mongo-1}).
+
+\subsection{Load Testing}
+We used JMeter to run some load test against the application.
+We performed the following operations:
+\begin{itemize}
+	\item login as admin
+    \item get the list of all users
+    \item create a new user
+    \item add a permission to the new user
+    \item remove a permissions from the new user
+    \item remove the user
+    \item get a list of running services
+\end{itemize}
+
+We simulated this workload for $100$ concurrent users performing the operations $100$ times, for a total or $70000$ requests.
+The tests are run with a $100$ Mbit connection to the Internet on a normal laptop.
+The test lasted for about $5$ minutes.
+On average, the application replied in $0.478 s$, where $0.343 s$ are due to the latency of the Internet connection.
+About $95\%$ of the requests finished in less than $1 s$ (including the network latency).
+The GitHub repository contains the raw results of the load test.
