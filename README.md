@@ -1,4 +1,4 @@
-# Consul Docker Management Dashboard
+# Docker Management Dashboard
 
 This repository contains the project of the course Web and Cloud Computing (winter 2017-18, University of Groningen) for group 4:
 
