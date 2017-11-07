@@ -7,10 +7,6 @@ help:
 	@echo "  push             Push all the build Docker containers."
 	@echo "  deploy-gcp       Deploy the Docker stack on Google Cloud (require SSH configuration)."
 	@echo "  undeploy-gcp     Undeploy the Docker stack from Google Cloud (require SSH configuration)."
-	@echo "  deploy-local     Deploy the Docker stack on the local machine."
-	@echo "  undeploy-local   Undeploy the Docker stack from the local machine."
-	@echo "  all-gcp          Build and push the containers to the registry, deploy to Google Cloud."
-	@echo "  all-local        Build and push the containers to the registry, deploy to the local machine."
 	@echo "  load-test        Launch a load test against the deployment on Google Cloud"
 	@echo ""
 
@@ -43,7 +39,14 @@ build-mongo-setup:
 	@docker build -t wacccourse/mongo-setup:latest mongo-setup
 	@echo ""
 
-build: build-frontend build-backend build-docker-proxy build-mongo-setup
+build-traefik:
+	@echo "---------------------------------------"
+	@echo "  [BUILD] Traefik"
+	@echo "---------------------------------------"
+	@docker build -t wacccourse/traefik:latest traefik
+	@echo ""
+
+build: build-frontend build-backend build-docker-proxy build-mongo-setup build-traefik
 
 push-frontend:
 	@echo "---------------------------------------"
@@ -66,6 +69,13 @@ push-docker-proxy:
 	@docker push wacccourse/docker-socket-proxy
 	@echo ""
 
+push-traefik:
+	@echo "---------------------------------------"
+	@echo "  [PUSH] Traefik"
+	@echo "---------------------------------------"
+	@docker push wacccourse/traefik
+	@echo ""
+
 push-mongo-setup:
 	@echo "---------------------------------------"
 	@echo "  [BUILD] Mongo Setup"
@@ -73,56 +83,33 @@ push-mongo-setup:
 	@docker push wacccourse/mongo-setup
 	@echo ""
 
-push: push-frontend push-backend push-docker-proxy push-mongo-setup
-
-undeploy-local:
-	@echo "---------------------------------------"
-	@echo "  [UNDEPLOY] Local Machine"
-	@echo "---------------------------------------"
-	docker stack rm wacc
-	sleep 3
-	docker volume rm wacc_mongo_data || exit 0
-	docker volume rm wacc_cassandra_data || exit 0
-	@echo ""
-
-deploy-local: undeploy-local
-	@echo "---------------------------------------"
-	@echo "  [DEPLOY] Local Machine"
-	@echo "---------------------------------------"
-	@docker stack deploy wacc -c wacc-stack.yml
-	@echo ""
+push: push-frontend push-backend push-docker-proxy push-mongo-setup push-traefik
 
 undeploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [UNDEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
-	ssh wacc1 'rm -r ~/repository || exit 0'
-	ssh wacc1 'docker stack rm wacc'
+	ssh wacc0 'rm -r ~/repository || exit 0'
+	ssh wacc0 'docker stack rm wacc'
 	sleep 3
-	ssh wacc1 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc2 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc3 'docker rm $(docker ps -aq) 2> /dev/null || exit 0'
-	ssh wacc1 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc2 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
-	ssh wacc3 'docker volume rm wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka || exit 0'
+	ssh wacc0 'docker container prune -f'
+	ssh wacc1 'docker container prune -f'
+	ssh wacc2 'docker container prune -f'
+	ssh wacc3 'docker container prune -f'
+	ssh wacc1 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
+	ssh wacc2 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
+	ssh wacc3 'docker volume rm -f wacc_mongo_data wacc_cassandra_data wacc_zookeeper_data wacc_zookeeper_datalog wacc_kafka_data || exit 0'
 	@echo ""
 
 deploy-gcp:
 	@echo "---------------------------------------"
 	@echo "  [DEPLOY] Google Cloud Platform"
 	@echo "---------------------------------------"
-	ssh wacc1 'mkdir ~/repository -p'
-	scp wacc-gcp.yml wacc1:~/repository/wacc-gcp.yml
-	scp gcp.env wacc1:~/repository/.env
-	ssh wacc1 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
+	ssh wacc0 'mkdir ~/repository -p'
+	scp wacc-gcp.yml wacc0:~/repository/wacc-gcp.yml
+	scp gcp.env wacc0:~/repository/.env
+	ssh wacc0 'set -a && source ~/repository/.env && docker stack deploy wacc -c ~/repository/wacc-gcp.yml'
 	@echo ""
-
-all-gcp: build push deploy-gcp
-
-all-local: build push deploy-local
-
-load-test:
-	bzt jmeter/wacc.jmx
 
 reboot-gcp:
 	@echo "---------------------------------------"
@@ -132,3 +119,19 @@ reboot-gcp:
 	@ssh wacc1 'sudo reboot' || exit 0
 	@ssh wacc2 'sudo reboot' || exit 0
 	@ssh wacc3 'sudo reboot' || exit 0
+
+cleanup-gcp:
+	@echo "---------------------------------------"
+	@echo "  [CLEANUP] Google Cloud Platform"
+	@echo "---------------------------------------"
+	@ssh wacc0 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc1 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc2 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc3 'docker images -q | xargs docker rmi || exit 0'
+	@ssh wacc0 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc1 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc2 'docker volume ls -q | xargs docker volume rm || exit 0'
+	@ssh wacc3 'docker volume ls -q | xargs docker volume rm || exit 0'
+
+load-test:
+	bzt jmeter/wacc.jmx

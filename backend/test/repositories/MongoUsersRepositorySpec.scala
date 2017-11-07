@@ -52,6 +52,10 @@ final class MongoUsersRepositorySpec extends PlaySpec with GuiceOneAppPerTest wi
     System.out.println("Drop database in MongoDB... [done]")
   }
 
+  override protected def afterEach(): Unit = {
+    Await.ready(mongo.database.map(db => db.drop()), MAX_DURATION)
+  }
+
   "MongoUsersRepository" when {
 
     "#authenticate" should {

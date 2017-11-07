@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-title>
+    New Service
+  </mat-card-title>
+  <mat-card-content>
+    <form #newServiceForm="ngForm" (ngSubmit)="onServiceSubmit(newServiceForm.value)">
+      <p>
+        <mat-form-field class="full-width">
+          <input matInput type="text" placeholder="Name:" name="name" ngModel required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <input matInput type="text" placeholder="Image:" name="image" ngModel required>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <input matInput type="number" placeholder="Replicas:" name="replicas" ngModel required>
+        </mat-form-field>
+      </p>
+      <p>
+        <button mat-raised-button color="primary" type="submit">Create Service</button>
+      </p>
+    </form>
+  </mat-card-content>
+</mat-card>

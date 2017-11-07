@@ -8,6 +8,21 @@ import scala.util.Try
 trait Authentication {
 
   /**
+    * Header were to look for the JWT token.
+    */
+  val AUTHENTICATION_HEADER = "Authorization"
+
+  /**
+    * Parse the Authorization header to extract the JWT token.
+    * NB: we do this by hand as recommended from the official documentation:
+    * https://www.playframework.com/documentation/2.6.x/ScalaActionsComposition#Authentication
+    *
+    * @param header Authorization header.
+    * @return Option with the serialized JWT token, if present.
+    */
+  def parseAuthorizationHeader(header: String): Option[String]
+
+  /**
     * Generate a new token for the given user.
     *
     * @param username Username.

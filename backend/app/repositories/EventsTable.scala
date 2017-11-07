@@ -39,14 +39,14 @@ abstract class EventsTable extends Table[EventsTable, Event] {
   def getByEventDate(date: Date): Future[List[Event]] = {
     select
       .where(_.date eqs date)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
+      .consistencyLevel_=(ConsistencyLevel.QUORUM)
       .fetch()
   }
 
   def getEventsByDateTime(date: Date, time: Long): Future[Option[Event]] = {
     select
       .where(_.date eqs date).and(_.time eqs time)
-      .consistencyLevel_=(ConsistencyLevel.ONE)
+      .consistencyLevel_=(ConsistencyLevel.QUORUM)
       .one()
   }
 }

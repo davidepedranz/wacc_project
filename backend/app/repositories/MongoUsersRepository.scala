@@ -12,16 +12,21 @@ import reactivemongo.core.errors.DatabaseException
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz.{-\/, \/, \/-}
 
+/**
+  * Implementation of the users' repository using MongoDB.
+  * Each user is stored in a dedicated document, so that all operations are atomic.
+  */
 @Singleton
 class MongoUsersRepository @Inject()(implicit ec: ExecutionContext, val reactiveMongoApi: ReactiveMongoApi)
   extends UsersRepository with ReactiveMongoComponents {
 
-  private val COLLECTION_USERS = "users"
+  // fields of each document
   private val FIELD_USERNAME = "_id"
   private val FIELD_PASSWORD = "password"
   private val FIELD_PERMISSIONS = "permissions"
 
-  private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection(COLLECTION_USERS))
+  // collection where to store the users
+  private def usersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
 
   override def authenticate(credentials: Credentials): Future[Option[User]] = {
     usersCollection.flatMap(_

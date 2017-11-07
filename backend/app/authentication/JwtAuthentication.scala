@@ -1,7 +1,7 @@
 package authentication
 
 import java.util.UUID
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 import io.igl.jwt._
 
@@ -14,7 +14,7 @@ import scala.util.Try
   *
   * @param secret Secret key used to sign the JWT.
   */
-final class JwtAuthentication @Inject()(@Secret secret: String) extends Authentication {
+final class JwtAuthentication @Inject()(@Named("secret") secret: String) extends Authentication {
 
   // JWT header
   private val JWT_TYPE: String = "JWT"
@@ -24,6 +24,13 @@ final class JwtAuthentication @Inject()(@Secret secret: String) extends Authenti
   private val APPLICATION_NAME: String = "wacc"
   private val NOT_BEFORE_LEEWAY_SECONDS: Long = (2 minutes).toSeconds
   private val DURATION_SECONDS: Long = (7 days).toSeconds
+
+  override def parseAuthorizationHeader(header: String): Option[String] = {
+    header.split("""\s""") match {
+      case Array("Bearer", token) => Option(token)
+      case _ ⇒ None
+    }
+  }
 
   override def generateToken(username: String): String = {
     val now: Long = System.currentTimeMillis() / 1000

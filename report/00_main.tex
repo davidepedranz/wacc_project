@@ -1,0 +1,82 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+
+\usepackage[margin=1in]{geometry}
+\setlength{\parskip}{0.5em}
+
+\usepackage[english]{babel}
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+% cref command
+\usepackage[noabbrev,capitalise]{cleveref}
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+    \normalfont
+    \large \textsc{University of Groningen \\ Web and Cloud Computing} \\ [22pt]
+    \horrule{0.5pt} \\[0.4cm]
+    \huge Docker Dashboard \\ Project Report \\
+    \horrule{0.5pt} \\[0.5cm]
+}
+
+\usepackage{array}
+
+\author{%
+	\begin{tabular}{c}
+    	Davide Pedranz \\
+        \small d.pedranz@student.rug.nl \\
+        \small S3543757
+    \end{tabular}
+    \and
+    \begin{tabular}{c}
+    	Yuying Andrew Chen \\
+        \small y.chen.66@student.rug.nl \\
+        \small S3421902
+    \end{tabular}
+    \and
+    \begin{tabular}{c} 
+    	Francesco Segala \\ 
+    	\small f.segala@student.rug.nl \\
+        \small S3521885
+    \end{tabular}
+}
+
+\date{\vspace{.5cm} \normalsize\today}
+
+\begin{document}
+    \maketitle
+    
+    \tableofcontents
+    \pagebreak
+
+    \input{01_introduction}
+    \input{02_architecture}
+    \input{03_deployment}
+    \input{04_conclusions}
+\end{document}

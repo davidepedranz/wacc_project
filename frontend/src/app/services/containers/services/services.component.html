@@ -1,0 +1,14 @@
+<section fxLayout fxLayoutAlign="center" class="container">
+  <mat-card *ngIf="!(fetching$ | async)" fxFlex="100">
+    <mat-card-title>Services</mat-card-title>
+    <mat-card-content>
+      <app-services-table [fetching]="fetching$ | async" [error]="error$ | async" [components$]="components$" (deleteService)=onDeleteService($event)></app-services-table>
+    </mat-card-content>
+    <button [routerLink]="['/services', 'new']" mat-fab color="primary" class="add-button">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-card>
+  <div *ngIf="fetching$ | async" fxLayoutAlign="center center" class="container">
+    <mat-progress-spinner *ngIf="fetching$ | async" mode="indeterminate"></mat-progress-spinner>
+  </div>
+</section>

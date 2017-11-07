@@ -36,6 +36,17 @@ final class JwtAuthenticationSpec extends WordSpec with MustMatchers with Option
         result.get mustBe "username"
       }
     }
-  }
 
+    "#parseAuthorizationHeader" should {
+      "return an empty option if the token is missing" in {
+        val result = authenticator.parseAuthorizationHeader("Bearer")
+        result mustBe empty
+      }
+      "return the token if present" in {
+        val result = authenticator.parseAuthorizationHeader("Bearer fake-token")
+        result mustBe defined
+        result must contain("fake-token")
+      }
+    }
+  }
 }

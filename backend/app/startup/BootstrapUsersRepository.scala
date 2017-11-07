@@ -12,6 +12,9 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.language.postfixOps
 
+/**
+  * Initialize the users' in MongoDB (create the first admin user).
+  */
 @Singleton
 final class BootstrapUsersRepository @Inject()(implicit ec: ExecutionContext, system: ActorSystem, repository: UsersRepository) {
 

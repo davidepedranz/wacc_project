@@ -17,21 +17,19 @@ import { AppComponent } from './core/containers/app/app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './authentication/services/token.interceptor';
 
-/**/ 
+/**/
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {taskTemplateComponent} from './services/service/service-form-members/service.tasktemplate.component';
-import {modeComponent} from './services/service/service-form-members/service.mode.component';
-import {portsComponent} from './services/service/service-form-members/service.ports.component';
-/**/ 
+
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    /**/ 
+    /**/
     ReactiveFormsModule,
     /**/
     HttpClientModule,
+    FormsModule,
 
     RouterModule.forRoot(routes),
     StoreModule.forRoot({}),
@@ -41,10 +39,8 @@ import {portsComponent} from './services/service/service-form-members/service.po
     CoreModule,
     AuthenticationModule.forRoot()
   ],
-  declarations : [
-    taskTemplateComponent,
-    modeComponent,
-    portsComponent
+  providers:[
+
   ],
   bootstrap: [
     AppComponent

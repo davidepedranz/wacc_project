@@ -10,9 +10,12 @@ import repositories.UsersRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * Controller that defines the logic needed to authenticate users to the system.
+  */
 @Singleton
-class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents,
-                                usersRepository: UsersRepository, authentication: Authentication) extends AbstractController(cc) {
+final class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerComponents, users: UsersRepository,
+                                      authentication: Authentication) extends AbstractController(cc) {
 
   /**
     * Authenticates the user using username + password as credentials.
@@ -22,7 +25,7 @@ class LoginController @Inject()(implicit ec: ExecutionContext, cc: ControllerCom
   def login: Action[JsValue] = Action.async(parse.json) { req =>
     req.body.validate[Credentials] match {
       case error: JsError => Future(BadRequest(JsError.toJson(error)))
-      case credentials: JsSuccess[Credentials] => usersRepository.authenticate(credentials.value).map {
+      case credentials: JsSuccess[Credentials] => users.authenticate(credentials.value).map {
         case Some(user: User) => Ok(Json.toJson(Token(authentication.generateToken(user.username), user)))
         case None => Unauthorized
       }

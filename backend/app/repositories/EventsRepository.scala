@@ -6,10 +6,14 @@ import javax.inject.{Inject, Singleton}
 
 import com.outworkers.phantom.dsl._
 import models._
+import play.api.Logger
 import services.Cassandra
 
 import scala.concurrent.Future
 
+/**
+  * Repository for the events, stored in Cassandra.
+  */
 @Singleton
 final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[EventsRepository](cassandra.connector) {
 
@@ -19,7 +23,16 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
     * Create the table for the events if it does not exist already.
     */
   def initialize(): Future[Seq[ResultSet]] = {
-    EventsTable$.create.ifNotExists().future()
+    // this ugly try is actually needed to handle errors correctly
+    try {
+      EventsTable$.create.ifNotExists().future.map { f =>
+        Logger.info("Initialized events table in Cassandra.")
+        f
+      }
+    } catch {
+      case t: Throwable =>
+        Future.failed(t)
+    }
   }
 
   /**
@@ -41,13 +54,12 @@ final class EventsRepository @Inject()(cassandra: Cassandra) extends Database[Ev
   /**
     * Read all the events for a given day.
     */
-  // TODO: replace parameter with date only class
   def readByDate(date: Date): Future[List[Event]] = {
     EventsTable$.getByEventDate(convertDateToDateOnly(date))
   }
 
-  // TODO: is there a better way to do it?
   private def convertDateToDateOnly(date: Date): Date = {
+    //noinspection SpellCheckingInspection
     val sdf = new SimpleDateFormat("yyyy-MM-dd")
     sdf.setTimeZone(TimeZone.getTimeZone("ECT"))
     sdf.parse(sdf.format(date))

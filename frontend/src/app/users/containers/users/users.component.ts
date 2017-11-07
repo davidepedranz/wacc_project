@@ -1,6 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { User } from '../../models/user.model';
 import { PERMISSION_USER_WRITE } from '../../services/users.service';
@@ -15,7 +17,9 @@ import { ChangePermission } from '../../components/users-table/users-table.compo
   styleUrls: ['./users.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription;
   currentUser$: Observable<User | null>;
   fetching$: Observable<boolean>;
   error$: Observable<boolean>;
@@ -31,7 +35,12 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usersStore.dispatch(new UsersActions.FetchUsers());
+    const timer = TimerObservable.create(0, 60 * 1000);
+    this.subscription = timer.subscribe(t => this.loadUsers());
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   changePermission($event: ChangePermission) {
@@ -50,5 +59,9 @@ export class UsersComponent implements OnInit {
 
   deleteUser(username: string) {
     this.usersStore.dispatch(new UsersActions.DeleteUser(username));
+  }
+
+  private loadUsers() {
+    this.usersStore.dispatch(new UsersActions.FetchUsers());
   }
 }

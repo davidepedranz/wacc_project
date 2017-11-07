@@ -11,6 +11,9 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
+/**
+  * Initialize the tables in Cassandra.
+  */
 @Singleton
 final class BootstrapEventsRepository @Inject()(implicit ec: ExecutionContext, system: ActorSystem, repository: EventsRepository) {
 

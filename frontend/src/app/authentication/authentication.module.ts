@@ -17,6 +17,7 @@ import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/token.service';
 import { TokenInterceptor } from './services/token.interceptor';
+import { CallsInterceptor } from './services/calls.interceptor';
 import { LoginComponent } from './containers/login.component';
 import { LoginFormComponent } from './components/login-form.component';
 
@@ -45,11 +46,18 @@ export class AuthenticationModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: AuthenticationModule,
-      providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: TokenInterceptor,
-        multi: true
-      }]
+      providers: [
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: TokenInterceptor,
+          multi: true
+        },
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: CallsInterceptor,
+          multi: true
+        }
+      ]
     };
   }
 }
